@@ -1,0 +1,33 @@
+{
+  "description": "Domains whose citations count as a qualifying source. A narration from web_search is spoken only if at least one citation matches. Suffix match on the hostname.",
+  "domains": [
+    "gov.tw",
+    "edu.tw",
+    "go.jp",
+    "ac.jp",
+    "gov",
+    "edu",
+    "nyc.gov",
+    "wikipedia.org",
+    "taipower.com.tw",
+    "metro.taipei",
+    "pts.org.tw",
+    "cna.com.tw",
+    "focustaiwan.tw",
+    "taipeitimes.com",
+    "udn.com",
+    "ltn.com.tw",
+    "nhk.or.jp",
+    "nikkei.com",
+    "asahi.com",
+    "nytimes.com",
+    "apnews.com",
+    "reuters.com",
+    "bbc.co.uk",
+    "bbc.com",
+    "theguardian.com",
+    "untourism.int",
+    "jnto.go.jp",
+    "taiwaninsight.org"
+  ]
+}

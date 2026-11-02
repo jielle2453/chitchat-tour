@@ -1,0 +1,395 @@
+"use client";
+// Walk engine: location fixes -> trigger engine -> /api/guide, plus spoken questions (/api/transcribe + /api/ask).
+// It never plays audio itself: narrations are handed to `onNarration`, so the session decides how to present them.
+import { useCallback, useEffect, useRef, useState } from "react";
+import { areaNameAt, nearbyPois } from "@/lib/geo";
+import { getItem, getKnowledgeItems } from "@/lib/kb";
+import { rankCandidates, shouldSpeak, type TriggerConfig } from "@/lib/trigger";
+import type {
+  AskRequest,
+  AskResponse,
+  Candidate,
+  DiscoveryOrigin,
+  GeoFix,
+  GuideRequest,
+  GuideResponse,
+  LocationSource,
+  Narration,
+  NearbyPoi,
+  TraceStep,
+  TranscribeResponse,
+  UserProfile,
+  WalkState,
+} from "@/lib/types";
+import { isNotReady, postForm, postJson } from "./api";
+import { t } from "./i18n";
+import { startRecording, type Recording } from "./recorder";
+import { stopSpeaking } from "./speech";
+import { readStored, writeStored } from "./storage";
+import { KEYS } from "./storageFormat";
+
+export type WalkStatus = "idle" | "running" | "paused" | "error";
+export type VoiceState = "idle" | "listening" | "transcribing" | "thinking";
+
+export interface Pin {
+  poiId: string;
+  itemId: string;
+  lat: number;
+  lon: number;
+  label: string;
+}
+
+export interface WalkOptions {
+  profile: UserProfile;
+  storageKey?: string; // where WalkState is persisted
+  persist?: boolean;
+  cfg?: TriggerConfig;
+  onNarration?: (narration: Narration, origin: DiscoveryOrigin, fix: GeoFix | null) => void;
+  onFix?: (fix: GeoFix, areaName: string | null) => void;
+}
+
+const RADIUS_M = 150;
+const MAX_TRACE = 300;
+const MAX_PINS = 3;
+const EMPTY_STATE: WalkState = { toldItemIds: [], lastSpokenAt: null, history: [] };
+
+function now() {
+  return Date.now();
+}
+
+export function useWalk(options: WalkOptions) {
+  const optsRef = useRef(options);
+  useEffect(() => {
+    optsRef.current = options;
+  });
+
+  const [fix, setFix] = useState<GeoFix | null>(null);
+  const [area, setArea] = useState<string | null>(null);
+  const [pins, setPins] = useState<Pin[]>([]);
+  const [checked, setChecked] = useState<{ poiId: string; lat: number; lon: number }[]>([]);
+  const [progress, setProgress] = useState(0);
+  const [trace, setTrace] = useState<TraceStep[]>([]);
+  const [status, setStatus] = useState<WalkStatus>("idle");
+  const [error, setError] = useState<{ message: string; notReady: boolean } | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [voice, setVoice] = useState<VoiceState>("idle");
+  const [heard, setHeard] = useState<string | null>(null);
+
+  const sourceRef = useRef<LocationSource | null>(null);
+  const tokenRef = useRef(0);
+  const busyRef = useRef(false);
+  const stateRef = useRef<WalkState>(EMPTY_STATE);
+  const fixRef = useRef<GeoFix | null>(null);
+  const poisRef = useRef<NearbyPoi[]>([]);
+  const candidatesRef = useRef<Candidate[]>([]);
+  const pinKeyRef = useRef("");
+  const recentRef = useRef<Narration[]>([]);
+  const recordingRef = useRef<Recording | null>(null);
+  const holdingRef = useRef(false);
+
+  const stateKey = () => `${KEYS.walkState}.${optsRef.current.storageKey ?? "walk"}`;
+
+  const addTrace = useCallback((steps: TraceStep[]) => {
+    if (!steps.length) return;
+    setTrace((prev) => [...prev, ...steps].slice(-MAX_TRACE));
+  }, []);
+
+  const fail = useCallback(
+    (err: unknown) => {
+      const message = err instanceof Error ? err.message : String(err);
+      setError({ message, notReady: isNotReady(err) });
+      setStatus("error");
+      tokenRef.current++;
+      sourceRef.current?.stop();
+      addTrace([{ kind: "error", message, at: now() }]);
+    },
+    [addTrace],
+  );
+
+  const deliver = useCallback((narration: Narration, origin: DiscoveryOrigin) => {
+    recentRef.current = [...recentRef.current, narration].slice(-3);
+    if (origin === "guide") {
+      const at = now();
+      const s = stateRef.current;
+      const next: WalkState = {
+        toldItemIds: narration.itemId && !s.toldItemIds.includes(narration.itemId) ? [...s.toldItemIds, narration.itemId] : s.toldItemIds,
+        lastSpokenAt: at,
+        history: narration.itemId ? [...s.history, { itemId: narration.itemId, at }] : s.history,
+      };
+      stateRef.current = next;
+      if (optsRef.current.persist !== false) writeStored(stateKey(), next);
+      // the pin for this story becomes a check mark
+      const c = candidatesRef.current.find((x) => x.itemId === narration.itemId && x.poiId);
+      const poi = c ? poisRef.current.find((p) => p.id === c.poiId) : undefined;
+      if (poi) setChecked((prev) => (prev.some((x) => x.poiId === poi.id) ? prev : [...prev, { poiId: poi.id, lat: poi.lat, lon: poi.lon }]));
+    }
+    optsRef.current.onNarration?.(narration, origin, fixRef.current);
+  }, []);
+
+  const attempt = useCallback(
+    async (f: GeoFix, areaName: string | null, nearby: NearbyPoi[], candidates: Candidate[], token: number) => {
+      const o = optsRef.current;
+      const t0 = now();
+      const state = stateRef.current;
+      const local: TraceStep[] = [
+        {
+          kind: "position",
+          message: `${areaName ?? "Unknown area"}: ${nearby.length} places within ${RADIUS_M} m`,
+          at: t0,
+        },
+        { kind: "user", message: `Hometown ${o.profile.hometown || "not given"}, language ${o.profile.lang}`, at: t0 },
+      ];
+      for (const c of candidates) {
+        const item = getItem(c.itemId);
+        local.push({
+          kind: "candidate",
+          message: `${item?.title.en ?? c.itemId} (score ${c.score.toFixed(2)}): ${c.reasons.join("; ")}`,
+          at: t0,
+          data: c,
+        });
+      }
+      if (!candidates.length) {
+        local.push({ kind: "skip", message: "Nothing nearby is worth telling this walker right now", at: t0 });
+        addTrace(local);
+        return;
+      }
+      const req: GuideRequest = { profile: o.profile, fix: f, candidates, state, areaName };
+      const res = await postJson<GuideResponse>("/api/guide", req);
+      if (token !== tokenRef.current) return;
+      // The agent's trace already restates position, user and candidates.
+      addTrace(res.trace.length ? res.trace : local);
+      if (res.narration) deliver(res.narration, "guide");
+    },
+    [addTrace, deliver],
+  );
+
+  const handleFix = useCallback(
+    (f: GeoFix, token: number, source: LocationSource) => {
+      if (token !== tokenRef.current) return;
+      fixRef.current = f;
+      setFix(f);
+      const prog = (source as { progress?: () => number }).progress;
+      if (typeof prog === "function") setProgress(prog.call(source));
+      let areaName: string | null = null;
+      let nearby: NearbyPoi[] = [];
+      let candidates: Candidate[] = [];
+      let ok = false;
+      try {
+        areaName = areaNameAt(f);
+        nearby = nearbyPois(f, RADIUS_M);
+        const o = optsRef.current;
+        candidates = rankCandidates({ fix: f, profile: o.profile, pois: nearby, items: getKnowledgeItems(), state: stateRef.current, now: now(), cfg: o.cfg });
+        ok = shouldSpeak(stateRef.current, now(), o.cfg);
+      } catch (err) {
+        fail(err);
+        return;
+      }
+      setArea(areaName);
+      poisRef.current = nearby;
+      candidatesRef.current = candidates;
+      optsRef.current.onFix?.(f, areaName);
+
+      // anticipation pins: the best few point-layer candidates, regardless of the cooldown
+      const nextPins: Pin[] = [];
+      for (const c of candidates) {
+        if (!c.poiId || nextPins.length >= MAX_PINS) continue;
+        const poi = nearby.find((p) => p.id === c.poiId);
+        if (poi) nextPins.push({ poiId: poi.id, itemId: c.itemId, lat: poi.lat, lon: poi.lon, label: poi.name ?? poi.brand ?? poi.kind });
+      }
+      const key = nextPins.map((p) => p.poiId).join("|");
+      if (key !== pinKeyRef.current) {
+        pinKeyRef.current = key;
+        setPins(nextPins);
+      }
+
+      if (!ok || busyRef.current) return;
+      busyRef.current = true;
+      setBusy(true);
+      attempt(f, areaName, nearby, candidates, token)
+        .catch((err) => {
+          if (isNotReady(err)) fail(err);
+          else addTrace([{ kind: "error", message: err instanceof Error ? err.message : String(err), at: now() }]);
+        })
+        .finally(() => {
+          busyRef.current = false;
+          setBusy(false);
+        });
+    },
+    [addTrace, attempt, fail],
+  );
+
+  const start = useCallback(
+    (createSource: () => LocationSource, opts?: { reset?: boolean }) => {
+      tokenRef.current++;
+      const token = tokenRef.current;
+      sourceRef.current?.stop();
+      setError(null);
+      if (opts?.reset) {
+        stateRef.current = EMPTY_STATE;
+        recentRef.current = [];
+        candidatesRef.current = [];
+        pinKeyRef.current = "";
+        setPins([]);
+        setChecked([]);
+        setTrace([]);
+        setProgress(0);
+        if (optsRef.current.persist !== false) writeStored(stateKey(), EMPTY_STATE);
+      } else if (optsRef.current.persist !== false) {
+        stateRef.current = readStored<WalkState>(stateKey(), EMPTY_STATE);
+      }
+      try {
+        const source = createSource();
+        sourceRef.current = source;
+        source.start(
+          (f) => handleFix(f, token, source),
+          (err) => {
+            if (token === tokenRef.current) fail(err);
+          },
+        );
+        setStatus("running");
+      } catch (err) {
+        fail(err);
+      }
+    },
+    [fail, handleFix],
+  );
+
+  const halt = useCallback((next: WalkStatus) => {
+    tokenRef.current++;
+    sourceRef.current?.stop();
+    setStatus(next);
+  }, []);
+  const pause = useCallback(() => halt("paused"), [halt]);
+  const stop = useCallback(() => {
+    halt("idle");
+    setPins([]);
+    pinKeyRef.current = "";
+  }, [halt]);
+
+  const ask = useCallback(
+    async (question: string) => {
+      const o = optsRef.current;
+      stopSpeaking();
+      setVoice("thinking");
+      try {
+        const req: AskRequest = {
+          profile: o.profile,
+          question,
+          fix: fixRef.current ?? undefined,
+          recent: recentRef.current,
+        };
+        const res = await postJson<AskResponse>("/api/ask", req);
+        addTrace(res.trace);
+        deliver(res.narration, "ask");
+      } catch (err) {
+        addTrace([{ kind: "error", message: err instanceof Error ? err.message : String(err), at: now() }]);
+      } finally {
+        setVoice("idle");
+      }
+    },
+    [addTrace, deliver],
+  );
+
+  const tellMeMore = useCallback(() => {
+    void ask(t(optsRef.current.profile.lang, "tellMoreQuestion"));
+  }, [ask]);
+
+  // Used by the photo flow, which calls /api/explain itself.
+  const push = useCallback(
+    (narration: Narration, origin: DiscoveryOrigin, steps: TraceStep[] = []) => {
+      addTrace(steps);
+      deliver(narration, origin);
+    },
+    [addTrace, deliver],
+  );
+
+  const startListening = useCallback(async () => {
+    if (recordingRef.current || holdingRef.current) return;
+    holdingRef.current = true;
+    stopSpeaking();
+    setHeard(null);
+    setVoice("listening");
+    try {
+      const rec = await startRecording();
+      if (!holdingRef.current) {
+        // released before the mic was ready
+        rec.cancel();
+        setVoice("idle");
+        return;
+      }
+      recordingRef.current = rec;
+    } catch (err) {
+      holdingRef.current = false;
+      setVoice("idle");
+      addTrace([{ kind: "error", message: `Microphone: ${err instanceof Error ? err.message : String(err)}`, at: now() }]);
+    }
+  }, [addTrace]);
+
+  const stopListening = useCallback(async () => {
+    holdingRef.current = false;
+    const rec = recordingRef.current;
+    if (!rec) {
+      setVoice((v) => (v === "listening" ? "idle" : v));
+      return;
+    }
+    recordingRef.current = null;
+    const { blob, durationMs } = await rec.stop();
+    if (durationMs < 400) {
+      setVoice("idle");
+      return;
+    }
+    setVoice("transcribing");
+    try {
+      const form = new FormData();
+      form.append("audio", blob, "question.wav");
+      form.append("lang", optsRef.current.profile.lang);
+      form.append("keywords", poisRef.current.map((p) => p.name ?? p.brand).filter(Boolean).join(","));
+      const { text } = await postForm<TranscribeResponse>("/api/transcribe", form);
+      if (!text.trim()) {
+        setVoice("idle");
+        return;
+      }
+      setHeard(text);
+      await ask(text);
+    } catch (err) {
+      addTrace([{ kind: "error", message: err instanceof Error ? err.message : String(err), at: now() }]);
+      setVoice("idle");
+    }
+  }, [ask, addTrace]);
+
+  const getFix = useCallback(() => fixRef.current, []);
+
+  useEffect(
+    () => () => {
+      tokenRef.current++;
+      sourceRef.current?.stop();
+      recordingRef.current?.cancel();
+    },
+    [],
+  );
+
+  return {
+    fix,
+    area,
+    pins,
+    checked,
+    progress,
+    trace,
+    status,
+    error,
+    busy,
+    voice,
+    heard,
+    start,
+    pause,
+    stop,
+    tellMeMore,
+    startListening,
+    stopListening,
+    ask,
+    push,
+    getFix,
+  };
+}
+
+export type WalkApi = ReturnType<typeof useWalk>;

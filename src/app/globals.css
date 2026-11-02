@@ -1,0 +1,158 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #f4f4f2;
+  --surface: #ffffff;
+  --ink: #111111;
+  --sub: #6b6b6b;
+  --line: #e6e6e3;
+  --accent: #ffd23f;
+  --shadow: 0 8px 28px rgba(17, 17, 17, 0.12);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-sub: var(--sub);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --radius-card: 20px;
+  --font-sans: "Noto Sans TC", "Noto Sans JP", system-ui, -apple-system, "Segoe UI", "Hiragino Sans", "PingFang TC", "Microsoft JhengHei", sans-serif;
+}
+
+html {
+  background: var(--bg);
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+}
+
+button,
+select,
+a,
+input {
+  touch-action: manipulation;
+}
+
+button {
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 2px;
+}
+
+/* ---------- map ---------- */
+.leaflet-container {
+  font-family: var(--font-sans);
+  background: #e9e9e6;
+}
+.rg-me {
+  position: relative;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: var(--ink);
+  border: 3px solid #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+.rg-me::after {
+  content: "";
+  position: absolute;
+  inset: -17px;
+  border-radius: 999px;
+  background: rgba(17, 17, 17, 0.1);
+  z-index: -1;
+}
+.rg-me-ring {
+  background: transparent;
+  border: 3px solid var(--ink);
+  box-shadow: none;
+}
+.rg-pin {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  background: var(--accent);
+  border: 2.5px solid var(--ink);
+  font-weight: 800;
+  font-size: 16px;
+  line-height: 1;
+  color: var(--ink);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+.rg-check {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: var(--accent);
+  border: 2px solid #fff;
+  outline: 1.5px solid var(--ink);
+  transform: rotate(-8deg);
+}
+
+/* ---------- motion ---------- */
+@keyframes rg-sheet-in {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes rg-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes rg-pop {
+  from {
+    transform: scale(0.6) rotate(-8deg);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) rotate(var(--rot, -4deg));
+    opacity: 1;
+  }
+}
+.rg-sheet-in {
+  animation: rg-sheet-in 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.rg-fade-in {
+  animation: rg-fade-in 0.2s ease-out;
+}
+.rg-pop {
+  animation: rg-pop 0.35s cubic-bezier(0.2, 1.2, 0.3, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rg-sheet-in,
+  .rg-fade-in,
+  .rg-pop {
+    animation: none;
+  }
+}
+
+.rg-scroll {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.rg-scroll::-webkit-scrollbar {
+  display: none;
+}

@@ -1,0 +1,2333 @@
+[
+  {
+    "id": "garbage-truck-why-music",
+    "category": "daily-life",
+    "layer": "area",
+    "trigger": {
+      "osm": [],
+      "context": "evening, residential lanes, when the music is audible",
+      "photo_concepts": [
+        "garbage truck",
+        "people carrying trash bags"
+      ]
+    },
+    "title": {
+      "en": "Why Taipei's garbage trucks play music",
+      "zh-TW": "台北垃圾車為什麼放音樂"
+    },
+    "fact": {
+      "en": "The music tells residents the truck has arrived, so they carry their bags out and hand them over in person. One scholarly article links this to dense housing with nowhere to store trash and a humid subtropical climate that draws rats, ants and cockroaches. In Taipei, crews run five evenings a week.",
+      "zh-TW": "音樂是在通知居民垃圾車到了，請把垃圾提出來交給清潔隊。有文章認為，原因是住宅密集、沒有地方囤垃圾，加上亞熱帶濕熱氣候容易引來老鼠、螞蟻與蟑螂。台北清潔隊一週有五個晚上出勤。"
+    },
+    "sources": [
+      {
+        "url": "https://taiwaninsight.org/from-musical-garbage-trucks-to-garbage-consciousness-in-taiwan-2/",
+        "title": "From Musical Garbage Trucks to Garbage Consciousness in Taiwan",
+        "publisher": "Taiwan Insight",
+        "verified": "full-text"
+      }
+    ],
+    "confidence": "medium",
+    "disputed": false,
+    "caveats": "The 'why' is the article's own analysis, a single source. Say 'one analysis suggests'. Do not promise the truck will actually pass during the demo.",
+    "hometown": {
+      "JP": {
+        "status": "different",
+        "comparison": {
+          "en": "In many Japanese cities, residents take sorted trash to a neighborhood collection point on set mornings, often before 8 am, rather than meeting a truck. Many Japanese collection trucks also play melodies, but the music is chosen by each municipality. Rules differ by city.",
+          "zh-TW": "日本許多城市是在固定的收運日早上（常是 8 點前）把分類好的垃圾放到社區集合點，不用碰到垃圾車。日本的收運車也常放音樂，但曲子由各自治體自選。各市規定不同。",
+          "ja": "日本の多くの都市では、決められた収集日の朝（8時前が多い）に、分別したごみを地域の集積所に出します。収集車がメロディを流す地域も多く、選曲は自治体ごとです。"
+        },
+        "sources": [
+          {
+            "url": "https://realestateguide.jp/?p=1325",
+            "title": "Garbage disposal in Japan (guide)",
+            "publisher": "Real Estate Guide Japan (private company)",
+            "verified": "full-text"
+          },
+          {
+            "url": "https://kuruma-news.jp/post/470753/2",
+            "title": "Why garbage trucks play music",
+            "publisher": "Kuruma News (Japan)",
+            "verified": "full-text"
+          }
+        ],
+        "confidence": "medium"
+      },
+      "US": {
+        "status": "different",
+        "comparison": {
+          "en": "In New York City, residents set trash out at the curb in the evening, after 6 pm in a lidded bin or after 8 pm in bags, and the truck collects later. Nobody has to meet the truck.",
+          "zh-TW": "紐約是晚上把垃圾放到路邊：用有蓋垃圾桶的話 6 點後可放，用袋子則 8 點後，之後垃圾車才來收，居民不需要等車。"
+        },
+        "sources": [
+          {
+            "url": "https://portal.311.nyc.gov/article?kanumber=KA-01801",
+            "title": "Residential set-out times and containers",
+            "publisher": "NYC 311",
+            "verified": "full-text"
+          },
+          {
+            "url": "https://www.nyc.gov/site/dsny/news/24-101/mayor-adams-sanitation-commissioner-tisch-first-ever-official-nyc-bin-trash-pick-up-",
+            "title": "First-ever official NYC bin",
+            "publisher": "NYC Department of Sanitation",
+            "verified": "full-text"
+          }
+        ],
+        "confidence": "high"
+      }
+    }
+  },
+  {
+    "id": "garbage-truck-japan-origin",
+    "category": "daily-life",
+    "layer": "area",
+    "trigger": {
+      "osm": [],
+      "context": "evening, when the garbage truck music plays",
+      "photo_concepts": [
+        "garbage truck"
+      ]
+    },
+    "title": {
+      "en": "The first musical garbage trucks came from Japan",
+      "zh-TW": "第一批會放音樂的垃圾車來自日本"
+    },
+    "fact": {
+      "en": "Taipei bought its first musical garbage trucks from Japan in 1967, and 21 garbage trucks plus 39 sewage trucks started work in early 1968. The sound systems came from an Osaka company and used a wind-up music box that could play only one tune.",
+      "zh-TW": "台北市 1967 年向日本買進第一批會放音樂的垃圾車，1968 年初有 21 輛垃圾車和 39 輛水肥車上路。音響來自大阪的廠商，用發條音樂盒，一個盒子只能放一首曲子。"
+    },
+    "sources": [
+      {
+        "url": "https://taiwaninsight.org/from-musical-garbage-trucks-to-garbage-consciousness-in-taiwan-2/",
+        "title": "From Musical Garbage Trucks to Garbage Consciousness in Taiwan",
+        "publisher": "Taiwan Insight",
+        "verified": "full-text"
+      }
+    ],
+    "confidence": "medium",
+    "disputed": false,
+    "caveats": "Single source (a Taiwan Insight article). Official or archival corroboration has not been found.",
+    "hometown": {
+      "JP": {
+        "status": "same",
+        "comparison": {
+          "en": "Many Japanese municipalities also run collection trucks with melodies picked locally, often children's songs or famous classical pieces, so the sound will feel familiar. The music boxes in Taipei's first trucks came from an Osaka company.",
+          "zh-TW": "日本許多自治體的收運車也放音樂，曲子由各地自選，常見童謠或有名的古典曲，所以聲音對日本遊客不陌生。台北第一批垃圾車的音樂盒來自大阪的廠商。",
+          "ja": "日本でも多くの自治体の収集車がメロディを流します（童謡や有名なクラシックなど、選曲は自治体ごと）。台北最初の収集車のオルゴールは大阪の会社製でした。"
+        },
+        "sources": [
+          {
+            "url": "https://kuruma-news.jp/post/470753/2",
+            "title": "Why garbage trucks play music",
+            "publisher": "Kuruma News (Japan)",
+            "verified": "full-text"
+          },
+          {
+            "url": "https://taiwaninsight.org/from-musical-garbage-trucks-to-garbage-consciousness-in-taiwan-2/",
+            "title": "From Musical Garbage Trucks to Garbage Consciousness in Taiwan",
+            "publisher": "Taiwan Insight",
+            "verified": "full-text"
+          }
+        ],
+        "confidence": "medium"
+      },
+      "US": {
+        "status": "different",
+        "comparison": {
+          "en": "In New York, the truck jingle you hear on a summer street is usually an ice cream truck, and the city's noise code limits jingles while such a truck is stopped.",
+          "zh-TW": "在紐約，夏天街上聽到的車載音樂多半是冰淇淋車，市府噪音規定限制這類車停下來時放音樂。"
+        },
+        "sources": [
+          {
+            "url": "https://www.marketplace.org/2016/07/26/ny-ice-cream-truck-jingle-jangles-many-nerves",
+            "title": "NY ice cream truck jingle jangles many nerves",
+            "publisher": "Marketplace",
+            "verified": "snippet"
+          }
+        ],
+        "confidence": "low"
+      }
+    }
+  },
+  {
+    "id": "garbage-truck-maidens-prayer",
+    "category": "daily-life",
+    "layer": "area",
+    "trigger": {
+      "osm": [],
+      "context": "evening, when the garbage truck music plays",
+      "photo_concepts": [
+        "garbage truck"
+      ]
+    },
+    "title": {
+      "en": "The tune is a Polish piano piece from 1856",
+      "zh-TW": "那首曲子是 1856 年的波蘭鋼琴曲"
+    },
+    "fact": {
+      "en": "The usual garbage truck tune is 'A Maiden's Prayer', a piano piece by Polish composer Tekla Badarzewska-Baranowska first published in 1856. It was one of seven standard tunes in a 1967 Japanese supplier catalogue, and the researcher found no evidence that Taiwanese officials picked it on purpose.",
+      "zh-TW": "常聽到的垃圾車曲子是〈少女的祈禱〉，是波蘭作曲家巴達捷芙斯卡 1856 年發表的鋼琴曲。它是 1967 年日本廠商目錄七首標準曲之一，作者也沒找到官員刻意挑選的證據。"
+    },
+    "sources": [
+      {
+        "url": "https://taiwaninsight.org/from-musical-garbage-trucks-to-garbage-consciousness-in-taiwan-2/",
+        "title": "From Musical Garbage Trucks to Garbage Consciousness in Taiwan",
+        "publisher": "Taiwan Insight",
+        "verified": "full-text"
+      }
+    ],
+    "confidence": "medium",
+    "disputed": false,
+    "caveats": "Single source. Do not say officials chose the tune for any reason.",
+    "hometown": {
+      "JP": {
+        "status": "same",
+        "comparison": {
+          "en": "Famous classical pieces such as 'A Maiden's Prayer' and 'Fur Elise' are also reported to be widely used on Japanese collection trucks, because each municipality picks its own tunes. A Japanese visitor may well recognise the tune.",
+          "zh-TW": "日本的收運車也常用〈少女的祈禱〉和〈給愛麗絲〉這類名曲，因為曲子是各自治體自己選的。日本遊客很可能一聽就認得。",
+          "ja": "日本のごみ収集車でも「乙女の祈り」「エリーゼのために」などの有名なクラシック曲が多く使われていると紹介されています。選曲は自治体ごとです。"
+        },
+        "sources": [
+          {
+            "url": "https://kuruma-news.jp/post/470753/2",
+            "title": "Why garbage trucks play music",
+            "publisher": "Kuruma News (Japan)",
+            "verified": "full-text"
+          }
+        ],
+        "confidence": "medium"
+      },
+      "US": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      }
+    }
+  },
+  {
+    "id": "garbage-truck-fur-elise",
+    "category": "daily-life",
+    "layer": "area",
+    "trigger": {
+      "osm": [],
+      "context": "evening, when the garbage truck plays Fur Elise",
+      "photo_concepts": [
+        "garbage truck"
+      ]
+    },
+    "title": {
+      "en": "Who put Fur Elise on garbage trucks? Accounts disagree",
+      "zh-TW": "〈給愛麗絲〉怎麼上垃圾車？說法不一"
+    },
+    "fact": {
+      "en": "Several stories explain how Beethoven's 'Fur Elise' joined the garbage truck repertoire, and they contradict each other. One article suggests it may have entered in the mid-1990s but admits there is no direct evidence. Treat any single origin story as unproven.",
+      "zh-TW": "關於〈給愛麗絲〉怎麼變成垃圾車曲目，有好幾個互相矛盾的說法。有文章推測可能是 1990 年代中期才加入，但承認沒有直接證據。任何單一版本的由來都不能當作定論。"
+    },
+    "sources": [
+      {
+        "url": "https://taiwaninsight.org/from-musical-garbage-trucks-to-garbage-consciousness-in-taiwan-2/",
+        "title": "From Musical Garbage Trucks to Garbage Consciousness in Taiwan",
+        "publisher": "Taiwan Insight",
+        "verified": "full-text"
+      },
+      {
+        "url": "https://www.businesstoday.com.tw/article/category/183027/post/202212280066/%E5%8F%B0%E7%81%A3%E6%93%BA%E8%84%AB%E3%80%8C%E5%9E%83%E5%9C%BE%E5%B3%B6%E3%80%8D%E8%8A%B1%E6%95%B8%E5%8D%81%E5%B9%B4%E5%8A%AA%E5%8A%9B%EF%BC%8C%E5%A4%96%E5%AA%92%E9%A9%9A%E8%A8%9D%EF%BC%9A%E5%9B%9E%E6%94%B6%E7%8E%87%E8%B6%85%E9%AB%98%E2%80%A6%E4%B8%96%E7%95%8C%E5%90%8D%E6%9B%B2%E8%AE%8A%E5%9E%83%E5%9C%BE%E8%BB%8A%E9%85%8D%E6%A8%82%E5%85%A8%E5%9B%A0%E9%80%992%E4%BA%BA%EF%BC%9F",
+        "title": "Garbage truck music origin (Business Today)",
+        "publisher": "Business Today",
+        "verified": "snippet"
+      }
+    ],
+    "confidence": "low",
+    "disputed": true,
+    "caveats": "DO NOT state any one origin (German-built trucks, an official hearing his daughter practise, or a named physician). Only say 'sources give several conflicting stories'.",
+    "hometown": {
+      "JP": {
+        "status": "same",
+        "comparison": {
+          "en": "Japanese collection trucks also use 'Fur Elise' in many areas, chosen locally. How it reached Taiwan's trucks is still unsettled, so do not tell Japanese visitors it came from Japan.",
+          "zh-TW": "日本許多地方的收運車也用〈給愛麗絲〉，由各自治體自選。它怎麼進到台灣垃圾車仍無定論，不要對日本遊客說是從日本來的。",
+          "ja": "日本でも多くの地域の収集車が「エリーゼのために」を使っています（自治体ごとの選曲）。台湾の収集車に入った経緯は定説がありません。"
+        },
+        "sources": [
+          {
+            "url": "https://kuruma-news.jp/post/470753/2",
+            "title": "Why garbage trucks play music",
+            "publisher": "Kuruma News (Japan)",
+            "verified": "full-text"
+          }
+        ],
+        "confidence": "medium"
+      },
+      "US": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      }
+    }
+  },
+  {
+    "id": "garbage-truck-1984-tune-swap",
+    "category": "daily-life",
+    "layer": "area",
+    "trigger": {
+      "osm": [],
+      "context": "evening, when the garbage truck music plays",
+      "photo_concepts": [
+        "garbage truck"
+      ]
+    },
+    "title": {
+      "en": "The time Taiwan tried to replace the garbage truck tune",
+      "zh-TW": "台灣曾經想換掉垃圾車曲子"
+    },
+    "fact": {
+      "en": "In 1984 the Taiwan Provincial government held a composition contest for a new garbage truck tune, and the winner was installed in more than 1,600 trucks. It was judged a failure because residents did not recognise the new tune and missed pickups.",
+      "zh-TW": "1984 年台灣省政府辦了垃圾車新曲比賽，得獎曲裝到 1600 多輛車上。結果居民聽不出那是垃圾車，常常錯過收運，被評為失敗。"
+    },
+    "sources": [
+      {
+        "url": "https://taiwaninsight.org/from-musical-garbage-trucks-to-garbage-consciousness-in-taiwan-2/",
+        "title": "From Musical Garbage Trucks to Garbage Consciousness in Taiwan",
+        "publisher": "Taiwan Insight",
+        "verified": "full-text"
+      }
+    ],
+    "confidence": "medium",
+    "disputed": false,
+    "caveats": "Single source.",
+    "hometown": {
+      "JP": {
+        "status": "same",
+        "comparison": {
+          "en": "Japanese municipalities also choose and change their truck tunes. Kawasaki and Yokohama use city songs, and Asaka in Saitama switched to an original song for burnable trash in April 2021.",
+          "zh-TW": "日本各自治體也自己選曲、換曲：川崎、橫濱用市歌，埼玉縣朝霞市 2021 年 4 月起可燃垃圾收運改用原創歌曲。",
+          "ja": "日本でも自治体が収集車の曲を選び、変更しています。川崎市・横浜市は市の歌、埼玉県朝霞市は2021年4月から燃やすごみの収集で独自の曲を使っています。"
+        },
+        "sources": [
+          {
+            "url": "https://kuruma-news.jp/post/470753/2",
+            "title": "Why garbage trucks play music",
+            "publisher": "Kuruma News (Japan)",
+            "verified": "full-text"
+          }
+        ],
+        "confidence": "medium"
+      },
+      "US": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      }
+    }
+  },
+  {
+    "id": "garbage-truck-1968-objection",
+    "category": "daily-life",
+    "layer": "area",
+    "trigger": {
+      "osm": [],
+      "context": "evening, when the garbage truck music plays",
+      "photo_concepts": [
+        "garbage truck"
+      ]
+    },
+    "title": {
+      "en": "Lawmakers complained about the tune in 1968 and 1983",
+      "zh-TW": "1968 與 1983 年都有人抱怨這首曲子"
+    },
+    "fact": {
+      "en": "In November 1968 a legislator objected that linking a pure maiden's song to garbage was improper, and officials were told to find an alternative. In 1983 a Taipei councilman said residents were tired of the tune and estimated that sanitation workers heard it about 10,000 times a month.",
+      "zh-TW": "1968 年 11 月有立委質疑把純潔少女的曲子配垃圾不恰當，要求另找替代曲。1983 年有台北市議員說居民聽膩了，並估計清潔隊員一個月要聽約一萬次。"
+    },
+    "sources": [
+      {
+        "url": "https://taiwaninsight.org/from-musical-garbage-trucks-to-garbage-consciousness-in-taiwan-2/",
+        "title": "From Musical Garbage Trucks to Garbage Consciousness in Taiwan",
+        "publisher": "Taiwan Insight",
+        "verified": "full-text"
+      }
+    ],
+    "confidence": "medium",
+    "disputed": false,
+    "caveats": "Single source. The 10,000-times figure is a councilman's estimate, so say 'estimated'.",
+    "hometown": {
+      "JP": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      },
+      "US": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      }
+    }
+  },
+  {
+    "id": "garbage-truck-local-tunes",
+    "category": "daily-life",
+    "layer": "national",
+    "trigger": {
+      "osm": [],
+      "context": "evening, when the garbage truck music plays",
+      "photo_concepts": [
+        "garbage truck"
+      ]
+    },
+    "title": {
+      "en": "Some places swapped in local tunes",
+      "zh-TW": "有些地方換成在地曲調"
+    },
+    "fact": {
+      "en": "After the failed 1984 swap, some localities did adopt local or Indigenous-themed tunes, for example Guiren in Tainan County in 2000, Majia in Pingtung in 2002 and Ren'ai in Nantou in 2013. Taipei itself still mostly uses the classic tunes.",
+      "zh-TW": "1984 年換曲失敗後，仍有一些地方改用在地或原住民主題的曲調，例如 2000 年台南縣歸仁、2002 年屏東瑪家、2013 年南投仁愛。台北市本身仍以傳統曲目為主。"
+    },
+    "sources": [
+      {
+        "url": "https://taiwaninsight.org/from-musical-garbage-trucks-to-garbage-consciousness-in-taiwan-2/",
+        "title": "From Musical Garbage Trucks to Garbage Consciousness in Taiwan",
+        "publisher": "Taiwan Insight",
+        "verified": "full-text"
+      }
+    ],
+    "confidence": "medium",
+    "disputed": false,
+    "caveats": "The article lists these places; the last clause about Taipei is a soft summary, so say 'the classic tunes are still heard'. Not a claim about Taipei policy.",
+    "hometown": {
+      "JP": {
+        "status": "same",
+        "comparison": {
+          "en": "Japan has the same local variety: Kawasaki and Yokohama use city songs, and Asaka in Saitama uses an original song.",
+          "zh-TW": "日本也有同樣的在地多樣性：川崎、橫濱用市歌，埼玉縣朝霞市用原創歌曲。",
+          "ja": "日本でも川崎市・横浜市の市歌、朝霞市の独自曲など、地域ごとの曲があります。"
+        },
+        "sources": [
+          {
+            "url": "https://kuruma-news.jp/post/470753/2",
+            "title": "Why garbage trucks play music",
+            "publisher": "Kuruma News (Japan)",
+            "verified": "full-text"
+          }
+        ],
+        "confidence": "medium"
+      },
+      "US": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      }
+    }
+  },
+  {
+    "id": "taipei-pay-as-you-throw",
+    "category": "daily-life",
+    "layer": "area",
+    "trigger": {
+      "osm": [],
+      "context": "residential lanes, near convenience stores that sell the official bags",
+      "photo_concepts": [
+        "official trash bag",
+        "garbage bag"
+      ]
+    },
+    "title": {
+      "en": "You pay for trash by buying the bag",
+      "zh-TW": "垃圾費是買袋子時一起付"
+    },
+    "fact": {
+      "en": "Taipei charges for household trash through official designated bags. The fee is built into the price of the bag instead of a monthly bill. Reports say the system started citywide on 1 July 2000 and that the city's daily trash fell sharply afterward.",
+      "zh-TW": "台北市的家戶垃圾費是靠專用垃圾袋收，費用包在袋子價錢裡，不是每月帳單。報導指這套隨袋徵收 2000 年 7 月 1 日起全市實施，之後每日垃圾量大幅下降。"
+    },
+    "sources": [
+      {
+        "url": "https://laws.gov.taipei/law/LawSearch/LawPrint/FL027198?type=0",
+        "title": "Taipei ordinance on general waste disposal fees",
+        "publisher": "Taipei City Law and Regulation Database",
+        "verified": "snippet"
+      },
+      {
+        "url": "https://www.ctee.com.tw/news/20260415701216-431401",
+        "title": "Taipei trash volume reduction report",
+        "publisher": "Commercial Times",
+        "verified": "snippet"
+      }
+    ],
+    "confidence": "low",
+    "disputed": false,
+    "caveats": "The 2000-07-01 start date and the reduction figures come from search snippets that were not mapped to a specific page. Do not quote the date or percentage until checked against the ordinance and the Taipei EPB.",
+    "hometown": {
+      "JP": {
+        "status": "same",
+        "comparison": {
+          "en": "Many Japanese municipalities also require designated trash bags, sold at supermarkets, convenience stores and drugstores. Details differ by city, so do not quote prices.",
+          "zh-TW": "日本許多自治體也要求使用指定垃圾袋，在超市、超商、藥妝店販售。各市細節不同，不要講金額。",
+          "ja": "日本でも多くの自治体が指定ごみ袋を求め、スーパーやコンビニで販売しています（自治体により異なります）。"
+        },
+        "sources": [
+          {
+            "url": "https://realestateguide.jp/?p=1325",
+            "title": "Garbage disposal in Japan (guide)",
+            "publisher": "Real Estate Guide Japan (private company)",
+            "verified": "full-text"
+          }
+        ],
+        "confidence": "medium"
+      },
+      "US": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      }
+    }
+  },
+  {
+    "id": "few-public-trash-cans",
+    "category": "street",
+    "layer": "area",
+    "trigger": {
+      "osm": [],
+      "context": "busy streets and commercial areas where no bin is in sight",
+      "photo_concepts": [
+        "street trash can",
+        "litter bin"
+      ]
+    },
+    "title": {
+      "en": "Why it is hard to find a street trash can in Taipei",
+      "zh-TW": "台北街上為什麼很難找到垃圾桶"
+    },
+    "fact": {
+      "en": "Taipei has cut back its pedestrian street bins over the years. Officials and neighborhood leaders point to household trash being dumped into them, overflow, and rats feeding on drink cups and food scraps. A 2026 report says the city resumed installing some street bins in early 2023.",
+      "zh-TW": "台北市這些年減少了行人專用垃圾桶。官方與里長提到的原因包括家戶垃圾被丟進去、滿溢，以及老鼠吃手搖杯和食物殘渣。2026 年的報導說，台北市 2023 年初又恢復設置部分垃圾桶。"
+    },
+    "sources": [
+      {
+        "url": "https://news.pts.org.tw/article/806602",
+        "title": "Taipei street trash cans and rats",
+        "publisher": "PTS News",
+        "verified": "full-text"
+      },
+      {
+        "url": "https://news.pts.org.tw/article/808690",
+        "title": "Taipei street trash can reduction",
+        "publisher": "PTS News",
+        "verified": "snippet"
+      }
+    ],
+    "confidence": "medium",
+    "disputed": false,
+    "caveats": "Do not quote bin counts (earlier figures such as 806 were not verified and change over time). Say 'fewer than before'. The village chief's view in the PTS article is one person's opinion.",
+    "hometown": {
+      "JP": {
+        "status": "same",
+        "comparison": {
+          "en": "Tokyo visitors will feel at home: Japan also has few public bins. Reports link this to bin removals in stations after the 1995 sarin attack and to a habit of carrying trash home. A Japan Tourism Agency survey found 22 percent of visitors had trouble finding somewhere to throw trash away.",
+          "zh-TW": "東京遊客會覺得熟悉：日本街上垃圾桶也很少。報導把原因連到 1995 年沙林事件後車站撤除垃圾桶，以及把垃圾帶回家的習慣。日本政府觀光局調查有 22% 的訪日客找不到地方丟垃圾。",
+          "ja": "日本も公共のごみ箱は少ないと言われます。1995年の地下鉄サリン事件後に駅のごみ箱が撤去されたことや、ごみを持ち帰る習慣が理由として挙げられ、JNTO調査では訪日客の22%がごみを捨てる場所が見つからず困ったと答えています。"
+        },
+        "sources": [
+          {
+            "url": "https://www.cnn.co.jp/travel/35233754.html",
+            "title": "Visitors troubled by the lack of trash cans in Japan",
+            "publisher": "CNN Japan (citing JNTO survey)",
+            "verified": "full-text"
+          }
+        ],
+        "confidence": "medium"
+      },
+      "US": {
+        "status": "unknown",
+        "comparison": {
+          "en": "New York's Sanitation Department reports about 24,700 public litter baskets citywide (April 2024). No like-for-like Taipei count was verified, so do not rank the two cities.",
+          "zh-TW": "紐約市清潔局公布全市約 24,700 個公共垃圾筒（2024 年 4 月）。台北沒有可比較的查證數字，所以不要比誰多誰少。"
+        },
+        "sources": [
+          {
+            "url": "https://council.nyc.gov/data/clean-streets/",
+            "title": "Clean Streets data",
+            "publisher": "New York City Council",
+            "verified": "full-text"
+          }
+        ],
+        "confidence": "high"
+      }
+    }
+  },
+  {
+    "id": "household-trash-in-public-bins-fine",
+    "category": "street",
+    "layer": "area",
+    "trigger": {
+      "osm": [],
+      "context": "near a street trash can",
+      "photo_concepts": [
+        "street trash can",
+        "trash bag in public bin"
+      ]
+    },
+    "title": {
+      "en": "Dropping a household trash bag in a street bin can be fined",
+      "zh-TW": "把家裡垃圾丟進路邊垃圾桶會被罰"
+    },
+    "fact": {
+      "en": "Under the Waste Disposal Act, dumping household trash into pedestrian bins can bring a fine of NT$3,600 to NT$6,000. Taipei has reportedly begun using AI cameras to catch offenders.",
+      "zh-TW": "依《廢棄物清理法》，把家戶垃圾丟進行人專用垃圾桶，可處新臺幣 3600 元到 6000 元罰鍰。報導說台北市已開始用 AI 影像辨識抓違規。"
+    },
+    "sources": [
+      {
+        "url": "https://tw.stock.yahoo.com/news/%E5%AE%B6%E7%94%A8%E5%9E%83%E5%9C%BE%E5%88%A5%E5%81%B7%E4%B8%9F-%E5%8C%97%E5%B8%82%E5%95%9F%E7%94%A8-ai%E9%96%8B%E6%8A%93-%E6%9C%80%E9%AB%98%E7%BD%B06%E5%8D%83-084100541.html",
+        "title": "Taipei uses AI to catch household trash dumping",
+        "publisher": "Yahoo Finance Taiwan (news report)",
+        "verified": "snippet"
+      }
+    ],
+    "confidence": "low",
+    "disputed": false,
+    "caveats": "Snippet only. Verify the fine range against the Waste Disposal Act text before use; the AI enforcement detail is from a news headline.",
+    "hometown": {
+      "JP": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      },
+      "US": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      }
+    }
+  },
+  {
+    "id": "convenience-store-density",
+    "category": "shop",
+    "layer": "point",
+    "trigger": {
+      "osm": [
+        "shop=convenience"
+      ],
+      "context": "any time; strongest when two convenience stores are in view",
+      "photo_concepts": [
+        "convenience store",
+        "7-Eleven",
+        "FamilyMart"
+      ]
+    },
+    "title": {
+      "en": "About one convenience store for every 1,659 people",
+      "zh-TW": "平均每 1659 人就有一間超商"
+    },
+    "fact": {
+      "en": "Taiwan's Ministry of Economic Affairs said that in July 2025 there was about one convenience store for every 1,659 people, with 14,236 stores by August 2025, up 3 percent from a year earlier. That is denser than Japan.",
+      "zh-TW": "經濟部說，2025 年 7 月台灣平均每 1659 人有一間便利商店，8 月底共 14,236 間，比前一年增加 3%。密度比日本還高。"
+    },
+    "sources": [
+      {
+        "url": "https://news.pts.org.tw/article/775582",
+        "title": "Taiwan convenience store density vs Japan",
+        "publisher": "PTS News (citing Ministry of Economic Affairs, 2025-10)",
+        "verified": "full-text"
+      }
+    ],
+    "confidence": "high",
+    "disputed": false,
+    "caveats": "Numbers are time-limited (2025). Do not give a reason for why Taiwan is so dense; none was verified. Do not compare with Korea for Korean visitors (Korea is denser).",
+    "hometown": {
+      "JP": {
+        "status": "different",
+        "comparison": {
+          "en": "Japan had about one store per 2,180 people in July 2025, with 56,585 stores in August 2025, so Taipei is denser per person.",
+          "zh-TW": "日本 2025 年 7 月約每 2180 人一間，8 月共 56,585 間，所以以人口平均來看，台灣更密。",
+          "ja": "日本は2025年7月時点で約2,180人に1店、8月時点で56,585店。人口あたりでは台北のほうが密です（経済産業省統計、公視報道）。"
+        },
+        "sources": [
+          {
+            "url": "https://news.pts.org.tw/article/775582",
+            "title": "Taiwan convenience store density vs Japan",
+            "publisher": "PTS News (citing Ministry of Economic Affairs)",
+            "verified": "full-text"
+          }
+        ],
+        "confidence": "high"
+      },
+      "US": {
+        "status": "unknown",
+        "comparison": {
+          "en": "The industry group NACS counts about 152,000 convenience stores in the US at the end of 2025. Its totals include stores that sell motor fuel, so the definition is broader and not like-for-like. No per-person US figure was verified.",
+          "zh-TW": "美國便利商店協會 NACS 統計 2025 年底全美約 15.2 萬間便利商店，統計範圍包含賣汽油的店，口徑較寬，不能直接比。沒有查證到美國每人平均的官方數字。"
+        },
+        "sources": [
+          {
+            "url": "https://www.convenience.org/stay-current/news/2026/january/26/2026-sees-slight-decrease-c-store-count_research",
+            "title": "2026 Sees Slight Decrease in C-Store Count",
+            "publisher": "NACS",
+            "verified": "full-text"
+          },
+          {
+            "url": "https://www.convenience.org/stay-current/news/2025/july/2/4-2024-was-a-year-of-cautious-optimism_research",
+            "title": "2024 Was a Year of Cautious Optimism for the C-Store Industry",
+            "publisher": "NACS",
+            "verified": "snippet"
+          }
+        ],
+        "confidence": "medium"
+      }
+    }
+  },
+  {
+    "id": "convenience-store-area-density",
+    "category": "shop",
+    "layer": "point",
+    "trigger": {
+      "osm": [
+        "shop=convenience"
+      ],
+      "context": "any time near a convenience store",
+      "photo_concepts": [
+        "convenience store"
+      ]
+    },
+    "title": {
+      "en": "A convenience store for every 2.57 square kilometers",
+      "zh-TW": "平均每 2.57 平方公里一間超商"
+    },
+    "fact": {
+      "en": "By land area, Taiwan had about one convenience store per 2.57 square kilometers in 2025, compared with one per 6.68 square kilometers in Japan, according to Ministry of Economic Affairs statistics reported by PTS.",
+      "zh-TW": "依經濟部統計，以土地面積算，2025 年台灣約每 2.57 平方公里一間超商，日本是每 6.68 平方公里一間。"
+    },
+    "sources": [
+      {
+        "url": "https://news.pts.org.tw/article/775582",
+        "title": "Taiwan convenience store density vs Japan",
+        "publisher": "PTS News (citing Ministry of Economic Affairs)",
+        "verified": "full-text"
+      }
+    ],
+    "confidence": "high",
+    "disputed": false,
+    "caveats": "Time-limited (2025). Area-based density depends on how much of each country is mountain or uninhabited, so do not over-interpret it.",
+    "hometown": {
+      "JP": {
+        "status": "different",
+        "comparison": {
+          "en": "Japan: one store per 6.68 square kilometers over the same period.",
+          "zh-TW": "日本同期是每 6.68 平方公里一間。",
+          "ja": "日本は同時期、6.68平方キロメートルに1店です。"
+        },
+        "sources": [
+          {
+            "url": "https://news.pts.org.tw/article/775582",
+            "title": "Taiwan convenience store density vs Japan",
+            "publisher": "PTS News (citing Ministry of Economic Affairs)",
+            "verified": "full-text"
+          }
+        ],
+        "confidence": "high"
+      },
+      "US": {
+        "status": "unknown",
+        "comparison": {
+          "en": "New York's corner stores, called bodegas, are estimated at about 8,000 citywide by the New York Health Foundation, with older industry estimates as high as 13,000. There is no official city count and the definition of a bodega varies, so do not compare density with Taipei.",
+          "zh-TW": "紐約街角的小店叫 bodega，紐約健康基金會估計全市約 8000 間，較舊的業界估計高到 1.3 萬間。市府沒有正式統計，bodega 的定義也不一，所以不要和台北比密度。"
+        },
+        "sources": [
+          {
+            "url": "https://nyhealthfoundation.org/?p=26834",
+            "title": "Healthy Food, Healthy Lives",
+            "publisher": "New York Health Foundation",
+            "verified": "full-text"
+          },
+          {
+            "url": "https://www.npr.org/sections/codeswitch/2017/03/10/518376170/new-york-city-bodegas-and-the-generations-who-love-them",
+            "title": "New York City bodegas and the generations who love them",
+            "publisher": "NPR (2017)",
+            "verified": "snippet"
+          }
+        ],
+        "confidence": "low"
+      }
+    }
+  },
+  {
+    "id": "convenience-store-bill-payment",
+    "category": "shop",
+    "layer": "point",
+    "trigger": {
+      "osm": [
+        "shop=convenience"
+      ],
+      "context": "any time near a convenience store counter",
+      "photo_concepts": [
+        "convenience store counter",
+        "ibon kiosk",
+        "bill payment"
+      ]
+    },
+    "title": {
+      "en": "Convenience stores started taking bill payments in 1998",
+      "zh-TW": "超商 1998 年就開始代收帳單"
+    },
+    "fact": {
+      "en": "Bill collection began in 1998, when FamilyMart signed with the Taipei City Government to collect parking fees and 7-Eleven teamed up with Chunghwa Telecom to collect phone bills. It later grew to utilities, traffic fines, school fees and taxes.",
+      "zh-TW": "代收服務 1998 年起步：全家和台北市政府簽約代收停車費，7-ELEVEN 與中華電信合作代收電話費。後來擴大到水電費、罰單、學雜費與稅款。"
+    },
+    "sources": [
+      {
+        "url": "https://newtalk.tw/news/view/2025-07-29/984728",
+        "title": "Convenience store bill payment history",
+        "publisher": "Newtalk",
+        "verified": "snippet"
+      }
+    ],
+    "confidence": "medium",
+    "disputed": false,
+    "caveats": "Snippet only; the prior research round did not map each claim to the page. Check the 1998 details before quoting.",
+    "hometown": {
+      "JP": {
+        "status": "same",
+        "comparison": {
+          "en": "Japanese convenience stores also take payments for others: you bring a payment slip to the register, pay in cash, and the store passes the money on to the utility, city or online shop. Japan's Digital Agency says this collection service handles over 1 billion transactions a year worth about 13 trillion yen (February 2025 document). Japan Post parcels can also be picked up at Lawson, FamilyMart and Ministop after registering.",
+          "zh-TW": "日本的超商也能代收：拿繳費單到櫃台付現，店家再把錢交給電力公司、市府或網購業者。日本數位廳（2025 年 2 月文件）說這類代收一年超過 10 億筆、約 13 兆日圓。日本郵便的包裹也能在 Lawson、全家、Ministop 取件，但要先註冊。",
+          "ja": "日本のコンビニでも収納代行があります。払込票をレジに出して現金で支払い、店が事業者や自治体に代金を引き渡す仕組みです。デジタル庁の資料（2025年2月）は、年間10億件以上、約13兆円規模としています。日本郵便の荷物も、登録すればローソン・ファミリーマート・ミニストップで受け取れます。"
+        },
+        "sources": [
+          {
+            "url": "https://www.digital.go.jp/assets/contents/node/basic_page/field_ref_resources/6b853713-ebd8-4c68-8da0-b72bab28c962/fa2716ef/20250214_private-business-dx_outline_03.pdf",
+            "title": "Private-sector DX regulatory reform outline (convenience-store payment collection)",
+            "publisher": "Japan Digital Agency",
+            "verified": "full-text"
+          },
+          {
+            "url": "http://www.post.japanpost.jp/service/receive/e-assist/receive_convenience.html",
+            "title": "Receive parcels at convenience stores",
+            "publisher": "Japan Post",
+            "verified": "full-text"
+          }
+        ],
+        "confidence": "high"
+      },
+      "US": {
+        "status": "unknown",
+        "comparison": {
+          "en": "The counter service that 7-Eleven's partner Western Union confirms in the US is money orders; utility bill payment at US convenience stores was not verified. UPS has put pickup lockers outside some 7-Eleven stores (a 2016 report), but current coverage is unconfirmed.",
+          "zh-TW": "美國 7-Eleven 合作夥伴西聯匯款證實的櫃台服務是購買匯票；美國超商能不能繳水電費沒有查證。UPS 曾在部分 7-Eleven 外設取貨櫃（2016 年報導），目前範圍未證實。"
+        },
+        "sources": [
+          {
+            "url": "https://www.westernunion.com/us/en/locations/7-eleven.html",
+            "title": "Purchase money orders at 7-Eleven",
+            "publisher": "Western Union",
+            "verified": "full-text"
+          },
+          {
+            "url": "https://www.cstoredecisions.com/2016/07/07/ups-install-drop-off-lockers-outside-7-eleven-stores/",
+            "title": "UPS to install drop-off lockers outside 7-Eleven stores",
+            "publisher": "CStore Decisions (2016)",
+            "verified": "snippet"
+          }
+        ],
+        "confidence": "low"
+      }
+    }
+  },
+  {
+    "id": "convenience-store-tax-payment",
+    "category": "shop",
+    "layer": "point",
+    "trigger": {
+      "osm": [
+        "shop=convenience"
+      ],
+      "context": "near a convenience store; tax season is most relevant",
+      "photo_concepts": [
+        "convenience store counter"
+      ]
+    },
+    "title": {
+      "en": "You can pay taxes at the convenience store",
+      "zh-TW": "稅也可以在超商繳"
+    },
+    "fact": {
+      "en": "From 16 September 2025 the Ministry of Finance raised the cap for tax payments at the four big convenience store chains to NT$30,000 per payment.",
+      "zh-TW": "財政部自 2025 年 9 月 16 日起，把四大超商代收稅款的上限提高為每筆 3 萬元。"
+    },
+    "sources": [
+      {
+        "url": "https://tw.finance.yahoo.com/news/%E8%B2%A1%E6%94%BF-%E8%B6%85%E5%95%86%E7%B9%B3%E7%A8%85%E9%87%91%E9%A1%8D%E4%B8%8A%E9%99%90-9%E6%9C%88%E5%B0%87%E6%8F%90%E9%AB%98%E8%87%B33%E8%90%AC%E5%85%83-092615325.html",
+        "title": "Convenience store tax payment cap raised to NT$30,000",
+        "publisher": "Yahoo Finance Taiwan (news report)",
+        "verified": "snippet"
+      }
+    ],
+    "confidence": "medium",
+    "disputed": false,
+    "caveats": "Time-limited policy figure; check the current cap before use.",
+    "hometown": {
+      "JP": {
+        "status": "same",
+        "comparison": {
+          "en": "Japanese convenience stores also collect public money such as national and local taxes, according to the Digital Agency. The Japanese cap per payment was not verified, so do not compare amounts.",
+          "zh-TW": "日本的超商也代收國稅、地方稅等公款（數位廳文件）。日本每筆上限沒有查證，不要比金額。",
+          "ja": "日本のコンビニでも国税・地方税などの公金収納代行を行っています（デジタル庁資料）。1件あたりの上限額は確認していません。"
+        },
+        "sources": [
+          {
+            "url": "https://www.digital.go.jp/assets/contents/node/basic_page/field_ref_resources/6b853713-ebd8-4c68-8da0-b72bab28c962/fa2716ef/20250214_private-business-dx_outline_03.pdf",
+            "title": "Private-sector DX regulatory reform outline (convenience-store payment collection)",
+            "publisher": "Japan Digital Agency",
+            "verified": "full-text"
+          }
+        ],
+        "confidence": "high"
+      },
+      "US": {
+        "status": "same",
+        "comparison": {
+          "en": "The US IRS also lets people pay taxes in cash at participating retail partners, but with much tighter limits: up to $500 per payment, a fee of up to $1.50, and payment at least 7 days before the due date. The IRS page does not name specific chains.",
+          "zh-TW": "美國國稅局也讓民眾在合作零售商以現金繳稅，但限制嚴很多：每筆最多 500 美元、手續費最高 1.5 美元，且要在到期日前至少 7 天繳。IRS 頁面沒有指明是哪些連鎖店。"
+        },
+        "sources": [
+          {
+            "url": "https://www.irs.gov/payments/pay-your-taxes-with-cash",
+            "title": "Pay your taxes with cash",
+            "publisher": "US Internal Revenue Service",
+            "verified": "full-text"
+          }
+        ],
+        "confidence": "high"
+      }
+    }
+  },
+  {
+    "id": "mrt-no-eating",
+    "category": "transport",
+    "layer": "point",
+    "trigger": {
+      "osm": [
+        "railway=subway_entrance"
+      ],
+      "context": "at a Taipei Metro station entrance",
+      "photo_concepts": [
+        "metro station entrance",
+        "no eating sign",
+        "fare gate"
+      ]
+    },
+    "title": {
+      "en": "Even a sip of water can be fined in the Taipei Metro",
+      "zh-TW": "在北捷連喝水都可能被罰"
+    },
+    "fact": {
+      "en": "Eating and drinking, including plain water, are banned inside the paid area. Under the Mass Rapid Transit Act the fine is NT$1,500 to NT$7,500. The metro says crumbs can attract insects or small animals that damage cables and disturb automated equipment, though riders may take medicine or water in urgent cases after telling staff.",
+      "zh-TW": "付費區內禁止飲食，連白開水也不行，依《大眾捷運法》可罰 1500 元到 7500 元。北捷說，食物碎屑會引來蟲鼠咬壞線路、干擾自動化設備；情況緊急需服藥或喝水時，可先告知站務人員。"
+    },
+    "sources": [
+      {
+        "url": "https://www.nownews.com/news/6633871",
+        "title": "Taipei Metro eating and drinking ban explained",
+        "publisher": "NOWnews",
+        "verified": "full-text"
+      }
+    ],
+    "confidence": "high",
+    "disputed": false,
+    "caveats": "Fine range reported by news; confirm against the Act text if quoting an article number. Do not claim the rule was relaxed in 2017; that could not be confirmed.",
+    "hometown": {
+      "JP": {
+        "status": "different",
+        "comparison": {
+          "en": "Tokyo Metro's own FAQ says there is no restriction on eating on its trains, but asks riders not to bother others. Japanese commuters are more annoyed by things like coughing without covering the mouth than by eating, in a 2025 survey of private railways. The FAQ page is dated 2016, so say 'Tokyo Metro says'.",
+          "zh-TW": "東京地下鐵官方 FAQ 說車內飲食沒有限制，只請不要造成他人困擾。民營鐵道協會 2025 年問卷中，最讓乘客困擾的是咳嗽不遮口等行為，擁擠時飲食排在第 14 名。FAQ 頁面日期是 2016 年，所以要說「東京地下鐵表示」。",
+          "ja": "東京メトロの公式FAQは「車内での飲食に制限はございませんが、他のお客様のご迷惑とならないようご協力をお願いしております」と案内しています（2016年更新）。"
+        },
+        "sources": [
+          {
+            "url": "https://ssl.tokyometro.jp/support/faq_answer?lang=ja&faqno=OpenFAQ-000176",
+            "title": "FAQ: eating and drinking in trains",
+            "publisher": "Tokyo Metro",
+            "verified": "snippet"
+          },
+          {
+            "url": "https://www.mintetsu.or.jp/activity/enquete/2025.html",
+            "title": "FY2025 ranking of nuisance behavior in stations and trains",
+            "publisher": "Japan Private Railway Association",
+            "verified": "snippet"
+          }
+        ],
+        "confidence": "medium"
+      },
+      "US": {
+        "status": "different",
+        "comparison": {
+          "en": "New York City Transit's published rules and fine schedule list fines for littering ($100), drinking alcohol ($50) and carrying liquid in open containers ($25), and the schedule shows no blanket ban on eating. Older news reports (2013, 2017) also said there was no explicit eating ban.",
+          "zh-TW": "紐約地鐵公布的行為規範與罰款表，列有亂丟垃圾罰 100 美元、喝酒 50 美元、攜帶開口液體容器 25 美元，表中沒有全面禁止進食的條文。2013、2017 年的舊報導也說沒有明文禁止吃東西。"
+        },
+        "sources": [
+          {
+            "url": "https://www.mta.info/document/17001",
+            "title": "Rules of Conduct and Fines (fine schedule)",
+            "publisher": "MTA New York City Transit",
+            "verified": "full-text"
+          },
+          {
+            "url": "https://www.cbsnews.com/newyork/news/new-yorkers-make-headlines-for-stinky-food-habits",
+            "title": "New Yorkers make headlines for stinky food habits",
+            "publisher": "CBS New York (2013)",
+            "verified": "full-text"
+          },
+          {
+            "url": "https://www.6sqft.com/mta-considers-ban-on-subway-dining-snacking-might-be-ok/",
+            "title": "MTA considers ban on subway dining",
+            "publisher": "6sqft (2017)",
+            "verified": "full-text"
+          }
+        ],
+        "confidence": "medium"
+      }
+    }
+  },
+  {
+    "id": "mrt-fare-gate-yellow-line",
+    "category": "transport",
+    "layer": "point",
+    "trigger": {
+      "osm": [
+        "railway=subway_entrance"
+      ],
+      "context": "near the fare gates inside a station",
+      "photo_concepts": [
+        "fare gate",
+        "yellow line",
+        "metro station"
+      ]
+    },
+    "title": {
+      "en": "The yellow line at the gates marks the no-food zone",
+      "zh-TW": "閘門前的黃線就是禁飲食區的界線"
+    },
+    "fact": {
+      "en": "The Taipei Metro's no-eating zone is the area inside the yellow line at the fare gates. Staff also have to step outside the gate line to drink, which is why the rule sparked online debate.",
+      "zh-TW": "北捷的禁止飲食區是閘門前黃線以內的範圍。連站務人員要喝水也得走到閘門外，這點曾引起網路討論。"
+    },
+    "sources": [
+      {
+        "url": "https://www.nownews.com/news/6633871",
+        "title": "Taipei Metro eating and drinking ban explained",
+        "publisher": "NOWnews",
+        "verified": "full-text"
+      }
+    ],
+    "confidence": "medium",
+    "disputed": false,
+    "caveats": "Single news source. Station layouts differ slightly, so say 'at the fare gates' rather than naming a station.",
+    "hometown": {
+      "JP": {
+        "status": "different",
+        "comparison": {
+          "en": "Tokyo Metro does not mark a no-eating zone at its gates; its FAQ says eating on trains is not restricted, only that riders should not disturb others.",
+          "zh-TW": "東京地下鐵沒有在閘門劃禁飲食區；官方 FAQ 說車內飲食沒有限制，只請不要打擾他人。",
+          "ja": "東京メトロは改札内に飲食禁止エリアを設けておらず、FAQでは車内飲食に制限はないが他のお客様への配慮を求めるとしています。"
+        },
+        "sources": [
+          {
+            "url": "https://ssl.tokyometro.jp/support/faq_answer?lang=ja&faqno=OpenFAQ-000176",
+            "title": "FAQ: eating and drinking in trains",
+            "publisher": "Tokyo Metro",
+            "verified": "snippet"
+          }
+        ],
+        "confidence": "medium"
+      },
+      "US": {
+        "status": "different",
+        "comparison": {
+          "en": "New York's subway has no yellow-line food zone at the turnstiles that the published rules mention. The MTA's rules and fine schedule list littering ($100) and carrying liquid in open containers ($25), not a no-eating area.",
+          "zh-TW": "紐約地鐵公布的規定裡沒有在閘門前劃黃線禁飲食區。MTA 的行為規範與罰款表列的是亂丟垃圾（100 美元）和攜帶開口液體容器（25 美元），沒有禁食區。"
+        },
+        "sources": [
+          {
+            "url": "https://www.mta.info/document/17001",
+            "title": "Rules of Conduct and Fines (fine schedule)",
+            "publisher": "MTA New York City Transit",
+            "verified": "full-text"
+          }
+        ],
+        "confidence": "medium"
+      }
+    }
+  },
+  {
+    "id": "pedestrian-flashing-green-rule",
+    "category": "street",
+    "layer": "point",
+    "trigger": {
+      "osm": [
+        "highway=traffic_signals"
+      ],
+      "context": "at a signalized crossing while the green man flashes",
+      "photo_concepts": [
+        "pedestrian signal",
+        "green man",
+        "crosswalk"
+      ]
+    },
+    "title": {
+      "en": "Taiwan changed the flashing-green rule in 2026",
+      "zh-TW": "2026 年綠燈閃爍的規定改了"
+    },
+    "fact": {
+      "en": "From 13 March 2026, a pedestrian who has not yet stepped onto the road during the flashing green is told to avoid entering, instead of being prohibited from entering. Under the old wording a fine of NT$500 was possible, and the new wording effectively removes it.",
+      "zh-TW": "2026 年 3 月 13 日起，綠燈閃爍時還沒踏上路的行人是「應避免跨入」，不再是「禁止跨入」。舊規定可罰 500 元，新措辭實質上等於不罰。"
+    },
+    "sources": [
+      {
+        "url": "https://newtalk.tw/news/view/2026-03-12/1023862",
+        "title": "Pedestrian signal rule amendment",
+        "publisher": "Newtalk",
+        "verified": "full-text"
+      }
+    ],
+    "confidence": "high",
+    "disputed": false,
+    "caveats": "Time-limited: describes the rule as of March 2026. Say 'since this March'. Do not claim anyone is no longer fined without 'effectively'.",
+    "hometown": {
+      "JP": {
+        "status": "same",
+        "comparison": {
+          "en": "Japan has the same idea: the Tokyo Metropolitan Police say a flashing pedestrian signal means the same as yellow, so wait for the next one. One difference in wording: Japanese rules call the walk light blue (青), not green. Remaining-time displays on pedestrian signals are widely used in Japan.",
+          "zh-TW": "日本的概念相同：警視廳說行人燈閃爍和黃燈意思一樣，要等下一次。措辭有個差異：日本的通行燈在說明裡叫「青」，不叫「綠」。日本行人號誌的剩餘時間顯示已很普遍。",
+          "ja": "日本も同じ考え方で、警視庁は歩行者用信号の青色の点滅は黄色信号と同じ意味で、次の青色信号まで待つよう案内しています。歩行者用信号の残り時間表示も広く普及しています。"
+        },
+        "sources": [
+          {
+            "url": "https://www.keishicho.metro.tokyo.lg.jp/kotsu/jikoboshi/bicycle/rule.html",
+            "title": "Bicycle traffic rules",
+            "publisher": "Tokyo Metropolitan Police Department",
+            "verified": "full-text"
+          },
+          {
+            "url": "https://trafficnews.jp/post/664581",
+            "title": "Pedestrian signal countdown displays in Japan",
+            "publisher": "Traffic News (Japan)",
+            "verified": "full-text"
+          }
+        ],
+        "confidence": "high"
+      },
+      "US": {
+        "status": "same",
+        "comparison": {
+          "en": "The US federal traffic-signal manual says the flashing upraised hand means pedestrians should not start to cross, though anyone already crossing may finish. It also requires a seconds countdown where the change interval is longer than 7 seconds.",
+          "zh-TW": "美國聯邦的號誌手冊規定，閃爍的手掌表示行人不要開始穿越，已經在路上的人可以走完；而且行人通行時間超過 7 秒的路口，必須有倒數秒數顯示。"
+        },
+        "sources": [
+          {
+            "url": "https://mutcd.fhwa.dot.gov/htm/2009/part4/part4e.htm",
+            "title": "MUTCD 2009, Part 4E Pedestrian Control Features",
+            "publisher": "US Federal Highway Administration",
+            "verified": "full-text"
+          }
+        ],
+        "confidence": "high"
+      }
+    }
+  },
+  {
+    "id": "pedestrian-green-man-run-animation",
+    "category": "street",
+    "layer": "point",
+    "trigger": {
+      "osm": [
+        "highway=traffic_signals"
+      ],
+      "context": "at a signalized crossing with a running green man",
+      "photo_concepts": [
+        "running green man",
+        "pedestrian signal"
+      ]
+    },
+    "title": {
+      "en": "The running green man is slated to be retired",
+      "zh-TW": "跑步的小綠人預計要退場"
+    },
+    "fact": {
+      "en": "The running animation of Taiwan's green man speeds up as the light flashes. The government wants to cancel it because it can urge people to dash across or suggest a last-chance sprint.",
+      "zh-TW": "台灣小綠人在綠燈閃爍時會加速奔跑。政府打算取消這個動畫，因為它可能催促行人衝刺，或暗示最後一刻衝過去。"
+    },
+    "sources": [
+      {
+        "url": "https://newtalk.tw/news/view/2026-03-12/1023862",
+        "title": "Pedestrian signal rule amendment",
+        "publisher": "Newtalk",
+        "verified": "full-text"
+      },
+      {
+        "url": "https://www.ctee.com.tw/news/20260311701344-431401",
+        "title": "Green man running animation",
+        "publisher": "Commercial Times",
+        "verified": "snippet"
+      }
+    ],
+    "confidence": "medium",
+    "disputed": false,
+    "caveats": "Only an instruction with no confirmed date, and rollout across signals is unconfirmed. Say 'is planned to go away' and never claim a particular signal has already changed.",
+    "hometown": {
+      "JP": {
+        "status": "different",
+        "comparison": {
+          "en": "In Japan the walk light is officially called blue (青), not green, and the Tokyo Metropolitan Police say a flashing pedestrian blue means the same as yellow: wait for the next blue. Whether Japanese signals have any running animation was not verified.",
+          "zh-TW": "日本的通行燈在法規與警方說明裡叫「青」，不是「綠」；警視廳說行人燈青色閃爍的意思和黃燈一樣，要等下一次青燈。日本號誌有沒有類似跑步動畫沒有查證。",
+          "ja": "日本では歩行者用信号の通行可の灯火は「青色」と呼ばれ、警視庁は青色の点滅は黄色信号と同じ意味で、次の青色信号まで待つよう案内しています。"
+        },
+        "sources": [
+          {
+            "url": "https://www.keishicho.metro.tokyo.lg.jp/kotsu/jikoboshi/bicycle/rule.html",
+            "title": "Bicycle traffic rules",
+            "publisher": "Tokyo Metropolitan Police Department",
+            "verified": "full-text"
+          }
+        ],
+        "confidence": "high"
+      },
+      "US": {
+        "status": "different",
+        "comparison": {
+          "en": "The US federal signal manual defines pedestrian signals by symbols, a walking person and a flashing upraised hand, plus a numeric seconds countdown during the flashing hand. It describes no running animation. New York City DOT's own practice was not verified.",
+          "zh-TW": "美國聯邦號誌手冊用符號定義行人號誌：行走的人、閃爍的手掌，閃爍期間再加上倒數秒數，沒有跑步動畫的規定。紐約市交通局自己的做法沒有查證。"
+        },
+        "sources": [
+          {
+            "url": "https://mutcd.fhwa.dot.gov/htm/2009/part4/part4e.htm",
+            "title": "MUTCD 2009, Part 4E Pedestrian Control Features",
+            "publisher": "US Federal Highway Administration",
+            "verified": "full-text"
+          }
+        ],
+        "confidence": "medium"
+      }
+    }
+  },
+  {
+    "id": "two-stage-left-turn-origin",
+    "category": "transport",
+    "layer": "point",
+    "trigger": {
+      "osm": [
+        "highway=traffic_signals"
+      ],
+      "context": "at a large intersection with a motorcycle waiting box",
+      "photo_concepts": [
+        "motorcycle waiting box",
+        "two-stage left turn",
+        "scooters at intersection"
+      ]
+    },
+    "title": {
+      "en": "Why scooters wait in a box to turn left",
+      "zh-TW": "機車為什麼要在待轉區等著左轉"
+    },
+    "fact": {
+      "en": "Many Taiwanese roads once banned motorcycles from the inner lanes, so riders could not turn left directly and the two-stage turn grew out of that, according to one motorcycle-rights advocate. Another account credits a traffic-management policy that separates vehicle types. The origin is not settled.",
+      "zh-TW": "有機車權益團體指出，過去許多路段禁止機車行駛內側車道，機車沒辦法直接左轉，兩段式左轉就是這樣延伸出來的。另一說法是車種分流的交通管理政策。起源並無定論。"
+    },
+    "sources": [
+      {
+        "url": "https://news.pts.org.tw/article/804187",
+        "title": "Two-stage left turn debate",
+        "publisher": "PTS News",
+        "verified": "full-text"
+      },
+      {
+        "url": "https://www.thenewslens.com/article/268480",
+        "title": "Two-stage left turn origins",
+        "publisher": "The News Lens",
+        "verified": "snippet"
+      }
+    ],
+    "confidence": "low",
+    "disputed": true,
+    "caveats": "Use 'one explanation is'. Origin accounts conflict. The rule applies to motorcycles 250cc and under per earlier reporting; not re-verified.",
+    "hometown": {
+      "JP": {
+        "status": "different",
+        "comparison": {
+          "en": "Japan drives on the left, so small mopeds (the 50cc class) must make two-stage right turns at certain intersections, such as ones with three or more lanes in each direction or marked ones. Details come from motoring media, not the police.",
+          "zh-TW": "日本靠左行駛，所以小排氣量的原付（50cc 級）在某些路口，例如單向三線道以上或有標示的路口，要做二段式右轉。細節來自汽機車媒體，不是警方原文。",
+          "ja": "日本は左側通行のため、原付（50cc級）は一部の交差点で二段階右折が必要です（自動車メディアの情報）。"
+        },
+        "sources": [
+          {
+            "url": "https://motor-fan.jp/article/1553295/",
+            "title": "Two-stage right turn for mopeds",
+            "publisher": "Motor-Fan (Japan)",
+            "verified": "snippet"
+          }
+        ],
+        "confidence": "medium"
+      },
+      "US": {
+        "status": "different",
+        "comparison": {
+          "en": "New York State's motorcycle manual tells riders that motorcyclists can use a full lane, and it gives no separate two-stage turn procedure; it mainly warns about cars turning left in front of riders. The legal wording on left turns was not checked.",
+          "zh-TW": "紐約州機車手冊說機車騎士可以使用完整的一條車道，沒有另外規定兩段式轉彎，主要是提醒騎士小心對向左轉的汽車。左轉的法條原文沒有查證。"
+        },
+        "sources": [
+          {
+            "url": "https://dmv.ny.gov/book/export/html/6576",
+            "title": "Motorcycle Manual",
+            "publisher": "New York State DMV",
+            "verified": "full-text"
+          }
+        ],
+        "confidence": "medium"
+      }
+    }
+  },
+  {
+    "id": "two-stage-left-turn-tainan",
+    "category": "transport",
+    "layer": "national",
+    "trigger": {
+      "osm": [],
+      "context": "intersection with a two-stage left-turn box",
+      "photo_concepts": [
+        "motorcycle waiting box"
+      ]
+    },
+    "title": {
+      "en": "Tainan tried letting scooters turn left directly",
+      "zh-TW": "台南試過讓機車直接左轉"
+    },
+    "fact": {
+      "en": "Tainan began a trial in 2023 and from August 2024 gradually dropped the two-stage requirement on 52 roads. Its traffic bureau said about 80 percent of riders still use the two-stage turn, and data cited in the report show traffic deaths fell 14.2 percent after the changes.",
+      "zh-TW": "台南 2023 年開始試辦，2024 年 8 月起在 52 條道路逐步取消強制兩段式左轉。市府交通局說約八成騎士仍選擇兩段式，報導引用的數據顯示改後交通死亡下降 14.2%。"
+    },
+    "sources": [
+      {
+        "url": "https://news.pts.org.tw/article/804187",
+        "title": "Two-stage left turn debate",
+        "publisher": "PTS News",
+        "verified": "full-text"
+      }
+    ],
+    "confidence": "medium",
+    "disputed": false,
+    "caveats": "The 14.2 percent figure is unattributed in the article, so say 'a report cited'. An earlier note of a 21 percent crash drop was NOT supported by the article and must not be used.",
+    "hometown": {
+      "JP": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      },
+      "US": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      }
+    }
+  },
+  {
+    "id": "motorcycle-share-of-road-deaths",
+    "category": "transport",
+    "layer": "national",
+    "trigger": {
+      "osm": [
+        "highway=traffic_signals"
+      ],
+      "context": "intersection full of scooters",
+      "photo_concepts": [
+        "scooters",
+        "motorcycle riders"
+      ]
+    },
+    "title": {
+      "en": "Scooter riders are most of Taiwan's road deaths",
+      "zh-TW": "機車騎士占了台灣多數交通死亡"
+    },
+    "fact": {
+      "en": "According to the Ministry of Transportation and Communications' road safety committee, motorcycle riders have consistently made up over 60 percent of traffic deaths. More than half of motorcycle crashes happen at intersections, and left-turn conflicts are among the top three causes.",
+      "zh-TW": "交通部道安委員會指出，機車騎士長年占交通事故死亡人數六成以上。機車事故有超過五成發生在路口，左轉衝突是前三大原因之一。"
+    },
+    "sources": [
+      {
+        "url": "https://news.pts.org.tw/article/804187",
+        "title": "Two-stage left turn debate",
+        "publisher": "PTS News",
+        "verified": "full-text"
+      }
+    ],
+    "confidence": "medium",
+    "disputed": false,
+    "caveats": "Secondhand from a news report quoting the committee; check the official statistics before quoting a year-specific figure. Sensitive topic: keep the tone factual.",
+    "hometown": {
+      "JP": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      },
+      "US": {
+        "status": "unknown",
+        "comparison": {
+          "en": "US federal data show about 9.5 million registered motorcycles in 2023 and 6,335 motorcyclists killed that year. No share-of-deaths figure was verified, so do not compare shares.",
+          "zh-TW": "美國聯邦資料顯示 2023 年約有 951 萬輛登記機車，當年有 6,335 名機車騎士死亡。沒有查證到占全部死亡的比例，所以不要比比例。"
+        },
+        "sources": [
+          {
+            "url": "https://crashstats.nhtsa.dot.gov/Api/Public/ViewPublication/813732",
+            "title": "Motorcycles: 2023 Data",
+            "publisher": "US NHTSA (registrations from FHWA)",
+            "verified": "full-text"
+          }
+        ],
+        "confidence": "high"
+      }
+    }
+  },
+  {
+    "id": "motorcycles-out-of-arcades",
+    "category": "transport",
+    "layer": "area",
+    "trigger": {
+      "osm": [],
+      "context": "arcade sidewalk with or without parked scooters",
+      "photo_concepts": [
+        "arcade",
+        "parked scooters",
+        "sidewalk"
+      ]
+    },
+    "title": {
+      "en": "Taipei has been pushing scooters out of the arcades since 1999",
+      "zh-TW": "台北從 1999 年起推動機車退出騎樓"
+    },
+    "fact": {
+      "en": "Taipei began a program in 1999 to get motorcycles off arcade walkways and sidewalks. A city traffic bureau briefing counted 312 road sections, 331.71 kilometers, by the end of April 2007.",
+      "zh-TW": "台北市 1999 年起推動機車退出騎樓與人行道。市府交通局簡報指出，到 2007 年 4 月底累計 312 個路段、長度 331.71 公里。"
+    },
+    "sources": [
+      {
+        "url": "https://www-ws.gov.taipei/001/Upload/367/relfile/46908/7951005/e2effc94-9372-4efb-9631-03c6ea77eaf1.pdf",
+        "title": "Taipei traffic bureau briefing",
+        "publisher": "Taipei City Government",
+        "verified": "snippet"
+      }
+    ],
+    "confidence": "medium",
+    "disputed": false,
+    "caveats": "The figures are from 2007 and must be spoken as 'as of 2007' or not at all. Do not claim current compliance.",
+    "hometown": {
+      "JP": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      },
+      "US": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      }
+    }
+  },
+  {
+    "id": "youbike-origin",
+    "category": "transport",
+    "layer": "point",
+    "trigger": {
+      "osm": [
+        "amenity=bicycle_rental"
+      ],
+      "context": "at a YouBike station",
+      "photo_concepts": [
+        "YouBike station",
+        "orange bike share bike"
+      ]
+    },
+    "title": {
+      "en": "YouBike began as a Taipei trial in 2009",
+      "zh-TW": "YouBike 2009 年從台北試辦開始"
+    },
+    "fact": {
+      "en": "YouBike began in 2009 as the Taipei Bike Sharing System, with a trial in the Xinyi district. The Taipei City Department of Transportation runs it in a build-operate-transfer arrangement with Giant Bicycles.",
+      "zh-TW": "YouBike 2009 年以「臺北市公共自行車租賃系統」的名義，從信義區試辦起步。由台北市交通局與巨大機械以 BOT 方式合作營運。"
+    },
+    "sources": [
+      {
+        "url": "https://en.wikipedia.org/wiki/YouBike",
+        "title": "YouBike",
+        "publisher": "Wikipedia",
+        "verified": "full-text"
+      }
+    ],
+    "confidence": "medium",
+    "disputed": false,
+    "caveats": "Wikipedia only; its station counts do not reconcile, so do not quote them.",
+    "hometown": {
+      "JP": {
+        "status": "same",
+        "comparison": {
+          "en": "Tokyo's main bike-share is docomo bike share, which lists 'Greater Tokyo' as its service area and shows bikes available at each port in its app. HELLO CYCLING is another big operator. Their start dates were not verified, so do not compare origins.",
+          "zh-TW": "東京主要的共享單車是 docomo bike share，官網列的服務範圍是「東京廣域」，App 可看各站可用車數；另一家大業者是 HELLO CYCLING。兩者的起步年份沒有查證，不要比起源。",
+          "ja": "東京の主なシェアサイクルはドコモ・バイクシェアで、提供エリアは「東京広域」、アプリでポートごとの自転車台数を確認できます。HELLO CYCLINGも大手です。"
+        },
+        "sources": [
+          {
+            "url": "https://docomo-cycle.jp/",
+            "title": "docomo bike share official site",
+            "publisher": "docomo bike share",
+            "verified": "full-text"
+          }
+        ],
+        "confidence": "medium"
+      },
+      "US": {
+        "status": "same",
+        "comparison": {
+          "en": "Citi Bike launched in New York on 27 May 2013 with 332 stations and about 6,000 bikes, four years after Taipei's 2009 trial. It was first run by Alta Bicycle Share and has been owned by Lyft since 2018.",
+          "zh-TW": "紐約的 Citi Bike 2013 年 5 月 27 日啟用，一開始有 332 站、約 6000 輛，比台北 2009 年的試辦晚四年。最初由 Alta Bicycle Share 營運，2018 年起由 Lyft 持有。"
+        },
+        "sources": [
+          {
+            "url": "https://en.wikipedia.org/wiki/Citi_Bike",
+            "title": "Citi Bike",
+            "publisher": "Wikipedia",
+            "verified": "full-text"
+          },
+          {
+            "url": "https://www.nyc.gov/html/dot/html/pr2025/nyc-dot-ebike-expansion.shtml",
+            "title": "NYC DOT e-bike expansion",
+            "publisher": "NYC Department of Transportation",
+            "verified": "snippet"
+          }
+        ],
+        "confidence": "medium"
+      }
+    }
+  },
+  {
+    "id": "youbike-free-30-min",
+    "category": "transport",
+    "layer": "point",
+    "trigger": {
+      "osm": [
+        "amenity=bicycle_rental"
+      ],
+      "context": "at a YouBike station",
+      "photo_concepts": [
+        "YouBike station"
+      ]
+    },
+    "title": {
+      "en": "The first 30 minutes of a Taipei YouBike ride are free",
+      "zh-TW": "台北 YouBike 前 30 分鐘免費"
+    },
+    "fact": {
+      "en": "Since 28 February 2024, Taipei has made the first 30 minutes of a YouBike rental free. A National Taiwan University thesis estimates this raised rentals by about 17 percent.",
+      "zh-TW": "台北市自 2024 年 2 月 28 日起，YouBike 前 30 分鐘免費。台灣大學的一篇論文估計，租借次數因此增加約 17%。"
+    },
+    "sources": [
+      {
+        "url": "https://tdr.lib.ntu.edu.tw/retrieve/a24fb379-557e-41a8-a7b0-4b340ac3ee12/ntu-113-2.pdf",
+        "title": "YouBike free-ride policy thesis",
+        "publisher": "National Taiwan University",
+        "verified": "snippet"
+      }
+    ],
+    "confidence": "low",
+    "disputed": false,
+    "caveats": "Policy may have changed; the 17 percent is one thesis estimate. Confirm the current tariff with Taipei City before quoting.",
+    "hometown": {
+      "JP": {
+        "status": "different",
+        "comparison": {
+          "en": "Tokyo's docomo bike share charges for the first 30 minutes too. Municipal documents list about 165 yen per 30 minutes for one-time users, and the extension rate in 12 Tokyo wards went from 110 to 165 yen in February 2022. Prices differ by area, so check the app and say 'around'.",
+          "zh-TW": "東京 docomo bike share 前 30 分鐘也要收費。自治體文件列單次使用者約每 30 分鐘 165 日圓，東京 12 區的延長費 2022 年 2 月由 110 圓調到 165 圓。各區價格不同，要說「大約」。",
+          "ja": "ドコモ・バイクシェアは最初の30分から有料です。自治体資料では1回利用は30分165円程度で、都内12区の延長料金は2022年2月に110円から165円に改定されました（地域で異なります）。"
+        },
+        "sources": [
+          {
+            "url": "https://appllio.com/news/2021-12-01-20631-docomo-bikeshare-price-increase",
+            "title": "docomo bike share extension fee increase",
+            "publisher": "Appllio (news)",
+            "verified": "snippet"
+          },
+          {
+            "url": "https://en.city.yokohama.lg.jp/business/nyusatsu/kakukukyoku/2021/sekkei/toshi/comisai20210802.files/0004_20210728.pdf",
+            "title": "Municipal bike share document",
+            "publisher": "Yokohama City",
+            "verified": "snippet"
+          }
+        ],
+        "confidence": "low"
+      },
+      "US": {
+        "status": "different",
+        "comparison": {
+          "en": "Citi Bike is not free for the first half hour. A single ride costs $4.99 including 30 minutes on a classic bike, and an annual membership ($239 a year) includes 45-minute classic rides. E-bikes cost extra per minute. Prices change, so say 'around'.",
+          "zh-TW": "Citi Bike 前半小時不是免費的。單次騎乘 4.99 美元，含一般單車 30 分鐘；年費會員（每年 239 美元）一般單車每趟含 45 分鐘；電輔車另外按分鐘計費。價格會變，要說「大約」。"
+        },
+        "sources": [
+          {
+            "url": "https://www.citibikenyc.com/pricing",
+            "title": "Citi Bike pricing",
+            "publisher": "Citi Bike (Lyft)",
+            "verified": "full-text"
+          }
+        ],
+        "confidence": "high"
+      }
+    }
+  },
+  {
+    "id": "manhole-covers-art",
+    "category": "street",
+    "layer": "national",
+    "trigger": {
+      "osm": [],
+      "context": "looking down at a decorated manhole cover",
+      "photo_concepts": [
+        "decorated manhole cover",
+        "manhole cover"
+      ]
+    },
+    "title": {
+      "en": "Taipei's painted manhole covers",
+      "zh-TW": "台北的彩繪人孔蓋"
+    },
+    "fact": {
+      "en": "Taipei's water department started the 'Taipei Water Lids' program in 2020, with two designs for each of the 12 districts, 24 in all, finished in 2023. The designs draw on local culture, and the anti-slip pattern matters because people step on them.",
+      "zh-TW": "台北市水利處 2020 年起推動「臺北蓋水」，12 個行政區各設計 2 款，共 24 款，2023 年完成。圖案取材在地人文，也要考慮防滑，因為人會踩在上面。"
+    },
+    "sources": [
+      {
+        "url": "https://www.ctee.com.tw/news/20241218701149-431401",
+        "title": "Anti-slip manhole covers and the Taipei Water Lids program",
+        "publisher": "Commercial Times",
+        "verified": "full-text"
+      },
+      {
+        "url": "https://www.mirrormedia.mg/story/20230511cnt005",
+        "title": "Manhole cover design",
+        "publisher": "Mirror Media",
+        "verified": "snippet"
+      }
+    ],
+    "confidence": "medium",
+    "disputed": false,
+    "caveats": "Design details beyond the numbers come from news, not the water department itself. Only trigger when a decorated cover is actually seen.",
+    "hometown": {
+      "JP": {
+        "status": "same",
+        "comparison": {
+          "en": "Decorative manhole covers also spread in Japan from the 1980s, partly to improve the image of sewers. Taipei's set dates from 2020. Do not quote national counts; the official figures could not be opened.",
+          "zh-TW": "日本也有裝飾人孔蓋，從 1980 年代起為了改善下水道形象而普及；台北這套是 2020 年才開始。全國數量沒有查證，不要講。",
+          "ja": "日本でも1980年代から下水道のイメージ向上のためデザインマンホールが広まりました。台北は2020年開始です。"
+        },
+        "sources": [
+          {
+            "url": "https://koubo.jp/article/55713",
+            "title": "Design manhole covers",
+            "publisher": "Koubo.jp",
+            "verified": "full-text"
+          }
+        ],
+        "confidence": "medium"
+      },
+      "US": {
+        "status": "unknown",
+        "comparison": {
+          "en": "New York's manhole covers are round because a round lid cannot fall through its own opening, according to the city's environmental protection department. No New York decorative program was verified, so do not say the city lacks one.",
+          "zh-TW": "紐約市環保局說，人孔蓋做成圓形是因為圓蓋不會掉進自己的洞裡。紐約有沒有類似彩繪計畫沒有查證，不要說沒有。"
+        },
+        "sources": [
+          {
+            "url": "https://www.untappedcities.com/why-are-manhole-covers-round-an-official-answer/",
+            "title": "Why are manhole covers round? An official answer",
+            "publisher": "Untapped New York",
+            "verified": "snippet"
+          }
+        ],
+        "confidence": "medium"
+      }
+    }
+  },
+  {
+    "id": "manhole-anti-slip",
+    "category": "street",
+    "layer": "national",
+    "trigger": {
+      "osm": [],
+      "context": "looking down at a manhole cover with a ripple pattern",
+      "photo_concepts": [
+        "manhole cover",
+        "anti-slip pattern"
+      ]
+    },
+    "title": {
+      "en": "A ripple-pattern manhole cover built for grip",
+      "zh-TW": "專為防滑設計的漣漪人孔蓋"
+    },
+    "fact": {
+      "en": "Taipei adopted a 'ripple' anti-slip manhole cover from May 2024, rated 50 BPN or higher for slip resistance. The city budgets about NT$30 million a year and can replace or raise roughly 428 covers a year.",
+      "zh-TW": "台北市 2024 年 5 月起採用「漣漪」防滑人孔蓋，防滑係數 50BPN 以上。每年預算約 3000 萬元，約可更換或調整 428 座。"
+    },
+    "sources": [
+      {
+        "url": "https://www.ctee.com.tw/news/20241218701149-431401",
+        "title": "Anti-slip manhole covers and the Taipei Water Lids program",
+        "publisher": "Commercial Times",
+        "verified": "full-text"
+      }
+    ],
+    "confidence": "medium",
+    "disputed": false,
+    "caveats": "Budget and count figures are as reported in late 2024. The article does not specify what the 374 covers completed by November refer to, so omit that number.",
+    "hometown": {
+      "JP": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      },
+      "US": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      }
+    }
+  },
+  {
+    "id": "overhead-power-lines",
+    "category": "street",
+    "layer": "national",
+    "trigger": {
+      "osm": [],
+      "context": "lanes with utility poles and transformers overhead",
+      "photo_concepts": [
+        "utility pole",
+        "overhead wires",
+        "pole transformer"
+      ]
+    },
+    "title": {
+      "en": "Why Taipei lanes still have poles and wires",
+      "zh-TW": "台北巷弄為什麼還有電線桿"
+    },
+    "fact": {
+      "en": "Taipower has said burying lines costs more than NT$40 million per kilometer, and underground space is crowded with water and gas pipes, which also makes repairs harder. That is why many lanes still carry overhead lines.",
+      "zh-TW": "台電說，地下化每公里成本超過 4000 萬元，地底還要擠水管、瓦斯管，搶修也困難。所以很多巷弄仍是架空線。"
+    },
+    "sources": [
+      {
+        "url": "https://news.pts.org.tw/article/822915",
+        "title": "Cable undergrounding in Taipei",
+        "publisher": "PTS News",
+        "verified": "snippet"
+      },
+      {
+        "url": "https://www.cna.com.tw/news/firstnews/201909270172.aspx",
+        "title": "Cable undergrounding cost (2019)",
+        "publisher": "Central News Agency",
+        "verified": "snippet"
+      }
+    ],
+    "confidence": "medium",
+    "disputed": false,
+    "caveats": "Cost figure is Taipower's claim as relayed by news. Do not explain why transformers sit on poles; no source found. Do not quote a Taipei undergrounding percentage.",
+    "hometown": {
+      "JP": {
+        "status": "same",
+        "comparison": {
+          "en": "Tokyo's 23 wards had only about 8 percent of roads without utility poles at the end of 2019, by Japan's road-length measure. Japan's ministry warns this measure is not comparable to Taipei's figures, so say 'also not high'.",
+          "zh-TW": "東京 23 區 2019 年底以道路長度算，無電線桿的比例約 8%。日本國交省說明這個算法不能直接和台北比，所以只說「日本也不高」。",
+          "ja": "東京23区の無電柱化率は2019年末で道路延長ベース約8%（国土交通省）。台北の数字とは算定方法が違うため直接比較はできません。"
+        },
+        "sources": [
+          {
+            "url": "https://www.mlit.go.jp/road/road/traffic/chicyuka/chi_13_01.html",
+            "title": "Utility pole removal (muden-chuka) statistics",
+            "publisher": "Japan Ministry of Land, Infrastructure, Transport and Tourism",
+            "verified": "full-text"
+          }
+        ],
+        "confidence": "high"
+      },
+      "US": {
+        "status": "same",
+        "comparison": {
+          "en": "About 80 percent of the US power grid is reported to be overhead, mostly because burying lines costs far more, roughly ten times a new overhead line by one estimate. Figures are approximate and vary by source.",
+          "zh-TW": "據報導美國約八成電網是架空線，主因同樣是埋地成本高，有一種估計是比新設架空線貴約十倍。數字都是概略值，各來源不一。"
+        },
+        "sources": [
+          {
+            "url": "https://www.ecmag.com/magazine/articles/article-detail/going-underground--power-line-burial-is-on-the-rise",
+            "title": "Going Underground: Power Line Burial Is on the Rise",
+            "publisher": "EC&M Magazine",
+            "verified": "snippet"
+          },
+          {
+            "url": "https://www.npr.org/2012/02/01/146158822/if-power-lines-fall-why-dont-they-go-underground",
+            "title": "If power lines fall, why don't they go underground?",
+            "publisher": "NPR",
+            "verified": "snippet"
+          }
+        ],
+        "confidence": "medium"
+      }
+    }
+  },
+  {
+    "id": "underground-share-conflict",
+    "category": "street",
+    "layer": "national",
+    "trigger": {
+      "osm": [],
+      "context": "lane where wires are overhead",
+      "photo_concepts": [
+        "overhead wires"
+      ]
+    },
+    "title": {
+      "en": "Taipei's underground-cable share depends on who counts",
+      "zh-TW": "台北電纜地下化比例，看誰怎麼算"
+    },
+    "fact": {
+      "en": "Sources give very different shares for Taipei's undergrounded cables, such as 87 percent and 96 percent, because statistics use different bases. The figures cannot be treated as a single answer.",
+      "zh-TW": "不同來源給的台北電纜地下化比例差很多，例如 87% 與 96%，原因是統計口徑不同。不能當成單一答案。"
+    },
+    "sources": [
+      {
+        "url": "https://news.pts.org.tw/article/822915",
+        "title": "Cable undergrounding in Taipei",
+        "publisher": "PTS News",
+        "verified": "snippet"
+      },
+      {
+        "url": "https://www.cna.com.tw/news/firstnews/201909270172.aspx",
+        "title": "Cable undergrounding cost (2019)",
+        "publisher": "Central News Agency",
+        "verified": "snippet"
+      }
+    ],
+    "confidence": "low",
+    "disputed": true,
+    "caveats": "DO NOT say any specific percentage. The 'main roads are buried, lanes are not' claim is an inference from the earlier research round, not stated by a source.",
+    "hometown": {
+      "JP": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      },
+      "US": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      }
+    }
+  },
+  {
+    "id": "arcade-qilou-origin",
+    "category": "architecture",
+    "layer": "area",
+    "trigger": {
+      "osm": [],
+      "context": "walking under a covered arcade walkway in front of shops",
+      "photo_concepts": [
+        "arcade",
+        "qilou",
+        "covered sidewalk"
+      ]
+    },
+    "title": {
+      "en": "Taiwan's arcades go back to an 1900 building rule",
+      "zh-TW": "騎樓可追溯到 1900 年的建築規則"
+    },
+    "fact": {
+      "en": "The institutional start of the arcade walkway is tied to the Japanese colonial government's 1900 Taiwan house building rules, which required houses along roads to have a roofed pedestrian passage. Some writers trace the idea back to Qing-era planning in Dadaocheng.",
+      "zh-TW": "騎樓的制度化與 1900 年台灣總督府的「台灣家屋建築規則」有關，規則要求沿路房屋要設有屋簷的人行通道。也有人把概念追溯到清代大稻埕的街區規劃。"
+    },
+    "sources": [
+      {
+        "url": "https://www.thenewslens.com/article/58053",
+        "title": "Taiwan arcade history",
+        "publisher": "The News Lens",
+        "verified": "snippet"
+      },
+      {
+        "url": "https://www.thenewslens.com/article/253928",
+        "title": "Taiwan arcade history",
+        "publisher": "The News Lens",
+        "verified": "snippet"
+      }
+    ],
+    "confidence": "medium",
+    "disputed": false,
+    "caveats": "Only mention the 1900 rule. Accounts of what triggered it (an 1898 flood, a 1899 proposal) differ, so do not give a cause.",
+    "hometown": {
+      "JP": {
+        "status": "different",
+        "comparison": {
+          "en": "Japanese covered shopping arcades are generally owned by shopping-street associations, and in 1955 the construction ministry took a policy of discouraging them over fire, traffic and hygiene concerns. Whether Taiwanese arcades are built into each building while Japanese ones are separate is not yet backed by an architectural source.",
+          "zh-TW": "日本的有頂商店街多半由商店街組織持有；1955 年建設省曾因防火、交通、衛生疑慮採抑制方針。至於「台灣騎樓是每棟建築自己退縮、日本是另外加蓋」這種結構差異，目前沒有建築史來源，不要講。",
+          "ja": "日本の有蓋アーケードは商店街組織の所有が多く、1955年に建設省が防火・交通・衛生の観点から抑制方針をとりました。"
+        },
+        "sources": [
+          {
+            "url": "https://www.chusho.meti.go.jp/shogyo/shogyo/jirei/15/dl/01.pdf",
+            "title": "Shopping-street arcades case study",
+            "publisher": "Japan Ministry of Economy, Trade and Industry (SME Agency)",
+            "verified": "snippet"
+          }
+        ],
+        "confidence": "low"
+      },
+      "US": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      }
+    }
+  },
+  {
+    "id": "arcade-is-road",
+    "category": "architecture",
+    "layer": "area",
+    "trigger": {
+      "osm": [],
+      "context": "uneven arcade floor with steps or slopes between shops",
+      "photo_concepts": [
+        "arcade floor",
+        "uneven sidewalk"
+      ]
+    },
+    "title": {
+      "en": "Legally, the arcade counts as part of the road",
+      "zh-TW": "法律上，騎樓算道路的一部分"
+    },
+    "fact": {
+      "en": "A 2005 Taipei City Law Commission ruling described arcades as part of the road, privately owned but serving the public. It also noted a legal change on who pays for leveling the floor: the authority may fund it or share the cost with the building owner.",
+      "zh-TW": "台北市法規會 2005 年函釋認為騎樓是道路的一部分，具有「私有公物」性質。函釋也說明整平工程費的法規已修正，主管機關可自行編預算，或與所有權人共同負擔。"
+    },
+    "sources": [
+      {
+        "url": "https://laws.gov.taipei/law/Interpretation/Content/FE015911",
+        "title": "Taipei Law Commission interpretation on arcade leveling",
+        "publisher": "Taipei City Law and Regulation Database",
+        "verified": "full-text"
+      }
+    ],
+    "confidence": "high",
+    "disputed": false,
+    "caveats": "Interpretation dated 17 August 2005; the law has been amended since, so avoid quoting article numbers or who pays today.",
+    "hometown": {
+      "JP": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      },
+      "US": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      }
+    }
+  },
+  {
+    "id": "iron-window-bars",
+    "category": "architecture",
+    "layer": "area",
+    "trigger": {
+      "osm": [],
+      "context": "older apartment buildings with iron window grilles",
+      "photo_concepts": [
+        "iron window grille",
+        "window bars",
+        "old apartment building"
+      ]
+    },
+    "title": {
+      "en": "Iron window grilles and the 1999 fire",
+      "zh-TW": "鐵窗與 1999 年的那場火"
+    },
+    "fact": {
+      "en": "A 1999 fire on Gezhi Road in Taipei killed two students, and the fire agency's investigation named window grilles blocking escape as a major factor. That is why safety advice now stresses leaving an openable escape route.",
+      "zh-TW": "1999 年台北格致路火災造成兩名學生死亡，消防署調查認為鐵窗妨礙逃生是主因之一。因此現在的安全建議強調要留有可開啟的逃生口。"
+    },
+    "sources": [
+      {
+        "url": "https://www.thenewslens.com/article/179424",
+        "title": "Iron window bars and illegal construction",
+        "publisher": "The News Lens",
+        "verified": "snippet"
+      }
+    ],
+    "confidence": "medium",
+    "disputed": false,
+    "caveats": "Do not state the 70 percent open-area or 10 cm rules; they came from one web article and are unverified. Do not claim why Taipei residents install bars.",
+    "hometown": {
+      "JP": {
+        "status": "different",
+        "comparison": {
+          "en": "In Japan, window bars are commonly seen on bathrooms, toilets and kitchens, according to one article. This is thin evidence, so only use it as a light remark.",
+          "zh-TW": "有文章說日本住宅的窗花常見於浴室、廁所、廚房。證據薄弱，只能當輕鬆的小評論。",
+          "ja": "日本では浴室・トイレ・台所の窓に面格子がよく見られると言われます（根拠は弱い）。"
+        },
+        "sources": [
+          {
+            "url": "https://www.tokyodev.com/articles/window-bars-in-japan",
+            "title": "Window bars in Japan",
+            "publisher": "TokyoDev",
+            "verified": "snippet"
+          }
+        ],
+        "confidence": "low"
+      },
+      "US": {
+        "status": "different",
+        "comparison": {
+          "en": "New York goes the other way for children: owners of buildings with three or more apartments must install approved window guards where a child 10 or younger lives. Windows leading to fire escapes are exempt.",
+          "zh-TW": "紐約對兒童是反向的規定：三戶以上的公寓，只要有 10 歲以下孩童居住，房東必須裝經核准的窗戶護欄，但通往防火逃生梯的窗戶不用裝。"
+        },
+        "sources": [
+          {
+            "url": "https://www.nyc.gov/site/doh/health/health-topics/window-guards-landlord.page",
+            "title": "Window Guards: Information for Building Owners",
+            "publisher": "NYC Department of Health",
+            "verified": "full-text"
+          }
+        ],
+        "confidence": "high"
+      }
+    }
+  },
+  {
+    "id": "rooftop-water-tank",
+    "category": "architecture",
+    "layer": "national",
+    "trigger": {
+      "osm": [],
+      "context": "rooftop water tanks visible above older buildings",
+      "photo_concepts": [
+        "rooftop water tank",
+        "water tower",
+        "rooftop"
+      ]
+    },
+    "title": {
+      "en": "The water tanks on Taiwanese roofs",
+      "zh-TW": "台灣屋頂上的水塔"
+    },
+    "fact": {
+      "en": "Rooftop tanks are commonly explained as a buffer for water outages and unsteady pressure. A one-ton tank is said to cover a family of four for about one to one and a half days. These claims come from trade websites, not the water company.",
+      "zh-TW": "屋頂水塔常見的說法是用來緩衝停水、穩定水壓，一噸水塔據說夠一家四口用一到一天半。這些說法出自商業網站，不是自來水公司的官方說明。"
+    },
+    "sources": [
+      {
+        "url": "https://www.pro360.com.tw/guide/water_tower_cleaning",
+        "title": "Water tower cleaning guide",
+        "publisher": "PRO360 (commercial)",
+        "verified": "snippet"
+      }
+    ],
+    "confidence": "low",
+    "disputed": false,
+    "caveats": "Commercial source only. Say 'commonly explained as'. Do not claim every Taiwanese household has its own tank; no source supports it.",
+    "hometown": {
+      "JP": {
+        "status": "same",
+        "comparison": {
+          "en": "Japan also has rooftop 'elevated water tanks' that feed buildings by gravity, and some cities encourage switching to direct supply. Based on a city government document.",
+          "zh-TW": "日本也有屋頂的「高置水槽」，靠重力供水給各樓層，部分自治體鼓勵改為直結給水。依據是市府文件。",
+          "ja": "日本にも屋上の高置水槽があり、重力で各階に給水します。"
+        },
+        "sources": [
+          {
+            "url": "https://www.city.niihama.lg.jp/uploaded/life/105060_433539_misc.pdf",
+            "title": "Water tank management guidance",
+            "publisher": "Niihama City, Japan",
+            "verified": "snippet"
+          }
+        ],
+        "confidence": "medium"
+      },
+      "US": {
+        "status": "same",
+        "comparison": {
+          "en": "New York is famous for rooftop wooden water tanks. City water pressure was too weak to reach upper floors, so buildings of six stories or more were required to have a rooftop tank with a pump; gravity then feeds the building. One article cites up to 17,000 tanks citywide, so say 'thousands'.",
+          "zh-TW": "紐約以屋頂木造水塔聞名。市政水壓推不到高樓層，所以六層以上的建築要在屋頂設水塔加抽水機，再靠重力供水。有文章說全市最多約 1.7 萬座，所以只說「數千座」。"
+        },
+        "sources": [
+          {
+            "url": "https://www.6sqft.com/nyc-water-towers-history-use-and-infrastructure/",
+            "title": "The history behind NYC's water towers",
+            "publisher": "6sqft",
+            "verified": "full-text"
+          }
+        ],
+        "confidence": "high"
+      }
+    }
+  },
+  {
+    "id": "bubble-tea-dispute",
+    "category": "shop",
+    "layer": "point",
+    "trigger": {
+      "osm": [],
+      "context": "in front of a hand-shaken drink shop",
+      "photo_concepts": [
+        "bubble tea shop",
+        "milk tea",
+        "tapioca pearls"
+      ]
+    },
+    "title": {
+      "en": "Two shops both claim to have invented bubble tea",
+      "zh-TW": "兩家店都說自己發明了珍珠奶茶"
+    },
+    "fact": {
+      "en": "Chun Shui Tang says it added tapioca pearls to milk tea by chance in 1987, while Hanlin Tea House says it got the idea in 1986. The two sides sued each other for about ten years and neither obtained a patent.",
+      "zh-TW": "春水堂說 1987 年偶然把粉圓加進奶茶，翰林茶館則說 1986 年就有這個點子。雙方互告打了約 10 年官司，最後都沒拿到專利。"
+    },
+    "sources": [
+      {
+        "url": "https://supertaste.tvbs.com.tw/hot/340391",
+        "title": "Who invented bubble tea",
+        "publisher": "TVBS Supertaste",
+        "verified": "full-text"
+      },
+      {
+        "url": "https://www.tatlerasia.com/dining/drinks/national-bubble-tea-day-zh-hant",
+        "title": "National Bubble Tea Day",
+        "publisher": "Tatler Asia",
+        "verified": "snippet"
+      }
+    ],
+    "confidence": "medium",
+    "disputed": true,
+    "caveats": "Always say 'both shops say'. Do not name an inventor. An earlier note about a 2019 court ruling was not in the page checked, so do not mention it.",
+    "hometown": {
+      "JP": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      },
+      "US": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      }
+    }
+  },
+  {
+    "id": "breakfast-hot-food",
+    "category": "shop",
+    "layer": "area",
+    "trigger": {
+      "osm": [],
+      "context": "morning, at a Taiwanese breakfast shop",
+      "photo_concepts": [
+        "breakfast shop",
+        "soy milk",
+        "egg pancake"
+      ]
+    },
+    "title": {
+      "en": "Taiwanese breakfast is usually served hot",
+      "zh-TW": "台灣早餐多半是熱的"
+    },
+    "fact": {
+      "en": "Research describes two strands of Taiwanese breakfast: rice porridge with side dishes, and wheat-based foods like fried dough sticks, flatbread and soy milk that spread with the people who came to Taiwan around 1949.",
+      "zh-TW": "有研究指出台灣早餐有兩條線：米食，像稀飯配小菜；以及 1949 年前後隨人口遷台而擴散的麵食，像油條、燒餅、豆漿。"
+    },
+    "sources": [
+      {
+        "url": "https://www.thenewslens.com/article/257348",
+        "title": "Taiwanese breakfast culture",
+        "publisher": "The News Lens",
+        "verified": "snippet"
+      },
+      {
+        "url": "https://supertaste.tvbs.com.tw/hot/346800",
+        "title": "Taiwanese breakfast culture",
+        "publisher": "TVBS Supertaste",
+        "verified": "snippet"
+      }
+    ],
+    "confidence": "low",
+    "disputed": false,
+    "caveats": "Only the two-strand history is sourced. The 'usually hot' title is a loose summary, so use it only for a light line.",
+    "hometown": {
+      "JP": {
+        "status": "different",
+        "comparison": {
+          "en": "One Japanese author living in Taiwan observes that Japanese breakfasts lean toward cold items such as rice balls and bento. This is a single observer's view, so say 'one writer notes'.",
+          "zh-TW": "有位在台灣生活的日本作者觀察，日本早餐偏冷食，例如飯糰、便當。這是單一觀察者的看法，要說「有位作者提到」。",
+          "ja": "日本の朝食は、おにぎりや弁当など冷たいものが中心だと観察する作者がいます（個人の見方）。"
+        },
+        "sources": [
+          {
+            "url": "https://www.thenewslens.com/article/257348",
+            "title": "Taiwanese breakfast culture",
+            "publisher": "The News Lens",
+            "verified": "snippet"
+          }
+        ],
+        "confidence": "low"
+      },
+      "US": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      }
+    }
+  },
+  {
+    "id": "joss-paper-burners",
+    "category": "daily-life",
+    "layer": "point",
+    "trigger": {
+      "osm": [
+        "amenity=place_of_worship"
+      ],
+      "context": "temple courtyard with a large furnace",
+      "photo_concepts": [
+        "temple furnace",
+        "joss paper burner",
+        "temple"
+      ]
+    },
+    "title": {
+      "en": "The big furnace at the temple is for burning paper money",
+      "zh-TW": "廟前那座大爐是燒金紙用的"
+    },
+    "fact": {
+      "en": "Some Taiwanese cities collect spirit money centrally and burn it in dedicated furnaces. Tainan's dedicated furnaces can burn more than 1,200 tons a year, and Kaohsiung started two mobile dedicated furnaces in 2023.",
+      "zh-TW": "台灣有些縣市集中收運紙錢，在專用金爐焚化。台南專用爐一年可燒 1200 噸以上，高雄 2023 年啟用兩座可移動式專用金爐。"
+    },
+    "sources": [
+      {
+        "url": "https://news.pts.org.tw/article/434862",
+        "title": "Tainan dedicated furnaces for spirit money",
+        "publisher": "PTS News",
+        "verified": "snippet"
+      }
+    ],
+    "confidence": "medium",
+    "disputed": false,
+    "caveats": "Say 'some Taiwanese cities'. Taipei's policy was not found, so never attribute this to Taipei. Figures are from snippets.",
+    "hometown": {
+      "JP": {
+        "status": "same",
+        "comparison": {
+          "en": "Japanese shrines and temples also burn things in ritual fire, but the objects differ: otakiage is the burning of old amulets and talismans, performed by the priest, to return the kami to its home shrine with thanks. Taiwan's furnaces burn spirit money as offerings.",
+          "zh-TW": "日本神社與寺廟也有儀式性焚燒，但燒的東西不同：「お焚き上げ」是由神職把舊護身符、神札燒掉，感謝並送神明回本社；台灣的金爐則是燒紙錢當供品。",
+          "ja": "日本の神社・寺でも、古いお札やお守りをお焚き上げで焼納します。神職が感謝を伝え、神様を元の神社へお返しするための儀式です。台湾の金爐は紙銭を供物として焼く点が異なります。"
+        },
+        "sources": [
+          {
+            "url": "https://shintoinari.org/services/visit-of-gratitude/",
+            "title": "Oreimairi and Otakiage",
+            "publisher": "Shinto Inari shrine website",
+            "verified": "full-text"
+          }
+        ],
+        "confidence": "medium"
+      },
+      "US": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      }
+    }
+  },
+  {
+    "id": "ghost-month-offerings",
+    "category": "daily-life",
+    "layer": "point",
+    "trigger": {
+      "osm": [
+        "amenity=place_of_worship"
+      ],
+      "context": "only in the seventh lunar month: offering tables outside shops and homes",
+      "photo_concepts": [
+        "offering table",
+        "ghost month offerings",
+        "incense"
+      ]
+    },
+    "title": {
+      "en": "Why tables of food appear on the street in the seventh lunar month",
+      "zh-TW": "農曆七月路邊為什麼擺滿拜拜桌"
+    },
+    "fact": {
+      "en": "During the seventh lunar month people hold rites and put out offerings to appease wandering spirits with no descendants to worship them, often called 'good brothers'. The 15th is Zhongyuan, but the rites can happen throughout the month. Early settlers' deaths from hardship and feuds are often cited as background.",
+      "zh-TW": "農曆七月有普渡，用祭品和儀式濟渡沒有後代祭祀的無主孤魂，民間俗稱好兄弟。十五日是中元節，但整個七月都可以辦。早期移民開墾傷亡、械鬥留下許多無人祭祀的孤魂，是常被提到的背景。"
+    },
+    "sources": [
+      {
+        "url": "https://smiletaiwan.cw.com.tw/article/9366",
+        "title": "Zhongyuan and Pudu",
+        "publisher": "CommonWealth Smile Taiwan",
+        "verified": "snippet"
+      }
+    ],
+    "confidence": "medium",
+    "disputed": false,
+    "caveats": "Season-bound: only trigger during the seventh lunar month (in 2026 it has already ended, so this will not trigger on a November demo). The historical background is a common interpretation, not a single settled account.",
+    "hometown": {
+      "JP": {
+        "status": "different",
+        "comparison": {
+          "en": "Japan's closest counterpart is Obon, held 13 to 16 July or August depending on region. It is mainly about welcoming family ancestors, with a small welcoming fire lit on the evening of the 13th, rather than appeasing unattached spirits. Based on general explainer sites only.",
+          "zh-TW": "日本最接近的是盂蘭盆節（お盆），依地區在 7 月或 8 月 13 到 16 日。重點是迎接自家祖先，13 日傍晚點迎火，不是安撫無主孤魂。資料只有一般解說網站。",
+          "ja": "日本で近い行事はお盆（地域により7月または8月の13〜16日）です。13日夕方に迎え火を焚いてご先祖様をお迎えするもので、無縁の霊を慰める台湾の普渡とは性格が異なります。"
+        },
+        "sources": [
+          {
+            "url": "https://allabout.co.jp/gm/gl/29005/",
+            "title": "About Obon",
+            "publisher": "All About Japan",
+            "verified": "snippet"
+          },
+          {
+            "url": "https://coki.jp/article/column/56600/",
+            "title": "Obon mukaebi and okuribi",
+            "publisher": "Coki",
+            "verified": "snippet"
+          }
+        ],
+        "confidence": "low"
+      },
+      "US": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      }
+    }
+  }
+]

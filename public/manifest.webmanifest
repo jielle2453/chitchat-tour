@@ -1,0 +1,10 @@
+{
+  "name": "Roadside Guide",
+  "short_name": "Roadside",
+  "description": "A walking guide for the everyday things on the street.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F4F4F2",
+  "theme_color": "#F4F4F2",
+  "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}
