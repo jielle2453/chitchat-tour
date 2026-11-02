@@ -11,6 +11,7 @@ describe("voice helpers", () => {
     const r = buildTranscribeRequest("zh-TW", ["東門"]);
     expect(r.languageBias).toEqual(["Mandarin Chinese"]);
     expect(r.keywords).toEqual(["東門"]);
+    expect(r.audioEncoding).toBe("WAV");
     expect(buildTranscribeRequest("ja", []).languageBias).toEqual(["Japanese"]);
   });
 

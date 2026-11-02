@@ -362,3 +362,18 @@ Meta 文件（dev.meta.ai）：
 - https://cerebralvalley.ai/e/meta-ai-developer-hackathon/details
 
 未能讀取：https://dev.meta.ai/docs/audio-understanding（404）。未讀：Geographic Use Policy、API reference（handshake 完整欄位）、Muse Spark Open Mac cookbook、search-grounding cookbook、tool search 專頁、prompt caching 專頁、muse-spark-open/hardware-platforms。
+
+## 實測結果（2026-11-02，拿到 API key 後）
+
+| 項目 | 結果 | 延遲 |
+|---|---|---|
+| 可用模型 | muse-wonder-1.0、muse-spark-1.1/1.2/1.3（含 contributor）、sam-3.1、muse-image-1.0、muse-voice-transcribe-1.0 | — |
+| Spark 純文字 | 正常；`reasoning.effort: "low"` 仍會產生約 300 reasoning tokens | 約 3 秒 |
+| Spark + `web_search` | 正常，但**沒有 `url_citation` 標註**。讀過的頁面要加 `include: ["web_search_call.action.sources"]` 才會出現在 `web_search_call.action.sources`。模型會先輸出一則 `phase: "commentary"` 的進度訊息（「正在幫你查…」），取答案時要跳過 | 5～9 秒 |
+| 結構化輸出（json_schema strict） | 正常；可以跟 web_search 同時用 | 4～17 秒 |
+| 模型自報的引用網址 | 常跟實際搜尋結果對不上（編碼不同、手機版網域、甚至只給網站首頁），只能用「同網站」比對 | — |
+| SAM 3.1 方框提示 | 正常，16 個以內一次送；回傳 id 對應送出的順序，有 mask | 約 4 秒 |
+| Spark 框選物件 | 座標順序是 `[x1, y1, x2, y2]`，0–1000 正規化，位置準確 | 約 8 秒 |
+| Voice Transcribe 檔案端點 | request JSON **必須有 `audioEncoding: "WAV"`**；`languageBias` 用 `"Mandarin Chinese"` 這種語言名稱；回傳 `{ sessionId, transcript, audioDurationMs, turns }`；**中文輸出是簡體**，要轉繁體 | 約 2.5 秒 |
+| Muse Image | 回傳 base64 WebP（`b64_json`），1920×1280 或直式 | 18～33 秒 |
+| App 端到端 | /api/guide 約 9 秒、/api/ask 約 9 秒、/api/photo 約 16 秒、/api/card 約 33 秒、/api/transcribe 約 4 秒 | — |

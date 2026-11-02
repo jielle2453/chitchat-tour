@@ -41,11 +41,22 @@ describe("verify", () => {
   });
   it("keeps trusted, deduped sources", () => {
     const s = trustedSources(extractCitations(response));
-    expect(s.map((x) => x.url)).toEqual(["https://en.wikipedia.org/wiki/Garbage_truck"]);
+    expect(s.map((x) => x.url)).toEqual(["https://en.wikipedia.org/wiki/Garbage_truck", "https://www.epd.gov.taipei/page"]);
     expect(s[0].verified).toBe("web_search");
   });
   it("reads output text", () => {
     expect(extractOutputText(response)).toBe("Taipei trucks play Beethoven.");
     expect(extractOutputText({ output_text: " hi " })).toBe("hi");
+  });
+  it("reads Meta's shape: sources on the search call, progress note before the answer", () => {
+    const meta = {
+      output: [
+        { type: "message", phase: "commentary", content: [{ type: "output_text", text: "Searching…", annotations: [] }] },
+        { type: "web_search_call", action: { sources: [{ type: "url", url: "https://english.land.gov.taipei/x" }, { type: "url", url: "https://www.youtube.com/watch?v=1" }] } },
+        { type: "message", content: [{ type: "output_text", text: "The answer.", annotations: [] }] },
+      ],
+    };
+    expect(extractOutputText(meta)).toBe("The answer.");
+    expect(trustedSources(extractCitations(meta)).map((x) => x.url)).toEqual(["https://english.land.gov.taipei/x"]);
   });
 });

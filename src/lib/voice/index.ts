@@ -39,10 +39,10 @@ export function parseKeywords(raw: string | null | undefined): string[] {
 }
 
 export function buildTranscribeRequest(lang: Lang, keywords: string[]) {
-  return { model: MODELS.transcribe, languageBias: [LANGUAGE_NAMES[lang]], keywords };
+  return { model: MODELS.transcribe, audioEncoding: "WAV", languageBias: [LANGUAGE_NAMES[lang]], keywords };
 }
 
-// The response shape of the file endpoint is not spelled out in our notes: accept the likely forms.
+// Documented response: { sessionId, transcript, audioDurationMs, turns[] }; older shapes kept as fallbacks.
 export function extractTranscript(body: unknown): string {
   if (typeof body === "string") return body.trim();
   if (!body || typeof body !== "object") return "";

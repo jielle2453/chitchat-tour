@@ -42,7 +42,9 @@ interface OutputTextPart {
 }
 interface OutputItem {
   type?: string;
+  phase?: string; // "commentary" marks the model's progress note before a tool call
   content?: OutputTextPart[];
+  action?: { sources?: { type?: string; url?: string; title?: string }[] };
 }
 export interface ResponsesResult {
   output?: OutputItem[];
@@ -66,18 +68,28 @@ export function extractCitations(response: ResponsesResult | null | undefined): 
       }
     }
   }
+  if (out.length) return out;
+  // Meta's web_search returns no url_citation annotations; the pages it read come back
+  // on web_search_call.action.sources when the request sets include: ["web_search_call.action.sources"].
+  for (const item of response?.output ?? []) {
+    if (item.type !== "web_search_call") continue;
+    for (const s of item.action?.sources ?? []) {
+      if (s.url) out.push({ url: s.url, title: s.title ?? hostnameOf(s.url) ?? s.url });
+    }
+  }
   return out;
 }
 
 export function extractOutputText(response: ResponsesResult | null | undefined): string {
+  // Only the final answer: skip "commentary" progress notes the model writes before searching.
+  const messages = (response?.output ?? []).filter((item) => item.type === "message" && item.phase !== "commentary");
+  const last = messages.at(-1);
   const parts: string[] = [];
-  for (const item of response?.output ?? []) {
-    if (item.type !== "message") continue;
-    for (const part of item.content ?? []) {
-      if (part.type === "output_text" && typeof part.text === "string") parts.push(part.text);
-    }
+  for (const part of last?.content ?? []) {
+    if (part.type === "output_text" && typeof part.text === "string") parts.push(part.text);
   }
   if (parts.length) return parts.join("").trim();
+  if (response?.output?.length) return "";
   return (response?.output_text ?? "").trim();
 }
 

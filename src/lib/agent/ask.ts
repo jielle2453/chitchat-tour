@@ -1,4 +1,5 @@
 import "server-only";
+import { z } from "zod";
 import { getItem, getKnowledgeItems } from "@/lib/kb";
 import { isMockMode } from "@/lib/meta/client";
 import type { AskRequest, AskResponse, ExplainRequest, GeoFix, KnowledgeItem, Lang, Narration, Source, UserProfile } from "@/lib/types";
@@ -66,32 +67,95 @@ async function webAnswer(opts: { profile: UserProfile; prompt: string; title: st
   const tool: Record<string, unknown> = { type: "web_search", search_context_size: "low" };
   if (taipei) tool.user_location = { type: "approximate", country: "TW", city: "Taipei", timezone: "Asia/Taipei" };
 
+  const place = taipei ? "\nThe visitor is walking in Taipei, Taiwan; answer about Taipei and Taiwan." : "";
+
   trace.add("decision", "Not in the knowledge base: searching the web.");
-  let text: string;
+  let answer: WebAnswer;
   let sources: Source[];
   try {
     const { text: out, raw } = await responsesText({
-      instructions: `${system}\n\nAnswer in ${LANG_NAME[profile.lang]}, ${LENGTH_HINT[profile.lang]}. The visitor's hometown is ${profile.hometown}.`,
+      instructions: `${system}\n\nAnswer in ${LANG_NAME[profile.lang]}, ${LENGTH_HINT[profile.lang]}. The visitor's hometown is ${profile.hometown}.${place}\n\n${ANSWER_FIELDS}`,
       input: prompt,
       tools: [tool],
+      include: ["web_search_call.action.sources"],
       max_tool_calls: MAX_TOOL_CALLS,
       max_output_tokens: 1500,
+      text: { format: { type: "json_schema", name: "sourced_answer", strict: true, schema: ANSWER_JSON_SCHEMA } },
     });
-    text = out;
+    answer = AnswerSchema.parse(JSON.parse(stripFences(out)));
     const citations = extractCitations(raw);
-    sources = trustedSources(citations);
-    trace.add("verify", `${citations.length} citation(s) found; ${sources.length} from trusted domains.`, {
+    const trusted = trustedSources(citations);
+    sources = rankSources(trusted, answer.used_urls).slice(0, MAX_SOURCES);
+    trace.add("verify", `${citations.length} page(s) read; ${trusted.length} from trusted domains; the model relied on ${answer.used_urls.length}.`, {
       kept: sources.map((s) => s.url),
-      dropped: citations.filter((c) => !sources.some((s) => s.url === c.url)).map((c) => c.url),
+      dropped: citations.filter((c) => !trusted.some((s) => s.url === c.url)).map((c) => c.url),
     });
   } catch (err) {
     trace.add("error", `Web search call failed (${err instanceof Error ? err.message.slice(0, 120) : "unknown error"}).`);
     return noSource(profile, title, trace, "No answer could be sourced.");
   }
 
-  if (!text || sources.length === 0) return noSource(profile, title, trace, "No citation from a trusted domain; will not state unsourced facts.");
+  const heading = answer.title.trim() || title;
+  if (!answer.found) {
+    trace.add("verify", "The model found no reliable source.");
+    trace.add("decision", "Saying honestly that no reliable source was found.");
+    const text = answer.answer.trim() || MSG.noSource[profile.lang];
+    return { id: newId(), itemId: null, title: heading, text, lang: profile.lang, sources: [], confidence: "low" };
+  }
+  let text = answer.answer.trim();
+  if (!text || sources.length === 0) return noSource(profile, heading, trace, "No citation from a trusted domain; will not state unsourced facts.");
   if (tooLong(text, profile.lang)) text = await shape(text, profile.lang, trace);
-  return { id: newId(), itemId: null, title, text, lang: profile.lang, sources, confidence: "medium" };
+  return { id: newId(), itemId: null, title: heading, text, lang: profile.lang, sources, confidence: "medium" };
+}
+
+const MAX_SOURCES = 3;
+
+const ANSWER_FIELDS =
+  "Reply as JSON. found: false when no reliable source supports an answer (then answer says so honestly). " +
+  "title: a short heading in the answer language naming the thing, at most 16 characters (6 words in English). " +
+  "answer: the spoken answer. used_urls: the URLs of the search results your answer relies on.";
+
+const AnswerSchema = z.object({ found: z.boolean(), title: z.string(), answer: z.string(), used_urls: z.array(z.string()) });
+type WebAnswer = z.infer<typeof AnswerSchema>;
+
+const ANSWER_JSON_SCHEMA = {
+  type: "object",
+  additionalProperties: false,
+  required: ["found", "title", "answer", "used_urls"],
+  properties: {
+    found: { type: "boolean" },
+    title: { type: "string" },
+    answer: { type: "string" },
+    used_urls: { type: "array", items: { type: "string" } },
+  },
+} as const;
+
+function stripFences(s: string): string {
+  return s.replace(/^\s*```(?:json)?\s*/i, "").replace(/\s*```\s*$/, "");
+}
+
+// The URLs the model lists rarely match the search results byte for byte (encoding, mobile hosts),
+// so compare host + decoded path, falling back to the same site. Trusted pages from sites the
+// model did not rely on are dropped: showing them would imply support they don't give.
+function urlKey(url: string): string {
+  try {
+    const u = new URL(url);
+    const host = u.hostname.replace(/^(www|m)\./, "").replace(/\.m\./, ".");
+    return `${host}${decodeURIComponent(u.pathname).replace(/\/$/, "")}`.toLowerCase();
+  } catch {
+    return url.toLowerCase();
+  }
+}
+
+export function rankSources(trusted: Source[], usedUrls: string[]): Source[] {
+  const used = new Set(usedUrls.map(urlKey));
+  const usedHosts = new Set(usedUrls.map((u) => urlKey(u).split("/")[0]));
+  const score = (s: Source) => (used.has(urlKey(s.url)) ? 2 : usedHosts.has(urlKey(s.url).split("/")[0]) ? 1 : 0);
+  return trusted
+    .map((s, i) => ({ s, i, k: score(s) }))
+    .filter((x) => x.k > 0)
+    .sort((a, b) => b.k - a.k || a.i - b.i)
+    .map((x) => x.s);
 }
 
 // Crude keyword match so mock mode (and nothing else) can answer from the KB.

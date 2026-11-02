@@ -101,22 +101,31 @@ describe("runAsk / runExplain", () => {
     const r = await runExplain({ profile, label: "garbage truck", itemId: "garbage-truck" });
     expect(r.narration.itemId).toBe("garbage-truck");
   });
-  it("real ask keeps only trusted citations, else says no source", async () => {
+  it("real ask keeps only trusted pages the model relied on, else says no source", async () => {
     process.env.META_API_KEY = "test";
-    const msg = (urls: string[]) => ({
-      text: "Answer.",
-      raw: { output: [{ type: "message", content: [{ type: "output_text", text: "Answer.", annotations: urls.map((url) => ({ type: "url_citation", url, title: "t", start_index: 0, end_index: 1 })) }] }] },
-    });
-    responsesText.mockResolvedValueOnce(msg(["https://blog.example.com/a", "https://en.wikipedia.org/wiki/A"]));
+    const reply = (urls: string[], used: string[], found = true) => {
+      const text = JSON.stringify({ found, title: "Hook turn", answer: found ? "Answer." : "I could not find a source.", used_urls: used });
+      return {
+        text,
+        raw: { output: [{ type: "web_search_call", action: { sources: urls.map((url) => ({ type: "url", url })) } }, { type: "message", content: [{ type: "output_text", text, annotations: [] }] }] },
+      };
+    };
+    responsesText.mockResolvedValueOnce(reply(["https://blog.example.com/a", "https://en.wikipedia.org/wiki/A", "https://www.gov.taipei/x"], ["https://en.m.wikipedia.org/wiki/A"]));
     const ok = await runAsk({ profile, question: "What is a scooter hook turn?", recent: [] });
     expect(ok.narration.sources.map((s) => s.url)).toEqual(["https://en.wikipedia.org/wiki/A"]);
+    expect(ok.narration.title).toBe("Hook turn");
     expect(ok.narration.confidence).toBe("medium");
     expect(responsesText.mock.calls[0][0].max_tool_calls).toBeGreaterThan(0);
 
-    responsesText.mockResolvedValueOnce(msg(["https://blog.example.com/a"]));
+    responsesText.mockResolvedValueOnce(reply(["https://blog.example.com/a"], ["https://blog.example.com/a"]));
     const bad = await runAsk({ profile, question: "What is a scooter hook turn?", recent: [] });
     expect(bad.narration.confidence).toBe("low");
     expect(bad.narration.sources).toEqual([]);
+
+    responsesText.mockResolvedValueOnce(reply(["https://en.wikipedia.org/wiki/A"], [], false));
+    const none = await runAsk({ profile, question: "Who named this lane?", recent: [] });
+    expect(none.narration.sources).toEqual([]);
+    expect(none.narration.text).toBe("I could not find a source.");
   });
 });
 
