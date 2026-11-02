@@ -79,12 +79,12 @@ export default function PhotoView({
   }
 
   return (
-    <div className="rg-fade-in absolute inset-0 z-30 flex flex-col bg-ink">
+    <div className="rg-fade-in absolute inset-0 z-30 flex flex-col bg-black">
       <div className="flex items-center justify-between px-3 pb-2 pt-[max(12px,env(safe-area-inset-top))] text-white">
-        <button type="button" onClick={onClose} aria-label={t(lang, "close")} className="grid h-11 w-11 place-items-center rounded-full bg-white/15">
-          <X size={20} aria-hidden />
+        <button type="button" onClick={onClose} aria-label={t(lang, "close")} className="grid h-10 w-10 place-items-center rounded-full bg-white/15">
+          <X size={18} aria-hidden />
         </button>
-        {result ? <span className="rounded-full bg-white/15 px-3 py-1 text-xs">{t(lang, "facesBlurred", { n: result.faces })}</span> : null}
+        {result ? <span className="rounded-full bg-white/15 px-2.5 py-1 text-[11px]">{t(lang, "facesBlurred", { n: result.faces })}</span> : null}
       </div>
 
       <div className="relative min-h-0 flex-1">
@@ -93,13 +93,22 @@ export default function PhotoView({
             <image href={result.dataUrl} width={result.width} height={result.height} />
             {result.objects.map((o) => {
               const active = selected === o.id;
+              // Monochrome: a white outline over a dark halo so it reads on any photo.
+              const halo = {
+                fill: "none" as const,
+                stroke: "rgba(0,0,0,0.55)",
+                strokeWidth: active ? 9 : 8,
+                vectorEffect: "non-scaling-stroke" as const,
+                strokeLinejoin: "round" as const,
+              };
               const common = {
-                fill: active ? "rgba(255,210,63,0.45)" : "rgba(255,210,63,0.16)",
-                stroke: "#FFD23F",
+                fill: active ? "rgba(255,255,255,0.35)" : "rgba(255,255,255,0.10)",
+                stroke: "#fff",
                 strokeWidth: active ? 4 : 3,
                 vectorEffect: "non-scaling-stroke" as const,
                 strokeLinejoin: "round" as const,
               };
+              const boxRx = Math.min(o.box[2] - o.box[0], o.box[3] - o.box[1]) * 0.12;
               return (
                 <g
                   key={o.id}
@@ -113,9 +122,15 @@ export default function PhotoView({
                   }}
                 >
                   {o.maskSvgPath ? (
-                    <path d={o.maskSvgPath} {...common} />
+                    <>
+                      <path d={o.maskSvgPath} {...halo} />
+                      <path d={o.maskSvgPath} {...common} />
+                    </>
                   ) : (
-                    <rect x={o.box[0]} y={o.box[1]} width={o.box[2] - o.box[0]} height={o.box[3] - o.box[1]} rx={Math.min(o.box[2] - o.box[0], o.box[3] - o.box[1]) * 0.12} {...common} />
+                    <>
+                      <rect x={o.box[0]} y={o.box[1]} width={o.box[2] - o.box[0]} height={o.box[3] - o.box[1]} rx={boxRx} {...halo} />
+                      <rect x={o.box[0]} y={o.box[1]} width={o.box[2] - o.box[0]} height={o.box[3] - o.box[1]} rx={boxRx} {...common} />
+                    </>
                   )}
                 </g>
               );
@@ -131,22 +146,22 @@ export default function PhotoView({
 
       <div className="space-y-3 px-4 pb-[max(16px,env(safe-area-inset-bottom))] pt-3 text-white">
         {error ? (
-          <p role="alert" className="rounded-2xl bg-white/15 p-3 text-sm">
+          <p role="alert" className="rounded-2xl bg-white/15 p-3 text-[13px]">
             {error}
           </p>
         ) : null}
         {result ? (
           result.objects.length ? (
             <>
-              <p className="text-center text-sm opacity-80">{session.explaining ? t(lang, "explaining") : t(lang, "tapObject")}</p>
-              <div className="flex flex-wrap justify-center gap-2">
+              <p className="text-center text-[13px] opacity-80">{session.explaining ? t(lang, "explaining") : t(lang, "tapObject")}</p>
+              <div className="flex flex-wrap justify-center gap-1.5">
                 {result.objects.map((o) => (
                   <button
                     key={o.id}
                     type="button"
                     onClick={() => void onPick(o)}
                     aria-pressed={selected === o.id}
-                    className={`min-h-11 rounded-full px-4 text-sm font-semibold ${selected === o.id ? "bg-accent text-ink" : "bg-white/15 text-white"}`}
+                    className={`min-h-10 rounded-full px-3.5 text-[13px] font-medium ${selected === o.id ? "bg-white text-black" : "bg-white/15 text-white"}`}
                   >
                     {o.label}
                   </button>
@@ -154,7 +169,7 @@ export default function PhotoView({
               </div>
             </>
           ) : (
-            <p className="text-center text-sm opacity-80">{t(lang, "noObjects")}</p>
+            <p className="text-center text-[13px] opacity-80">{t(lang, "noObjects")}</p>
           )
         ) : null}
       </div>

@@ -36,13 +36,13 @@ export default function Sheet({
         aria-label={title}
         className="rg-sheet-in relative flex max-h-[85%] flex-col rounded-t-card bg-surface pb-[max(16px,env(safe-area-inset-bottom))] shadow-[0_-8px_28px_rgba(17,17,17,0.12)]"
       >
-        <div className="flex items-center justify-between px-5 pb-2 pt-4">
-          <h2 className="text-lg font-bold">{title}</h2>
-          <button type="button" onClick={onClose} aria-label={t(lang, "close")} className="grid h-10 w-10 place-items-center rounded-full bg-bg">
-            <X size={18} aria-hidden />
+        <div className="flex items-center justify-between px-4 pb-1.5 pt-3.5">
+          <h2 className="text-[17px] font-semibold">{title}</h2>
+          <button type="button" onClick={onClose} aria-label={t(lang, "close")} className="grid h-9 w-9 place-items-center rounded-full bg-fill">
+            <X size={16} aria-hidden />
           </button>
         </div>
-        <div className="rg-scroll min-h-0 flex-1 px-5 pb-2">{children}</div>
+        <div className="rg-scroll min-h-0 flex-1 px-4 pb-2">{children}</div>
       </div>
     </div>
   );

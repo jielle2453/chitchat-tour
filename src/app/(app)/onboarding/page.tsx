@@ -20,18 +20,18 @@ export default function OnboardingPage() {
 
   return (
     <div className="rg-scroll flex h-full flex-col px-6 pb-[max(24px,env(safe-area-inset-bottom))] pt-[max(32px,env(safe-area-inset-top))]">
-      <div className="flex-1 space-y-8">
-        <header className="space-y-3">
+      <div className="flex-1 space-y-7">
+        <header className="space-y-2.5">
           {/* slot for a sticker/illustration */}
-          <div aria-hidden className="grid h-20 w-20 -rotate-6 place-items-center rounded-[22px] border-[5px] border-white bg-accent text-4xl font-extrabold shadow-[0_0_0_2px_#111]">
+          <div aria-hidden className="grid h-16 w-16 -rotate-6 place-items-center rounded-[20px] border-4 border-white bg-fill text-3xl font-extrabold shadow-[0_0_0_2px_#111]">
             ?
           </div>
-          <h1 className="pt-2 text-[28px] font-bold leading-tight">{t(lang, "onbTitle")}</h1>
-          <p className="text-base text-sub">{t(lang, "onbSub")}</p>
+          <h1 className="pt-1.5 text-[26px] font-semibold leading-tight">{t(lang, "onbTitle")}</h1>
+          <p className="text-[15px] leading-relaxed text-sub">{t(lang, "onbSub")}</p>
         </header>
 
-        <section aria-labelledby="lang-h" className="space-y-3">
-          <h2 id="lang-h" className="text-sm font-semibold text-sub">
+        <section aria-labelledby="lang-h" className="space-y-2.5">
+          <h2 id="lang-h" className="text-[13px] font-medium text-sub">
             {t(lang, "onbLang")}
           </h2>
           <div className="flex flex-wrap gap-2">
@@ -41,7 +41,7 @@ export default function OnboardingPage() {
                 type="button"
                 aria-pressed={lang === l.code}
                 onClick={() => setLang(l.code)}
-                className={`h-12 rounded-full px-5 text-base font-semibold ${lang === l.code ? "bg-ink text-white" : "bg-surface text-ink ring-1 ring-line"}`}
+                className={`h-10 rounded-full px-4 text-[15px] font-medium ${lang === l.code ? "bg-ink text-white" : "bg-surface text-ink ring-1 ring-line"}`}
               >
                 {l.label}
               </button>
@@ -49,8 +49,8 @@ export default function OnboardingPage() {
           </div>
         </section>
 
-        <section aria-labelledby="from-h" className="space-y-3">
-          <h2 id="from-h" className="text-sm font-semibold text-sub">
+        <section aria-labelledby="from-h" className="space-y-2.5">
+          <h2 id="from-h" className="text-[13px] font-medium text-sub">
             {t(lang, "onbFrom")}
           </h2>
           <div className="relative">
@@ -58,7 +58,7 @@ export default function OnboardingPage() {
               value={home}
               onChange={(e) => setHome(e.target.value)}
               aria-labelledby="from-h"
-              className="h-14 w-full appearance-none rounded-2xl bg-surface px-4 pr-11 text-base ring-1 ring-line"
+              className="h-12 w-full appearance-none rounded-xl bg-surface px-3.5 pr-10 text-[15px] ring-1 ring-line"
             >
               <option value="">{t(lang, "preferNot")}</option>
               {countries.map((c) => (
@@ -67,12 +67,12 @@ export default function OnboardingPage() {
                 </option>
               ))}
             </select>
-            <ChevronDown size={18} aria-hidden className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-sub" />
+            <ChevronDown size={16} aria-hidden className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-sub" />
           </div>
-          <p className="text-sm text-sub">{t(lang, "onbFromHint")}</p>
+          <p className="text-[13px] text-sub">{t(lang, "onbFromHint")}</p>
         </section>
       </div>
-      <button type="button" onClick={go} className="mt-8 h-16 w-full rounded-full bg-ink text-lg font-bold text-white">
+      <button type="button" onClick={go} className="mt-8 h-12 w-full rounded-full bg-ink text-[15px] font-semibold text-white">
         {t(lang, "onbStart")}
       </button>
     </div>

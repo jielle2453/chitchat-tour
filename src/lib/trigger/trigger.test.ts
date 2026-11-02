@@ -1,6 +1,17 @@
 import { describe, expect, it } from "vitest";
-import type { GeoFix, KnowledgeItem, NearbyPoi, UserProfile, WalkState } from "@/lib/types";
-import { DEFAULT_TRIGGER_CONFIG, emptyWalkState, rankCandidates, shouldSpeak } from "./index";
+import type { GeoFix, KnowledgeItem, NearbyPoi, Sighting, UserProfile, WalkState } from "@/lib/types";
+import {
+  addSighting,
+  agePhrase,
+  conceptsMatch,
+  DEFAULT_TRIGGER_CONFIG,
+  emptyWalkState,
+  findConceptsInText,
+  rankCandidates,
+  shouldSpeak,
+  SIGHTING_WINDOW_MS,
+  topicGroup,
+} from "./index";
 
 // 2026-01-01 12:00 Taipei = 04:00 UTC
 const NOON = Date.UTC(2026, 0, 1, 4, 0, 0);
@@ -48,6 +59,22 @@ describe("exclusions", () => {
     const items = [item("told"), item("low", { confidence: "low" }), item("nosrc", { sources: [] }), item("ok")];
     const state: WalkState = { ...emptyWalkState(), toldItemIds: ["told"] };
     expect(rank(items, { state }).map((c) => c.itemId)).toEqual(["ok"]);
+  });
+
+  it("never offers facet items, even with a matching POI or sighting", () => {
+    const facetPoint = item("convenience-store-area-density", { parent: "convenience-store-density" });
+    expect(rank([facetPoint])).toHaveLength(0);
+    const facetSighting = item("garbage-truck-japan-origin", {
+      parent: "garbage-truck-why-music",
+      layer: "sighting",
+      trigger: { osm: [], photo_concepts: ["garbage truck"] },
+      category: "daily-life",
+    });
+    const state: WalkState = {
+      ...emptyWalkState(),
+      sightings: [{ concept: "garbage truck", at: NOON - 1000, source: "photo" }],
+    };
+    expect(rank([facetSighting], { pois: [], state, now: NOON })).toHaveLength(0);
   });
 });
 
@@ -106,20 +133,145 @@ describe("hometown relativity", () => {
 });
 
 describe("other layers", () => {
-  it("area items work without a POI but score below a good point match", () => {
+  it("area items are quiet-stretch fillers: dropped while a point match exists", () => {
     const area = item("area", { layer: "area", trigger: { osm: [] }, category: "street" });
     const point = item("pt");
-    expect(rank([area, point]).map((c) => c.itemId)).toEqual(["pt", "area"]);
+    expect(rank([area, point]).map((c) => c.itemId)).toEqual(["pt"]);
+    // alone on a fresh walk with nothing nearby, the area fact may speak
     expect(rank([area], { pois: [] })).toHaveLength(1);
   });
 
-  it("national items only when no strong point item, or when idle", () => {
+  it("area items wait for a longer idle gap once the walk has started", () => {
+    const area = item("area", { layer: "area", trigger: { osm: [] }, category: "street" });
+    const justSpoke: WalkState = { ...emptyWalkState(), lastSpokenAt: NOON - 60_000 };
+    expect(rank([area], { pois: [], state: justSpoke, now: NOON })).toHaveLength(0);
+    const idle: WalkState = { ...emptyWalkState(), lastSpokenAt: NOON - 300_000 };
+    const out = rank([area], { pois: [], state: idle, now: NOON });
+    expect(out.map((c) => c.itemId)).toEqual(["area"]);
+    expect(out[0].reasons.join()).toContain("quiet for a while");
+  });
+
+  it("national items only when nothing is encountered and the walker is idle", () => {
     const nat = item("nat", { layer: "national", trigger: { osm: [] }, category: "daily-life" });
     const strong = item("pt", { hometown: { JP: cmp("absent") } });
     expect(rank([nat, strong]).map((c) => c.itemId)).toEqual(["pt"]);
     expect(rank([nat], { pois: [] }).map((c) => c.itemId)).toEqual(["nat"]);
     const idleState: WalkState = { ...emptyWalkState(), lastSpokenAt: NOON - DEFAULT_TRIGGER_CONFIG.nationalItemIdleMs };
-    expect(rank([nat, strong], { state: idleState }).map((c) => c.itemId)).toContain("nat");
+    // even when idle, a real point match keeps the filler out
+    expect(rank([nat, strong], { state: idleState, now: NOON }).map((c) => c.itemId)).toEqual(["pt"]);
+    expect(rank([nat], { pois: [], state: idleState, now: NOON }).map((c) => c.itemId)).toEqual(["nat"]);
+    const justSpoke: WalkState = { ...emptyWalkState(), lastSpokenAt: NOON - 60_000 };
+    expect(rank([nat], { pois: [], state: justSpoke, now: NOON })).toHaveLength(0);
+  });
+});
+
+describe("sighting layer", () => {
+  const truck = (id: string, o: Partial<KnowledgeItem> = {}) =>
+    item(id, { layer: "sighting", trigger: { osm: [], photo_concepts: ["garbage truck"] }, category: "daily-life", ...o });
+  const seen = (concept: string, at: number, source: Sighting["source"] = "photo"): WalkState => ({
+    ...emptyWalkState(),
+    sightings: [{ concept, at, source }],
+  });
+
+  it("is a candidate only with a recent matching sighting", () => {
+    expect(rank([truck("t")], { pois: [] })).toHaveLength(0);
+    expect(rank([truck("t")], { pois: [], state: seen("garbage truck", NOON - 2 * 60_000), now: NOON })).toHaveLength(1);
+    // older than ~10 minutes: the truck is long gone
+    const stale = seen("garbage truck", NOON - SIGHTING_WINDOW_MS - 1);
+    expect(rank([truck("t")], { pois: [], state: stale, now: NOON })).toHaveLength(0);
+  });
+
+  it("matches case-insensitively with plurals and synonyms", () => {
+    expect(rank([truck("t")], { pois: [], state: seen("Garbage Trucks", NOON - 1000), now: NOON })).toHaveLength(1);
+    expect(rank([truck("t")], { pois: [], state: seen("trash truck", NOON - 1000), now: NOON })).toHaveLength(1);
+    expect(rank([truck("t")], { pois: [], state: seen("utility pole", NOON - 1000), now: NOON })).toHaveLength(0);
+  });
+
+  it("scores high and explains itself in the trace", () => {
+    const area = item("area", { layer: "area", trigger: { osm: [] }, category: "street" });
+    const out = rank([area, truck("t")], { pois: [], state: seen("garbage truck", NOON - 2 * 60_000), now: NOON });
+    expect(out.map((c) => c.itemId)).toEqual(["t"]);
+    expect(out[0].reasons.join("; ")).toContain("you photographed garbage truck 2 min ago");
+  });
+
+  it("reports ask-source sightings differently", () => {
+    const out = rank([truck("t")], { pois: [], state: seen("garbage truck", NOON - 30_000, "ask"), now: NOON });
+    expect(out[0].reasons.join("; ")).toContain("you asked about garbage truck just now");
+  });
+});
+
+describe("topic de-duplication", () => {
+  const truck = (id: string) =>
+    item(id, { layer: "sighting", trigger: { osm: [], photo_concepts: ["garbage truck"] }, category: "daily-life" });
+  // Synthetic same-topic pair: the two-segment fallback puts both in "story-apple".
+  const apple = (id: string) => truck(id);
+
+  it("offers only the best item per group at a time", () => {
+    const a = item("mrt-station-codes", { category: "transport", trigger: { osm: ["railway=subway_entrance"] } });
+    const b = item("priority-seats-renamed-2025", { category: "transport", trigger: { osm: ["railway=subway_entrance"] } });
+    const subway = poi({ id: "node/9", kind: "subway_entrance", tags: { railway: "subway_entrance" } });
+    expect(rank([a, b], { pois: [subway] })).toHaveLength(1);
+  });
+
+  it("blocks a second item of the same group later in the walk, unless asked", () => {
+    const state: WalkState = {
+      toldItemIds: ["story-apple-pie"],
+      lastSpokenAt: NOON - 600_000,
+      history: [{ itemId: "story-apple-pie", at: NOON - 600_000 }],
+      sightings: [{ concept: "garbage truck", at: NOON - 1000, source: "photo" }],
+    };
+    expect(rank([apple("story-apple-tart")], { pois: [], state, now: NOON })).toHaveLength(0);
+    const asked: WalkState = {
+      ...state,
+      sightings: [{ concept: "garbage truck", at: NOON - 1000, source: "ask" }],
+    };
+    const out = rank([apple("story-apple-tart")], { pois: [], state: asked, now: NOON });
+    expect(out).toHaveLength(1);
+    expect(out[0].reasons).toContain("you asked about this again");
+  });
+
+  it("groups odd ids explicitly and falls back to a two-segment prefix", () => {
+    expect(topicGroup("manhole-covers-art")).toBe("manhole");
+    expect(topicGroup("manhole-anti-slip")).toBe("manhole");
+    expect(topicGroup("two-stage-left-turn-tainan")).toBe("two-stage-left-turn");
+    expect(topicGroup("mrt-station-codes")).toBe("mrt");
+    expect(topicGroup("escalator-stand-both-sides")).toBe("mrt");
+    expect(topicGroup("claw-machine-shops")).toBe("claw-machine");
+    expect(topicGroup("bubble-tea-dispute")).toBe("bubble-tea");
+    expect(topicGroup("brand-new-thing")).toBe("brand-new");
+  });
+});
+
+describe("sighting utils", () => {
+  it("conceptsMatch forgives case, plurals and synonyms", () => {
+    expect(conceptsMatch("Garbage Truck", "garbage truck")).toBe(true);
+    expect(conceptsMatch("garbage trucks", "garbage truck")).toBe(true);
+    expect(conceptsMatch("trash truck", "garbage truck")).toBe(true);
+    expect(conceptsMatch("litter bin", "street trash can")).toBe(true);
+    expect(conceptsMatch("utility pole", "garbage truck")).toBe(false);
+    expect(conceptsMatch("", "garbage truck")).toBe(false);
+  });
+
+  it("addSighting appends, refreshes and caps", () => {
+    const s1 = addSighting(emptyWalkState(), "garbage truck", "photo", NOON);
+    expect(s1.sightings).toHaveLength(1);
+    const s2 = addSighting(s1, "Garbage Trucks", "ask", NOON + 1000);
+    expect(s2.sightings).toHaveLength(1);
+    expect(s2.sightings![0]).toEqual({ concept: "Garbage Trucks", at: NOON + 1000, source: "ask" });
+    expect(s1.sightings).toHaveLength(1); // no mutation
+    expect(addSighting(s1, "  ", "photo", NOON)).toBe(s1);
+  });
+
+  it("findConceptsInText finds known concepts in a question", () => {
+    const known = ["garbage truck", "truck", "manhole cover"];
+    expect(findConceptsInText("Why does the garbage truck play music?", known)).toEqual(["garbage truck"]);
+    expect(findConceptsInText("What a nice street!", known)).toEqual([]);
+  });
+
+  it("agePhrase reads naturally", () => {
+    expect(agePhrase(NOON - 10_000, NOON)).toBe("just now");
+    expect(agePhrase(NOON - 60_000, NOON)).toBe("1 min ago");
+    expect(agePhrase(NOON - 120_000, NOON)).toBe("2 min ago");
   });
 });
 

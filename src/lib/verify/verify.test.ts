@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { extractCitations, extractOutputText, isTrustedUrl, trustedSources } from "./index";
+import { extractCitations, extractOutputText, isTrustedUrl, readableSourceTitle, trustedSources } from "./index";
 
 const response = {
   output: [
@@ -58,5 +58,39 @@ describe("verify", () => {
     };
     expect(extractOutputText(meta)).toBe("The answer.");
     expect(trustedSources(extractCitations(meta)).map((x) => x.url)).toEqual(["https://english.land.gov.taipei/x"]);
+  });
+  it("uses the real page titles carried by web_search_call.results", () => {
+    // Live shape (2026-11-02 probe): action.sources is url-only, while
+    // web_search_call.results carries { type: "text_result", title, url, snippet }.
+    const live = {
+      output: [
+        {
+          type: "web_search_call",
+          action: {
+            type: "search",
+            query: "q",
+            sources: [
+              { type: "url", url: "https://www.jil.go.jp/institute/zassi/backnumber/2024/05/pdf/082-083.pdf" },
+              { type: "url", url: "https://taiwaninsight.org/2025/12/05/from-musical-garbage-trucks-to-garbage-consciousness-in-taiwan/" },
+            ],
+          },
+          results: [
+            { type: "text_result", title: "From Musical Garbage Trucks to Garbage Consciousness in Taiwan", url: "https://taiwaninsight.org/2025/12/05/from-musical-garbage-trucks-to-garbage-consciousness-in-taiwan/", snippet: "" },
+          ],
+        },
+        { type: "message", content: [{ type: "output_text", text: "The answer.", annotations: [] }] },
+      ],
+    };
+    const s = trustedSources(extractCitations(live));
+    expect(s.find((x) => x.url.includes("taiwaninsight"))?.title).toBe("From Musical Garbage Trucks to Garbage Consciousness in Taiwan");
+  });
+  it("never falls back to a bare hostname when a better title exists", () => {
+    const pdf = "https://www.jil.go.jp/institute/zassi/backnumber/2024/05/pdf/082-083.pdf";
+    const s = trustedSources(extractCitations({ output: [{ type: "web_search_call", action: { sources: [{ type: "url", url: pdf }] } }] }));
+    expect(s).toEqual([{ url: pdf, title: "Japan Institute for Labour Policy and Training", publisher: "www.jil.go.jp", verified: "web_search" }]);
+    expect(readableSourceTitle("https://en.wikipedia.org/wiki/Garbage_truck", "en.wikipedia.org")).toBe("Garbage truck");
+    expect(readableSourceTitle("https://www.youtube.com/watch?v=T0I8fhbM2l0")).toBe("YouTube");
+    expect(readableSourceTitle(pdf, "www.jil.go.jp")).toBe("Japan Institute for Labour Policy and Training");
+    expect(readableSourceTitle("https://en.wikipedia.org/wiki/Garbage_truck", "Garbage truck - Wikipedia")).toBe("Garbage truck - Wikipedia");
   });
 });

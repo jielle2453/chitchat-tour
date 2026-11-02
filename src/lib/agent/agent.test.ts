@@ -82,6 +82,20 @@ describe("runGuide (real path, mocked model)", () => {
     expect(r.narration?.itemId).toBe("garbage-truck");
     expect(r.trace.some((t) => t.kind === "error")).toBe(true);
   });
+  it("parses fenced JSON without retrying", async () => {
+    const full = JSON.stringify({ decision: "speak", itemId: "garbage-truck", title: "Garbage truck", text: "Notice the music?", reason: "Differs from Tokyo." });
+    responsesText.mockResolvedValue({ text: "```json\n" + full + "\n```" });
+    const r = await runGuide(base());
+    expect(r.narration?.text).toBe("Notice the music?");
+    expect(responsesText).toHaveBeenCalledTimes(1);
+  });
+  it("repairs a truncated tail without retrying", async () => {
+    const full = JSON.stringify({ decision: "speak", itemId: "garbage-truck", title: "Garbage truck", text: "Notice the music?", reason: "Differs from Tokyo." });
+    responsesText.mockResolvedValue({ text: full.slice(0, -2) });
+    const r = await runGuide(base());
+    expect(r.narration?.text).toBe("Notice the music?");
+    expect(responsesText).toHaveBeenCalledTimes(1);
+  });
 });
 
 describe("runAsk / runExplain", () => {
@@ -113,6 +127,9 @@ describe("runAsk / runExplain", () => {
     responsesText.mockResolvedValueOnce(reply(["https://blog.example.com/a", "https://en.wikipedia.org/wiki/A", "https://www.gov.taipei/x"], ["https://en.m.wikipedia.org/wiki/A"]));
     const ok = await runAsk({ profile, question: "What is a scooter hook turn?", recent: [] });
     expect(ok.narration.sources.map((s) => s.url)).toEqual(["https://en.wikipedia.org/wiki/A"]);
+    expect(ok.narration.sources[0].title).toBe("Wikipedia");
+    expect(ok.narration.sources[0].title).not.toContain("wikipedia.org");
+    expect(ok.narration.sources[0].publisher).toBe("en.wikipedia.org");
     expect(ok.narration.title).toBe("Hook turn");
     expect(ok.narration.confidence).toBe("medium");
     expect(responsesText.mock.calls[0][0].max_tool_calls).toBeGreaterThan(0);
@@ -126,6 +143,64 @@ describe("runAsk / runExplain", () => {
     const none = await runAsk({ profile, question: "Who named this lane?", recent: [] });
     expect(none.narration.sources).toEqual([]);
     expect(none.narration.text).toBe("I could not find a source.");
+  });
+  it("real ask surfaces the page title from web_search_call.results", async () => {
+    process.env.META_API_KEY = "test";
+    const text = JSON.stringify({ found: true, title: "Hook turn", answer: "Answer.", used_urls: ["https://en.m.wikipedia.org/wiki/Hook_turn"] });
+    responsesText.mockResolvedValueOnce({
+      text,
+      raw: {
+        output: [
+          { type: "web_search_call", action: { sources: [{ type: "url", url: "https://en.wikipedia.org/wiki/Hook_turn" }] }, results: [{ type: "text_result", title: "Hook turn (Taiwan)", url: "https://en.wikipedia.org/wiki/Hook_turn", snippet: "" }] },
+          { type: "message", content: [{ type: "output_text", text, annotations: [] }] },
+        ],
+      },
+    });
+    const r = await runAsk({ profile, question: "What is a scooter hook turn?", recent: [] });
+    expect(r.narration.sources).toEqual([{ url: "https://en.wikipedia.org/wiki/Hook_turn", title: "Hook turn (Taiwan)", publisher: "en.wikipedia.org", verified: "web_search" }]);
+  });
+});
+
+describe("new voice (mock)", () => {
+  const BANNED = [
+    "Have you noticed this?",
+    "気づきましたか",
+    "你有注意到嗎",
+    "你有看到",
+    "interestingly",
+    "fun fact",
+    "很有趣的是",
+    "有趣的是",
+    "面白いことに",
+    "Elsewhere it's often different",
+  ];
+  it("mock narrations never use announcer openers", async () => {
+    for (const profile of [{ hometown: "JP", lang: "ja" as const }, { hometown: "US", lang: "en" as const }, { hometown: "US", lang: "zh-TW" as const }]) {
+      const r = await runGuide(base({ profile }));
+      const text = r.narration?.text ?? "";
+      for (const b of BANNED) expect(text).not.toContain(b);
+    }
+  });
+  it("mock narrations stay within the short spoken budget", async () => {
+    const en = await runGuide(base({ profile: { hometown: "US", lang: "en" } }));
+    expect(en.narration!.text.split(/\s+/).length).toBeLessThanOrEqual(90);
+    const zh = await runGuide(base({ profile: { hometown: "US", lang: "zh-TW" } }));
+    expect(zh.narration!.text.length).toBeLessThanOrEqual(200);
+  });
+  it("openers vary by item but are stable per item", async () => {
+    const { openerFor } = await import("./common");
+    const openers = new Set(["a", "b", "c", "d", "e", "f", "g"].map((id) => openerFor("en", `item-${id}`)));
+    expect(openers.size).toBeGreaterThan(1);
+    expect(openerFor("en", "garbage-truck")).toBe(openerFor("en", "garbage-truck"));
+  });
+  it("the guide prompt demands the short witty voice", async () => {
+    const { loadPrompt } = await import("./prompts");
+    const system = await loadPrompt("guide-system.md");
+    expect(system).toContain("45 to 70 words");
+    expect(system).toContain("70 to 120 characters");
+    expect(system).toContain("很有趣的是");
+    const ask = await loadPrompt("ask-system.md");
+    expect(ask).toContain("45 to 70 words");
   });
 });
 

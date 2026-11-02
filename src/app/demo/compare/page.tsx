@@ -11,7 +11,7 @@ import { useProfile } from "@/lib/client/storage";
 import { useGuideSession } from "@/lib/client/useGuideSession";
 
 const SPEEDS = [1, 2, 4];
-const selectCls = "h-11 rounded-full bg-surface px-4 text-sm font-semibold ring-1 ring-line";
+const selectCls = "h-10 rounded-full bg-surface px-3.5 text-[13px] font-medium ring-1 ring-line";
 
 export default function ComparePage() {
   const { profile } = useProfile();
@@ -49,7 +49,7 @@ export default function ComparePage() {
   }
 
   const picker = (value: string, onChange: (v: string) => void, n: number) => (
-    <label className="flex items-center gap-2 text-sm font-semibold text-sub">
+    <label className="flex items-center gap-2 text-[13px] font-medium text-sub">
       {t(lang, "cmpTraveller", { n })}
       <select disabled={started} value={value} onChange={(e) => onChange(e.target.value)} className={selectCls} aria-label={t(lang, "cmpTraveller", { n })}>
         {countries.map((c) => (
@@ -63,39 +63,39 @@ export default function ComparePage() {
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-5xl flex-col items-center gap-6 px-4 py-8">
-      <header className="space-y-2 text-center">
-        <h1 className="text-3xl font-bold">{t(lang, "cmpTitle")}</h1>
-        <p className="mx-auto max-w-xl text-base text-sub">{t(lang, "cmpSub")}</p>
+      <header className="space-y-1.5 text-center">
+        <h1 className="text-2xl font-semibold">{t(lang, "cmpTitle")}</h1>
+        <p className="mx-auto max-w-xl text-[15px] text-sub">{t(lang, "cmpSub")}</p>
       </header>
 
-      <div className="flex flex-wrap items-center justify-center gap-3">
+      <div className="flex flex-wrap items-center justify-center gap-2.5">
         {!started ? (
-          <button type="button" onClick={start} disabled={!route} className="h-12 rounded-full bg-ink px-6 font-bold text-white disabled:opacity-40">
+          <button type="button" onClick={start} disabled={!route} className="h-11 rounded-full bg-ink px-5 text-[15px] font-medium text-white disabled:opacity-40">
             {t(lang, "cmpStart")}
           </button>
         ) : (
           <>
-            <button type="button" onClick={toggle} className="flex h-12 items-center gap-2 rounded-full bg-ink px-5 font-bold text-white">
-              {running ? <Pause size={16} fill="currentColor" aria-hidden /> : <Play size={16} fill="currentColor" aria-hidden />}
+            <button type="button" onClick={toggle} className="flex h-11 items-center gap-2 rounded-full bg-ink px-4 text-[15px] font-medium text-white">
+              {running ? <Pause size={14} fill="currentColor" aria-hidden /> : <Play size={14} fill="currentColor" aria-hidden />}
               {running ? t(lang, "cmpPause") : t(lang, "cmpResume")}
             </button>
-            <button type="button" onClick={reset} className="flex h-12 items-center gap-2 rounded-full bg-surface px-5 font-semibold ring-1 ring-line">
-              <RotateCcw size={16} aria-hidden />
+            <button type="button" onClick={reset} className="flex h-11 items-center gap-2 rounded-full bg-surface px-4 text-[15px] font-medium ring-1 ring-line">
+              <RotateCcw size={14} aria-hidden />
               {t(lang, "cmpReset")}
             </button>
           </>
         )}
         <div role="group" aria-label={t(lang, "cmpSpeed")} className="flex rounded-full bg-surface p-1 ring-1 ring-line">
           {SPEEDS.map((s) => (
-            <button key={s} type="button" aria-pressed={a.simSpeed === s} onClick={() => setSpeed(s)} className={`h-9 min-w-10 rounded-full px-3 text-sm font-bold ${a.simSpeed === s ? "bg-accent" : "text-sub"}`}>
+            <button key={s} type="button" aria-pressed={a.simSpeed === s} onClick={() => setSpeed(s)} className={`h-8 min-w-9 rounded-full px-2.5 text-[13px] font-medium ${a.simSpeed === s ? "bg-ink text-white" : "text-sub"}`}>
               {t(lang, "speedPill", { n: s })}
             </button>
           ))}
         </div>
         <div role="group" aria-label={t(lang, "cmpSound")} className="flex items-center gap-1 rounded-full bg-surface p-1 pl-3 ring-1 ring-line">
-          <Volume2 size={16} aria-hidden className="mr-1 text-sub" />
+          <Volume2 size={14} aria-hidden className="mr-1 text-sub" />
           {[true, false].map((left) => (
-            <button key={String(left)} type="button" aria-pressed={soundLeft === left} onClick={() => setSoundLeft(left)} className={`h-9 rounded-full px-3 text-sm font-bold ${soundLeft === left ? "bg-ink text-white" : "text-sub"}`}>
+            <button key={String(left)} type="button" aria-pressed={soundLeft === left} onClick={() => setSoundLeft(left)} className={`h-8 rounded-full px-2.5 text-[13px] font-medium ${soundLeft === left ? "bg-ink text-white" : "text-sub"}`}>
               {t(lang, left ? "cmpLeft" : "cmpRight")}
             </button>
           ))}
@@ -120,7 +120,7 @@ export default function ComparePage() {
         </MiniPhone>
       </div>
 
-      <Link href="/" className="text-sm font-semibold underline underline-offset-4">
+      <Link href="/" className="text-[13px] font-medium underline underline-offset-4">
         {t(lang, "cmpOpen")}
       </Link>
       <AudioOverlay lang={lang} />

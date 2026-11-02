@@ -4,7 +4,7 @@ import { getItem } from "@/lib/kb";
 import { isMockMode, openWeightClient } from "@/lib/meta/client";
 import type { Candidate, GuideRequest, GuideResponse, KnowledgeItem, Lang, Narration } from "@/lib/types";
 import { chatText, responsesText, type ChatBackend } from "./llm";
-import { compass, composeFromItem, contrastFromItem, itemConfidence, itemSources, LANG_NAME, LENGTH_HINT, pickText, stripFences, Trace, usableComparison } from "./common";
+import { compass, composeFromItem, contrastFromItem, itemConfidence, itemSources, LANG_NAME, LENGTH_HINT, parseModelJson, pickText, Trace, usableComparison } from "./common";
 import { loadPrompt } from "./prompts";
 
 const MAX_CANDIDATES = 3;
@@ -148,28 +148,37 @@ export async function runGuide(req: GuideRequest): Promise<GuideResponse> {
   const user = buildUserMessage(top, req);
   const open = openWeightClient();
 
-  let decision: Decision;
-  try {
-    if (open) {
-      trace.add("decision", `Narrating with the open-weight model ${open.model}.`);
-      const raw = await chatText(
-        open as unknown as ChatBackend,
-        system,
-        `${user}\n\nReply with a single JSON object with keys decision, itemId, title, text, reason. JSON only.`,
-      );
-      decision = DecisionSchema.parse(JSON.parse(stripFences(raw)));
-    } else {
-      trace.add("decision", "Asking the Meta model to choose and narrate.");
-      const { text } = await responsesText({
-        instructions: system,
-        input: user,
-        max_output_tokens: 1500,
-        text: { format: { type: "json_schema", name: "guide_decision", strict: true, schema: DECISION_JSON_SCHEMA } },
-      });
-      decision = DecisionSchema.parse(JSON.parse(stripFences(text)));
+  // The model sometimes returns truncated or otherwise unparsable JSON (observed live:
+  // "Unterminated string in JSON"). One immediate retry before falling back to canned text.
+  let decision: Decision | null = null;
+  let lastError: unknown = null;
+  for (let attempt = 0; attempt < 2 && !decision; attempt++) {
+    try {
+      if (open) {
+        if (attempt === 0) trace.add("decision", `Narrating with the open-weight model ${open.model}.`);
+        const raw = await chatText(
+          open as unknown as ChatBackend,
+          system,
+          `${user}\n\nReply with a single JSON object with exactly these keys: decision, itemId, title, text, here, elsewhere, reason. JSON only, no code fences, no prose before or after. Keep text short enough to finish the object.`,
+        );
+        decision = parseModelJson(raw, DecisionSchema);
+      } else {
+        if (attempt === 0) trace.add("decision", "Asking the Meta model to choose and narrate.");
+        const { text } = await responsesText({
+          instructions: system,
+          input: user,
+          max_output_tokens: 2500,
+          text: { format: { type: "json_schema", name: "guide_decision", strict: true, schema: DECISION_JSON_SCHEMA } },
+        });
+        decision = parseModelJson(text, DecisionSchema);
+      }
+    } catch (err) {
+      lastError = err;
+      if (attempt === 0) trace.add("error", `Model output could not be used (${err instanceof Error ? err.message.slice(0, 120) : "unknown error"}); retrying once.`);
     }
-  } catch (err) {
-    trace.add("error", `Model output could not be used (${err instanceof Error ? err.message.slice(0, 120) : "unknown error"}); falling back to the top candidate.`);
+  }
+  if (!decision) {
+    trace.add("error", `Retry failed (${lastError instanceof Error ? lastError.message.slice(0, 120) : "unknown error"}); falling back to the top candidate.`);
     return speakFallback("fallback to the top-ranked candidate.");
   }
 

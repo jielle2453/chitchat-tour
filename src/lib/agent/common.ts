@@ -1,3 +1,4 @@
+import { z } from "zod";
 import type { Confidence, HometownComparison, KnowledgeItem, Lang, LocalizedText, Source, TraceKind, TraceStep, UserProfile } from "@/lib/types";
 
 export class Trace {
@@ -15,10 +16,10 @@ export const LANG_NAME: Record<Lang, string> = {
 };
 
 export const LENGTH_HINT: Record<Lang, string> = {
-  en: "about 90 to 150 words",
-  ja: "about 150 to 250 characters",
-  "zh-TW": "about 150 to 250 characters",
-  ko: "about 150 to 250 characters",
+  en: "about 45 to 70 words",
+  ja: "about 70 to 120 characters",
+  "zh-TW": "about 70 to 120 characters",
+  ko: "about 70 to 120 characters",
 };
 
 export function pickText(t: LocalizedText | null | undefined, lang: Lang): { text: string; lang: Lang } | null {
@@ -55,13 +56,40 @@ export function itemConfidence(item: KnowledgeItem, profile: UserProfile): Confi
   return rank[r];
 }
 
+// Short spoken openers, rotated per item so consecutive narrations don't start alike.
+// They carry no facts: the verified KB fact always does the talking.
+const OPENERS: Record<Lang, string[]> = {
+  en: ["Quick one while we walk — ", "Here's a good one: ", "Listen to this — ", "This one's worth knowing: ", "While we're passing this — "],
+  ja: ["歩きながらどうぞ。小ネタですけど、", "これ、いい話なんですよ。", "ちょっと聞いてください。", "これ、知ってると楽しいですよ。", "通りすがりにどうぞ。"],
+  "zh-TW": ["邊走邊聽，這個很妙，", "欸，跟你說一個，", "這個你一定沒想到，", "經過這裡剛好講一下，", "來，這個很有梗，"],
+  ko: ["걸으면서 하나만요. ", "이거 재밌어요. ", "잠깐 들어보세요. ", "이건 알아두면 좋아요. ", "지나가며 하나만요. "],
+};
+
+// Light contrast lead-ins, kept modest ("often"): the KB comparison does the talking.
+const CONTRASTS: Record<Lang, string[]> = {
+  en: [" Elsewhere it's often different: ", " In other places it's often different: "],
+  ja: ["ほかの場所では少し違うことも多いです。", "ちなみに、ほかの場所ではこういうことも多いです。"],
+  "zh-TW": ["換個地方，做法常常不一樣：", "其他地方，常常是另一套做法："],
+  ko: ["다른 곳에서는 꽤 다른 경우가 많아요. ", "다른 곳에서는 흔히 다르답니다. "],
+};
+
+function hashId(id: string): number {
+  let h = 0;
+  for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0;
+  return h;
+}
+
+export function openerFor(lang: Lang, itemId: string): string {
+  const list = OPENERS[lang];
+  return list[hashId(`open:${itemId}`) % list.length];
+}
+
+export function contrastFor(lang: Lang, itemId: string): string {
+  const list = CONTRASTS[lang];
+  return list[hashId(`contrast:${itemId}`) % list.length];
+}
+
 const T = {
-  hook: {
-    en: (title: string) => `Have you noticed this? ${title}.`,
-    ja: (title: string) => `気づきましたか？${title}。`,
-    "zh-TW": (title: string) => `你有注意到嗎？${title}。`,
-    ko: (title: string) => `혹시 눈치채셨나요? ${title}.`,
-  },
   disputed: {
     en: "There are several stories about this.",
     ja: "これについてはいくつかの説があります。",
@@ -73,12 +101,6 @@ const T = {
     ja: "あくまで一つの見方です。",
     "zh-TW": "這只是其中一種解釋。",
     ko: "하나의 설명일 뿐입니다.",
-  },
-  hometown: {
-    en: "Elsewhere it's often different. ",
-    ja: "ほかの場所では、少し違うことも多いです。",
-    "zh-TW": "換個地方，做法常常不一樣。",
-    ko: "다른 곳에서는 꽤 다른 경우가 많아요. ",
   },
   noSource: {
     en: "I couldn't find a reliable source for that, so I'd rather not guess.",
@@ -114,15 +136,72 @@ export function composeFromItem(item: KnowledgeItem, profile: UserProfile): { ti
   const lang: Lang = [title, fact, ...(cmpText ? [cmpText] : [])].every((p) => p.lang === profile.lang) ? profile.lang : "en";
   const pick = (t: LocalizedText | null | undefined) => pickText(t, lang)!.text;
   const sep = lang === "en" || lang === "ko" ? " " : "";
-  const parts = [T.hook[lang](pick(item.title))];
+  const parts = [openerFor(lang, item.id)];
   if (item.disputed) parts.push(T.disputed[lang]);
   parts.push(pick(item.fact));
-  if (cmp) parts.push(T.hometown[lang] + pick(cmp.comparison));
+  if (cmp) parts.push(contrastFor(lang, item.id) + pick(cmp.comparison));
   return { title: pick(item.title), text: parts.join(sep), lang, fellBack: lang !== profile.lang };
 }
 
 export function stripFences(s: string): string {
   return s.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "").trim();
+}
+
+// Extract one JSON object from raw model output. Handles code fences,
+// leading/trailing prose, and a truncated trailing string (closed only in
+// the safe case: output ends inside a top-level string with no unclosed
+// brackets). Throws when nothing usable can be recovered.
+export function extractJsonObject(raw: string): string {
+  const text = raw
+    .replace(/```(?:json)?/gi, "")
+    .replace(/```/g, "")
+    .trim();
+  const start = text.indexOf("{");
+  if (start < 0) throw new Error("No JSON object in model output");
+  let depth = 0;
+  let bracketDepth = 0;
+  let inStr = false;
+  let esc = false;
+  for (let i = start; i < text.length; i++) {
+    const ch = text[i];
+    if (inStr) {
+      if (esc) esc = false;
+      else if (ch === "\\") esc = true;
+      else if (ch === '"') inStr = false;
+    } else if (ch === '"') {
+      inStr = true;
+    } else if (ch === "{") {
+      depth++;
+    } else if (ch === "}") {
+      depth--;
+      if (depth === 0 && bracketDepth === 0) return text.slice(start, i + 1);
+      if (depth < 0) throw new Error("No JSON object in model output");
+    } else if (ch === "[") {
+      bracketDepth++;
+    } else if (ch === "]") {
+      bracketDepth--;
+    }
+  }
+  // Ran off the end: repair only safe truncations of the top-level shape
+  // (no unclosed arrays). Either the cut landed inside a trailing string, or
+  // the value just before the cut is already complete (only braces missing).
+  if (bracketDepth === 0 && depth > 0) {
+    let fixed = text.slice(start);
+    if (inStr) {
+      if (fixed.endsWith("\\")) fixed = fixed.slice(0, -1);
+      fixed += '"';
+    } else if (!/["\d}\]A-Za-z]$/.test(fixed)) {
+      throw new Error(`Unterminated string in JSON at position ${text.length}`);
+    }
+    return `${fixed}${"}".repeat(depth)}`;
+  }
+  throw new Error(`Unterminated string in JSON at position ${text.length}`);
+}
+
+// Parse + validate one JSON object from raw model output, tolerating fences,
+// prose wrapping, and safe truncation repair. Throws on failure.
+export function parseModelJson<T>(raw: string, schema: z.ZodType<T>): T {
+  return schema.parse(JSON.parse(extractJsonObject(raw)));
 }
 
 export function compass(deg: number | undefined): string {

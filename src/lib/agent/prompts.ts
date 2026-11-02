@@ -12,6 +12,14 @@ const FALLBACKS: Record<string, string> = {
 const cache = new Map<string, string>();
 
 export async function loadPrompt(name: "guide-system.md" | "ask-system.md"): Promise<string> {
+  // In dev, always re-read: prompt iteration (and live eval) must take effect without a restart.
+  if (process.env.NODE_ENV !== "production") {
+    try {
+      return (await readFile(path.join(process.cwd(), "prompts", name), "utf8")).trim();
+    } catch {
+      return FALLBACKS[name];
+    }
+  }
   const hit = cache.get(name);
   if (hit) return hit;
   let text = FALLBACKS[name];

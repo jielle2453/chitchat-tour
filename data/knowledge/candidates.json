@@ -1,0 +1,1157 @@
+[
+  {
+    "id": "intersection-no-right-on-red",
+    "category": "transport",
+    "layer": "point",
+    "trigger": {
+      "osm": ["highway=traffic_signals"],
+      "context": "at a signalized intersection; strongest when cars or scooters wait at a red light",
+      "photo_concepts": ["traffic light", "red light", "intersection", "crosswalk"]
+    },
+    "title": {
+      "en": "No turning on red, and pedestrians go first",
+      "zh-TW": "紅燈不能轉彎，行人先走",
+      "ja": "赤信号では曲がれない、歩行者優先"
+    },
+    "fact": {
+      "en": "Turning right on red counts as running a red light here, with fines of NT$1,800 to NT$5,400. Since late June 2023, drivers who fail to yield to pedestrians face up to NT$6,000 plus demerit points and a safety lecture.",
+      "zh-TW": "在台灣，紅燈右轉視同闖紅燈，可罰1800到5400元。2023年6月底起，汽機車不停讓行人，最高罰6000元，還要記點、上道安講習。",
+      "ja": "台湾では赤信号での右折は信号無視と同じで、1800〜5400元の罰金です。2023年6月末からは、歩行者に道を譲らないと最高6000元の罰金に加え、点数と安全講習が付きます。"
+    },
+    "sources": [
+      {
+        "url": "http://www.tourbus.org.tw/upfiles/1689315997.pdf",
+        "title": "道路交通管理處罰條例修正後注意事項 (tourist bus association briefing)",
+        "publisher": "Taiwan Tourist Bus Association (industry briefing quoting the 2023 amendment)",
+        "verified": "web_search"
+      },
+      {
+        "url": "https://news.housefun.com.tw/news/article/917096490128.html",
+        "title": "沒闖紅燈也可能違規?「2情況」1800元恐飛了",
+        "publisher": "HouseFun News (quoting Road Traffic Management and Penalty Act Art. 53)",
+        "verified": "web_search"
+      }
+    ],
+    "confidence": "medium",
+    "disputed": false,
+    "caveats": "Fine range and article numbers come from secondary pages quoting the law. Verify against law.moj.gov.tw (Road Traffic Management and Penalty Act Art. 53 and Art. 44) before use. Do not over-explain the 3-metre enforcement detail.",
+    "hometown": {
+      "JP": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      },
+      "US": {
+        "status": "same",
+        "comparison": {
+          "en": "New York City is the exception that proves the US rule: turning right on red is illegal in all five boroughs unless a sign expressly permits it (a few Staten Island spots). So a New Yorker already knows this habit.",
+          "zh-TW": "紐約市是全美國的例外：五個區一律禁止紅燈右轉，只有史泰登島少數有標誌的路口可以。紐約客對這條規則早就習慣了。",
+          "ja": "ニューヨーク市は米国の例外で、5区すべてで赤信号での右折は禁止です（標識のあるスタテン島の一部を除く）。ニューヨーカーにはおなじみのルールです。"
+        },
+        "sources": [
+          {
+            "url": "https://portal.311.nyc.gov/article/?kanumber=KA-01354",
+            "title": "Right Turn on Red in Staten Island",
+            "publisher": "NYC311",
+            "verified": "web_search"
+          }
+        ],
+        "confidence": "medium"
+      }
+    }
+  },
+  {
+    "id": "mrt-station-codes",
+    "category": "transport",
+    "layer": "point",
+    "trigger": {
+      "osm": ["railway=subway_entrance"],
+      "context": "at a Taipei Metro station entrance; strongest at interchange stations",
+      "photo_concepts": ["metro station entrance", "station sign", "station code", "MRT sign"]
+    },
+    "title": {
+      "en": "Every station has a code: Dongmen is R07 and O06",
+      "zh-TW": "每站都有編號：東門是R07也是O06",
+      "ja": "駅には番号がある：東門はR07かつO06"
+    },
+    "fact": {
+      "en": "Taipei Metro stations carry letter-plus-number codes, so interchange stations have two: Dongmen is R07 on the red line and O06 on the orange line. The network has 131 stations, and Dongmen's interchange opened in November 2013.",
+      "zh-TW": "台北捷運每站都有英文加數字的編號，轉乘站就有兩個：東門站是紅線R07，也是橘線O06。全線131站，東門轉乘是2013年11月才通車的。",
+      "ja": "台北メトロの駅には英字＋数字の番号があり、乗換駅は2つ持ちます。東門駅は赤線R07、オレンジ線O06です。全131駅で、東門の乗換えは2013年11月に開通しました。"
+    },
+    "sources": [
+      {
+        "url": "https://en.wikipedia.org/wiki/Dongmen_metro_station",
+        "title": "Dongmen metro station",
+        "publisher": "Wikipedia",
+        "verified": "web_search"
+      },
+      {
+        "url": "https://en.wikipedia.org/wiki/List_of_Taipei_Metro_stations",
+        "title": "List of Taipei Metro stations",
+        "publisher": "Wikipedia",
+        "verified": "web_search"
+      }
+    ],
+    "confidence": "medium",
+    "disputed": false,
+    "caveats": "Station count changes as extensions open; say 'over 130 stations' if unsure of the current number. The opening date refers to the Dongmen interchange (Nov 2013).",
+    "hometown": {
+      "JP": {
+        "status": "same",
+        "comparison": {
+          "en": "Tokyo Metro and Toei Subway introduced the same letter-plus-number station codes in 2004, for example Shibuya on the Ginza Line is G-01.",
+          "zh-TW": "東京メトロ和都營地下鐵2004年就導入同樣的編號，例如銀座線澀谷站是G-01。",
+          "ja": "東京メトロと都営地下鉄は2004年に同じ駅ナンバリングを導入しました。銀座線渋谷駅ならG-01です。"
+        },
+        "sources": [
+          {
+            "url": "https://ja.wikipedia.org/wiki/%E9%A7%85%E3%83%8A%E3%83%B3%E3%83%90%E3%83%AA%E3%83%B3%E3%82%B0",
+            "title": "駅ナンバリング",
+            "publisher": "Wikipedia (Japanese)",
+            "verified": "web_search"
+          }
+        ],
+        "confidence": "medium"
+      },
+      "US": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      }
+    }
+  },
+  {
+    "id": "priority-seats-renamed-2025",
+    "category": "transport",
+    "layer": "point",
+    "trigger": {
+      "osm": ["railway=subway_entrance"],
+      "context": "inside a metro car, near the dark-blue seats by the doors",
+      "photo_concepts": ["priority seat", "dark blue train seat", "metro car interior"]
+    },
+    "title": {
+      "en": "The blue seats got a new name in 2025",
+      "zh-TW": "藍色椅子2025年改名了",
+      "ja": "青い座席は2025年に改名された"
+    },
+    "fact": {
+      "en": "The dark-blue seats used to be called 博愛座 (courtesy seats). In July 2025 the legislature renamed them 優先席 (priority seats) and widened eligibility from the elderly, weak, women and children to anyone who genuinely needs a seat.",
+      "zh-TW": "車廂裡深藍色的椅子以前叫「博愛座」。2025年7月立法院修法改名「優先席」，對象從老弱婦孺擴大為其他有實際需求的人。",
+      "ja": "車内の濃い青の座席は、以前は「博愛座」と呼ばれていました。2025年7月の法改正で「優先席」に改名され、対象もお年寄りなどから「実際に必要な人」に広がりました。"
+    },
+    "sources": [
+      {
+        "url": "https://www.cna.com.tw/news/ahel/202507150040.aspx",
+        "title": "博愛座改為優先席立院三讀通過 有實際需求者優先乘坐",
+        "publisher": "Central News Agency",
+        "verified": "web_search"
+      }
+    ],
+    "confidence": "medium",
+    "disputed": false,
+    "caveats": "Read via a quoted repost plus a PTS noon-news listing; open the CNA page in full before use. Avoid taking sides in yielding disputes; state the rule, not who deserves the seat.",
+    "hometown": {
+      "JP": {
+        "status": "same",
+        "comparison": {
+          "en": "Japan uses the exact same name, 優先席: every commuter train sets them aside for seniors, expectant mothers, people with disabilities and others in need, and fellow riders are asked to yield them.",
+          "zh-TW": "日本用的名字一模一樣，就叫優先席，設在每節通勤車廂，給高齡者、孕婦、身障者等，需要的人優先坐。",
+          "ja": "日本もまったく同じ「優先席」という名前で、通勤電車の各車両にあり、お年寄りや妊婦さんなどに譲ることになっています。"
+        },
+        "sources": [
+          {
+            "url": "https://ja.wikipedia.org/wiki/%E5%84%AA%E5%85%88%E5%B8%AD",
+            "title": "優先席",
+            "publisher": "Wikipedia (Japanese)",
+            "verified": "web_search"
+          }
+        ],
+        "confidence": "medium"
+      },
+      "US": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      }
+    }
+  },
+  {
+    "id": "bus-tap-on-off",
+    "category": "transport",
+    "layer": "point",
+    "trigger": {
+      "osm": ["highway=bus_stop"],
+      "context": "at a bus stop while boarding or alighting",
+      "photo_concepts": ["bus stop", "bus card reader", "boarding a bus", "EasyCard tap"]
+    },
+    "title": {
+      "en": "Tap when you get on AND when you get off",
+      "zh-TW": "上車嗶一次，下車也要嗶",
+      "ja": "乗る時も降りる時もタッチ"
+    },
+    "fact": {
+      "en": "Taipei buses charge by section, one section NT$15 for a full fare, so riders tap on boarding and again on alighting. The double-tap rule started in July 2019, and skipping a tap loses the bus-to-MRT transfer discount.",
+      "zh-TW": "台北公車按段計費，全票一段15元，所以上車下車都要刷卡。雙北2019年7月起實施，少刷一次就沒有公車轉捷運的優惠。",
+      "ja": "台北のバスは区間制で、全額は1区間15元。乗車時と降車時の2回タッチが必要です。このルールは2019年7月からで、タッチを忘れると乗換割引が受けられません。"
+    },
+    "sources": [
+      {
+        "url": "https://english.gov.taipei/News_Content.aspx?n=ADAE9018C6CFA1FE&sms=5B794C46F3CDE718&s=9A133D4C7D89B633",
+        "title": "What are the fares for different age groups (NT$15 full fare)",
+        "publisher": "Taipei City Government",
+        "verified": "web_search"
+      },
+      {
+        "url": "https://www.thefreelibrary.com/Taipei+and+New+Taipei+bus+passengers+have+to+swipe+card+twice+from...-a0587976477",
+        "title": "Taipei and New Taipei bus passengers have to swipe card twice from July 1 (CNA report repost)",
+        "publisher": "Central News Agency via The Free Library",
+        "verified": "web_search"
+      }
+    ],
+    "confidence": "low",
+    "disputed": false,
+    "caveats": "The July-2019 start and the transfer-discount detail come from a repost of a CNA report, not the CNA page itself. Open the original CNA/Focus Taiwan page or the Public Transport Office notice before use. JP/US comparisons still need sources.",
+    "hometown": {
+      "JP": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      },
+      "US": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      }
+    }
+  },
+  {
+    "id": "taipei-grand-mosque",
+    "category": "architecture",
+    "layer": "point",
+    "trigger": {
+      "osm": ["amenity=place_of_worship"],
+      "context": "on Xinsheng South Road near Daan Park; visible dome and minarets",
+      "photo_concepts": ["mosque", "dome", "minaret", "Islamic architecture"]
+    },
+    "title": {
+      "en": "The grand mosque by the park, finished in 1960",
+      "zh-TW": "公園旁的大清真寺，1960年落成",
+      "ja": "公園そばの大モスク、1960年完成"
+    },
+    "fact": {
+      "en": "Taipei Grand Mosque on Xinsheng South Road was completed in 1960, designed by architect Yang Cho-cheng, and is Taiwan's oldest and largest mosque. It became a municipal historic site in 1999.",
+      "zh-TW": "新生南路上的台北清真寺1960年落成，建築師楊卓成設計，是台灣最大最古老的清真寺，1999年列為市定古蹟。",
+      "ja": "新生南路の台北清真寺は1960年完成、楊卓成の設計で、台湾最大・最古のモスクです。1999年に市の古跡に指定されました。"
+    },
+    "sources": [
+      {
+        "url": "https://zh.wikipedia.org/wiki/%E5%8F%B0%E5%8C%97%E6%B8%85%E7%9C%9F%E5%AF%BA",
+        "title": "台北清真寺",
+        "publisher": "Wikipedia (Chinese)",
+        "verified": "web_search"
+      }
+    ],
+    "confidence": "medium",
+    "disputed": false,
+    "caveats": "Do not go inside to narrate unless the walker visits; keep it to what is visible from the street. Prayer-time and worship details were not researched.",
+    "hometown": {
+      "JP": {
+        "status": "different",
+        "comparison": {
+          "en": "Tokyo Camii, Japan's largest mosque, is newer in its current form: first built in 1938 and rebuilt in Ottoman style in 2000.",
+          "zh-TW": "日本最大的東京ジャーミイ，現在的建物比較新：1938年初建，2000年改建成鄂圖曼式。",
+          "ja": "日本最大の東京ジャーミイは、1938年に建てられ、2000年にオスマン様式で再建された、こちらより新しい建物です。"
+        },
+        "sources": [
+          {
+            "url": "https://en.wikipedia.org/wiki/Tokyo_Mosque",
+            "title": "Tokyo Mosque",
+            "publisher": "Wikipedia",
+            "verified": "web_search"
+          }
+        ],
+        "confidence": "medium"
+      },
+      "US": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      }
+    }
+  },
+  {
+    "id": "dongmen-market-1928",
+    "category": "shop",
+    "layer": "point",
+    "trigger": {
+      "osm": ["amenity=marketplace"],
+      "context": "near the Dongmen Market area (Xinyi Rd / Jinshan S. Rd); note the indoor market moved to an interim site in 2026",
+      "photo_concepts": ["traditional market", "market stalls", "fresh food market", "rice noodle soup stall"]
+    },
+    "title": {
+      "en": "A market from 1928, now in temporary exile",
+      "zh-TW": "1928年的市場，現在暫時搬家",
+      "ja": "1928年創業の市場、今は仮移転中"
+    },
+    "fact": {
+      "en": "Dongmen Market dates back to 1928 and was once nicknamed the aristocrats' market for its officials' neighbourhood clientele. Its indoor stalls moved 600 metres to an interim market in September 2026 for a four-year rebuild, while the surrounding street shops stayed.",
+      "zh-TW": "東門市場1928年就有了，以前鄰近官舍，被叫過貴族市場。內市場2026年9月搬到600公尺外的中繼市場改建4年，外市店家還在原地。",
+      "ja": "東門市場は1928年創業で、官舎が近かったため「貴族市場」と呼ばれました。屋内市場は2026年9月に600メートル先の仮市場へ移転し、4年かけて改築されます。周辺の店はそのままです。"
+    },
+    "sources": [
+      {
+        "url": "https://hoomedia.com.tw/2026/10/09/173009/",
+        "title": "百年東門市場轉型!中繼市場今開幕",
+        "publisher": "HooMedia (quoting city government announcements)",
+        "verified": "web_search"
+      },
+      {
+        "url": "https://www.youtube.com/watch?v=3uSISWiSlDo",
+        "title": "東門市場改建 45攤商搬離4年 (EBC News report)",
+        "publisher": "EBC News via YouTube",
+        "verified": "web_search"
+      }
+    ],
+    "confidence": "low",
+    "disputed": false,
+    "caveats": "CRITICAL FOR DEMO: the indoor market site is a construction zone; trigger on the surrounding street shops, not the old hall. Rebuild sources are non-whitelist media quoting the city; confirm dates against the Taipei Market Administration Office page. JP/US comparisons still need sources.",
+    "hometown": {
+      "JP": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      },
+      "US": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      }
+    }
+  },
+  {
+    "id": "red-green-postboxes",
+    "category": "street",
+    "layer": "point",
+    "trigger": {
+      "osm": ["amenity=post_box"],
+      "context": "street corners and post office fronts across Taipei",
+      "photo_concepts": ["post box", "red mailbox", "green mailbox"]
+    },
+    "title": {
+      "en": "Red box for express, green box for ordinary mail",
+      "zh-TW": "紅筒限時，綠筒平信",
+      "ja": "赤は速達、緑は普通郵便"
+    },
+    "fact": {
+      "en": "Chunghwa Post's signature colour is green, from uniforms to mail trucks, which is why carriers are nicknamed the green-clad messengers. As a rule of thumb, red boxes take express and airmail while green boxes take ordinary mail, so the wrong slot costs days.",
+      "zh-TW": "中華郵政的代表色是綠色，從制服到郵車都是綠的，郵差才有「綠衣使者」的外號。一般說法是：紅筒投限時和航空，綠筒投平信，投錯邊會慢好幾天。",
+      "ja": "中華郵政の色は緑で、制服から郵便車まで緑一色。「緑の使者」と呼ばれます。目安として、赤いポストは速達・航空便、緑は普通郵便で、間違えると数日遅れます。"
+    },
+    "sources": [
+      {
+        "url": "https://www.post.gov.tw/post/FileCenter/post_ww2/Bulletin_File/files/1513296906483/E95FBE43-E532-4BB1-A1A8-370558F4CD82.pdf",
+        "title": "各國郵差 (postal museum education material)",
+        "publisher": "Chunghwa Post",
+        "verified": "web_search"
+      }
+    ],
+    "confidence": "low",
+    "disputed": false,
+    "caveats": "Only the green branding is sourced from Chunghwa Post itself; the red/green sorting rule still needs the post.gov.tw FAQ before use. OSM amenity=post_box coverage in Taipei must be checked before wiring as a point trigger; otherwise demote to area.",
+    "hometown": {
+      "JP": {
+        "status": "different",
+        "comparison": {
+          "en": "Japanese post boxes are round and red: the iron round box appeared in 1901 and red became the standard. Japan even has blue boxes reserved for express mail.",
+          "zh-TW": "日本郵筒是紅色圓筒，1901年出現鐵製圓筒後紅色成為標準；速達專用還有藍色郵筒。",
+          "ja": "日本のポストは赤い丸型で、1901年の鉄製丸型の登場後に赤が標準になりました。速達専用の青いポストもあります。"
+        },
+        "sources": [
+          {
+            "url": "https://ja.wikipedia.org/wiki/%E9%83%B5%E4%BE%BF%E3%83%9D%E3%82%B9%E3%83%88",
+            "title": "郵便ポスト",
+            "publisher": "Wikipedia (Japanese)",
+            "verified": "web_search"
+          }
+        ],
+        "confidence": "medium"
+      },
+      "US": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      }
+    }
+  },
+  {
+    "id": "claw-machine-shops",
+    "category": "shop",
+    "layer": "sighting",
+    "trigger": {
+      "osm": [],
+      "context": "any street with a brightly lit unattended game storefront, day or night",
+      "photo_concepts": ["claw machine shop", "claw machines", "plush toys in glass cases"]
+    },
+    "title": {
+      "en": "A whole store of nothing but claw machines",
+      "zh-TW": "整間店只有夾娃娃機",
+      "ja": "クレーンゲームだけの店"
+    },
+    "fact": {
+      "en": "Taiwan's streets are full of unattended 24-hour claw machine shops; owners rent out individual machines by the month. Claw machines are now the single biggest source of amusement tax in New Taipei, bringing in over NT$100 million in 2023.",
+      "zh-TW": "台灣街頭到處是24小時無人夾娃娃機店，機台用月租分租出去。夾娃娃機已是新北市娛樂稅第一大稅源，2023年實徵超過1億元。",
+      "ja": "台湾の街には24時間無人のクレーンゲーム店があちこちにあり、台は月貸しされています。新北市では娯楽税の最大の税源で、2023年の税収は1億元を超えました。"
+    },
+    "sources": [
+      {
+        "url": "https://www.tax.ntpc.gov.tw/dl-6393-91e46f13904e41f0b4dfb80e74d68b93.html",
+        "title": "112年甲組稅捐稽徵機關娛樂稅徵收暨成長概況分析",
+        "publisher": "New Taipei City Tax Collection Office",
+        "verified": "web_search"
+      }
+    ],
+    "confidence": "medium",
+    "disputed": false,
+    "caveats": "The 24-hour unattended format is observable but was not sourced to a page; keep it as scene-setting, not the claim. Nationwide store counts were not verified, so quote only the New Taipei tax figure. JP/US comparisons still need sources.",
+    "hometown": {
+      "JP": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      },
+      "US": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      }
+    }
+  },
+  {
+    "id": "food-delivery-riders",
+    "category": "daily-life",
+    "layer": "sighting",
+    "trigger": {
+      "osm": [],
+      "context": "meal hours, when pink and green delivery boxes swarm the streets",
+      "photo_concepts": ["food delivery rider", "delivery box on scooter", "pink delivery box", "green delivery box"]
+    },
+    "title": {
+      "en": "The pink and green scooter army",
+      "zh-TW": "粉紅和綠色外送大軍",
+      "ja": "ピンクと緑の配達軍団"
+    },
+    "fact": {
+      "en": "Food delivery in Taiwan runs on scooters, and the pink foodpanda and green Uber Eats boxes are everywhere at meal hours. The business is so big that in late 2024 the Fair Trade Commission blocked Uber Eats from buying foodpanda's Taiwan operation.",
+      "zh-TW": "台灣外送靠機車，用餐時間滿街粉紅foodpanda和綠色Uber Eats。生意大到2024年底，公平會禁止Uber Eats併購foodpanda台灣業務。",
+      "ja": "台湾のデリバリーはバイクが主役で、食事時にはピンクのfoodpandaと緑のUber Eatsがあふれます。2024年末には、公平交易委員会がUber Eatsによるfoodpanda台湾事業の買収を禁じるほど大きな市場です。"
+    },
+    "sources": [
+      {
+        "url": "https://schedule.printable.de.com/web/uber-transportation-to-airport/",
+        "title": "Uber Eats併foodpanda競爭疑慮大 公平會禁止 (CNA 2024-12-25, quoted)",
+        "publisher": "Central News Agency (quoted in repost)",
+        "verified": "web_search"
+      }
+    ],
+    "confidence": "low",
+    "disputed": false,
+    "caveats": "The merger-block comes via a quoted repost, not the CNA page itself; open the original CNA/Focus Taiwan article before use. Rider counts and order volumes were deliberately not quoted (only weak video sources).",
+    "hometown": {
+      "JP": {
+        "status": "same",
+        "comparison": {
+          "en": "Uber Eats started in Tokyo in September 2016, so the app on the rider's phone will look familiar; the difference is that in Taiwan the riders are overwhelmingly on scooters.",
+          "zh-TW": "Uber Eats 2016年9月從東京開始，日本人對App很熟；差別是台灣外送員幾乎都騎機車。",
+          "ja": "Uber Eatsは2016年9月に東京で始まったので、アプリ自体はおなじみのはず。違いは、台湾の配達員がほぼバイクなことです。"
+        },
+        "sources": [
+          {
+            "url": "http://ja.wikipedia.org/wiki/Uber_Eats",
+            "title": "Uber Eats",
+            "publisher": "Wikipedia (Japanese)",
+            "verified": "web_search"
+          }
+        ],
+        "confidence": "medium"
+      },
+      "US": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      }
+    }
+  },
+  {
+    "id": "outdoor-banquet-banzhuo",
+    "category": "daily-life",
+    "layer": "sighting",
+    "trigger": {
+      "osm": [],
+      "context": "when a street is tented over with round tables, stoves and red chairs, usually around weddings, funerals or temple festivals",
+      "photo_concepts": ["outdoor banquet tent", "round tables on street", "red plastic chairs", "banquet cooking stoves"]
+    },
+    "title": {
+      "en": "The whole street becomes a restaurant",
+      "zh-TW": "馬路變成餐廳",
+      "ja": "道路がレストランになる"
+    },
+    "fact": {
+      "en": "For weddings, funerals and temple festivals, hosts hire a 總鋪師 (banquet chef) who sets up stoves by the roadside and cooks on the spot. These roadside feasts, called 辦桌 or 流水席, can take over a whole lane.",
+      "zh-TW": "婚喪喜慶時，主人家請總鋪師在馬路邊搭棚、現場開伙，就是辦桌或流水席，整條巷子都可能變成宴會廳。",
+      "ja": "結婚式やお葬式、お祭りの際には「総鋪師」と呼ばれる料理人が道路脇に店を出してその場で調理します。「辦桌（パントー）」と呼ばれる路上宴会で、路地全体が会場になります。"
+    },
+    "sources": [
+      {
+        "url": "https://zh.wikipedia.org/wiki/%E8%BE%A6%E6%A1%8C",
+        "title": "辦桌",
+        "publisher": "Wikipedia (Chinese)",
+        "verified": "web_search"
+      }
+    ],
+    "confidence": "medium",
+    "disputed": false,
+    "caveats": "Do not promise one will be seen; trigger only on photo/ask. Street-closure permits for 辦桌 were not researched, so say nothing about legality.",
+    "hometown": {
+      "JP": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      },
+      "US": {
+        "status": "different",
+        "comparison": {
+          "en": "New York has its own version of eating in the street: a block party needs a city permit applied for 60 to 90 days ahead, plus a processing fee. Same instinct, far more paperwork.",
+          "zh-TW": "紐約也有封街吃飯：block party要向市府申請，60到90天前提出還要付費。精神一樣，手續麻煩多了。",
+          "ja": "ニューヨークにも路上パーティー（block party）がありますが、市の許可が60〜90日前に必要で手数料もかかります。気持ちは同じ、手続きは大変です。"
+        },
+        "sources": [
+          {
+            "url": "https://www.NYC.gov/site/cecm/permitting/permit-types.page",
+            "title": "Permit Types - CECM",
+            "publisher": "NYC Mayor's Office (CECM/SAPO)",
+            "verified": "web_search"
+          }
+        ],
+        "confidence": "medium"
+      }
+    }
+  },
+  {
+    "id": "temple-procession-bajiajiang",
+    "category": "daily-life",
+    "layer": "sighting",
+    "trigger": {
+      "osm": [],
+      "context": "temple festival days, when drums, gongs, firecrackers and costumed troupes fill the street",
+      "photo_concepts": ["temple procession", "costumed performers", "lion dance", "firecrackers", "incense smoke"]
+    },
+    "title": {
+      "en": "Generals with painted faces clearing the god's path",
+      "zh-TW": "臉譜將軍幫神明開路",
+      "ja": "隈取りの将軍が神様の道を開く"
+    },
+    "fact": {
+      "en": "At temple festivals, troupes like the Eight Generals march ahead of the palanquin with painted faces, embroidered banners, firecrackers and incense. Procession troupes come in civil and martial styles, and the Eight Generals are a martial one.",
+      "zh-TW": "廟會遶境時，八家將這類陣頭走在神轎前面開路，臉譜、繡旗、鞭炮加香煙。陣頭分文陣武陣，八家將屬於武陣。",
+      "ja": "廟のお祭りでは、八家将などの一行が隈取り姿で神輿の前を行き、旗や爆竹、お香を伴います。陣頭には文と武があり、八家将は武のものです。"
+    },
+    "sources": [
+      {
+        "url": "https://english.cw.com.tw/article/article.action?id=3313",
+        "title": "The unique tradition of the Eight Generals and the highlights of Taipei Qingshan King Festival",
+        "publisher": "CommonWealth Magazine (English)",
+        "verified": "web_search"
+      },
+      {
+        "url": "https://www.moea.gov.tw/MNS/DOGA/content/wHandMenuFile.ashx?file_id=11692",
+        "title": "多元與涵融 臺灣南部的廟會陣頭",
+        "publisher": "Ministry of Economic Affairs",
+        "verified": "web_search"
+      }
+    ],
+    "confidence": "medium",
+    "disputed": false,
+    "caveats": "CommonWealth English is a proposed (not yet whitelisted) domain; the martial/civil split is from an MOEA-hosted PDF. Trigger only on photo/ask; never promise a procession will appear. The famous Qingshan King festival is in Wanhua, not Daan, so do not imply it happens in Yongkang.",
+    "hometown": {
+      "JP": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      },
+      "US": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      }
+    }
+  },
+  {
+    "id": "escalator-stand-both-sides",
+    "category": "transport",
+    "layer": "area",
+    "trigger": {
+      "osm": [],
+      "context": "MRT stations, on or near escalators",
+      "photo_concepts": ["escalator", "standing on escalator", "escalator etiquette sign"]
+    },
+    "title": {
+      "en": "Both sides are for standing now",
+      "zh-TW": "現在兩邊都可以站",
+      "ja": "今は両側とも立つため"
+    },
+    "fact": {
+      "en": "Taipei Metro used to ask riders to stand on the right, but since 2005 the message has been hold the handrail, stand steady. Since October 2024 the metro posts that both sides are for standing and asks people not to walk on escalators.",
+      "zh-TW": "北捷以前宣導靠右站，2005年後改成「緊握扶手、站穩踏階」。2024年10月起更公告兩側都可以站，請大家不要在手扶梯上走動。",
+      "ja": "台北メトロは以前右側に立つよう呼びかけていましたが、2005年以降は「手すりを持って、しっかり立つ」に変わりました。2024年10月からは両側とも立つため、歩かないよう呼びかけています。"
+    },
+    "sources": [
+      {
+        "url": "https://www.ptt.cc/bbs/Gossiping/M.1789630654.A.E82.html",
+        "title": "[新聞] 北捷手扶梯風氣改變了 (quoting news reports on the Oct 2024 policy)",
+        "publisher": "PTT Gossiping (quoting NowNews and official statements)",
+        "verified": "web_search"
+      },
+      {
+        "url": "https://www.youtube.com/watch?v=cdnES1JORgw",
+        "title": "捷運禮儀,你我一起!搭乘電扶梯禮貌互動,勿奔跑",
+        "publisher": "Taipei Metro (official channel)",
+        "verified": "web_search"
+      }
+    ],
+    "confidence": "low",
+    "disputed": false,
+    "caveats": "Weak source chain (forum quotes of news plus an official video title). Open the NowNews original or a metro.taipei press release before use. JP/US escalator comparisons (Tokyo-left vs Kansai-right, MTA stand-right) still need sources.",
+    "hometown": {
+      "JP": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      },
+      "US": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      }
+    }
+  },
+  {
+    "id": "receipt-lottery-1951",
+    "category": "shop",
+    "layer": "national",
+    "trigger": {
+      "osm": [],
+      "context": "after any purchase, when the receipt or the載具 question comes up",
+      "photo_concepts": ["receipt", "uniform invoice", "checkout counter"]
+    },
+    "title": {
+      "en": "Every receipt is a lottery ticket",
+      "zh-TW": "每張發票都是樂透",
+      "ja": "レシートはすべて宝くじ"
+    },
+    "fact": {
+      "en": "Taiwan's uniform-invoice lottery started in 1951 to fight tax evasion: the chance of winning makes shoppers demand receipts. Saving the invoice on a phone barcode adds a second draw, with millions of cloud-invoice-only prizes each period.",
+      "zh-TW": "台灣統一發票對獎1951年就開始了，當年為防逃稅，用中獎吸引大家主動要收據。用手機載具存雲端發票，還能多對一次專屬獎，每期多達幾百萬組。",
+      "ja": "台湾の統一発票の宝くじは1951年に脱税対策として始まり、当選の期待で客にレシートを求めさせます。携帯のバーコードで保存すれば専属賞の2回目の抽選があり、毎回数百万組が当たります。"
+    },
+    "sources": [
+      {
+        "url": "https://zh.wikipedia.org/wiki/%E7%B5%B1%E4%B8%80%E7%99%BC%E7%A5%A8_(%E8%87%BA%E7%81%A3)",
+        "title": "統一發票 (臺灣)",
+        "publisher": "Wikipedia (Chinese)",
+        "verified": "web_search"
+      },
+      {
+        "url": "https://www.mof.gov.tw/singlehtml/384fb3077bb349ea973e7fc6f13b6974?cntId=7ea1b2b5bc4a42c599c327994602c9b5",
+        "title": "公告115年1-6月期統一發票開獎獎別及組數",
+        "publisher": "Ministry of Finance",
+        "verified": "web_search"
+      }
+    ],
+    "confidence": "medium",
+    "disputed": false,
+    "caveats": "Facets for 'tell me more': (1) the 1951 origin story; (2) the載具 follow-up: cashiers ask 有載具嗎, cloud invoices double-dip and winnings can auto-transfer to a bank account. Prize-group counts change every period, so quote them only with a date or round them off.",
+    "hometown": {
+      "JP": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      },
+      "US": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      }
+    }
+  },
+  {
+    "id": "plastic-bag-fee-2002",
+    "category": "daily-life",
+    "layer": "national",
+    "trigger": {
+      "osm": [],
+      "context": "checkout counters, when a bag is offered or charged",
+      "photo_concepts": ["plastic bag", "shopping bag", "reusable bag", "checkout counter"]
+    },
+    "title": {
+      "en": "No free plastic bags since 2002",
+      "zh-TW": "2002年起塑膠袋要錢",
+      "ja": "2002年からレジ袋は有料"
+    },
+    "fact": {
+      "en": "Taiwan stopped free plastic shopping bags in July 2002 and extended the ban to 14 retail categories in 2018. Shoppers pay per bag or bring their own, with fines up to NT$6,000 for stores that break the rule.",
+      "zh-TW": "台灣2002年7月起店家不能免費給購物塑膠袋，2018年擴大到14類商店。民眾自備袋子或付費購買，違規店家最高罰6000元。",
+      "ja": "台湾では2002年7月からレジ袋の無料配布が禁止され、2018年には14業種に拡大しました。客は袋を買うか持参し、違反した店には最高6000元の罰金です。"
+    },
+    "sources": [
+      {
+        "url": "https://english.ey.gov.tw/Page/61BF20C3E89B856/17a4de83-8ad0-439e-ab7a-0aca6928e4f9",
+        "title": "Government to expand restrictions on plastic bag use",
+        "publisher": "Executive Yuan",
+        "verified": "web_search"
+      },
+      {
+        "url": "https://service.moenv.gov.tw/file/get/MOENV/zh-tw/792B10C80351B760",
+        "title": "購物用塑膠袋管制範圍 (MOENV briefing slides)",
+        "publisher": "Ministry of Environment",
+        "verified": "web_search"
+      }
+    ],
+    "confidence": "medium",
+    "disputed": false,
+    "caveats": "The NT$6,000 maximum comes from a non-whitelist explainer quoting the EPA; verify against the MOENV announcement before quoting the number.",
+    "hometown": {
+      "JP": {
+        "status": "same",
+        "comparison": {
+          "en": "Japan followed later: all retailers have charged for plastic bags since July 2020, typically a few yen each.",
+          "zh-TW": "日本比較晚：2020年7月起所有商店塑膠袋收費，一個大約幾日圓。",
+          "ja": "日本は遅れて2020年7月から全店で有料化され、1枚数円です。"
+        },
+        "sources": [
+          {
+            "url": "https://www.meti.go.jp/policy/recycle/plasticbag/plasticbag_top.html",
+            "title": "プラスチック製買物袋有料化 (METI reference page)",
+            "publisher": "Ministry of Economy, Trade and Industry (Japan)",
+            "verified": "web_search"
+          },
+          {
+            "url": "https://blog.nus.edu.sg/greenjapan/2020/10/22/japans-new-plastic-bag-charge-what-it-means-for-the-country-and-its-environment-sihao-and-yu-en/",
+            "title": "Japan's new plastic bag charge",
+            "publisher": "NUS Green Japan (citing METI policy)",
+            "verified": "web_search"
+          }
+        ],
+        "confidence": "medium"
+      },
+      "US": {
+        "status": "same",
+        "comparison": {
+          "en": "New York State banned plastic carryout bags in March 2020, so a New Yorker also brings a tote or pays for paper.",
+          "zh-TW": "紐約州2020年3月禁用塑膠袋，紐約客買東西也要自備袋子或付費買紙袋。",
+          "ja": "ニューヨーク州も2020年3月にレジ袋を禁止したので、ニューヨーカーも袋を持参します。"
+        },
+        "sources": [
+          {
+            "url": "http://dec.ny.gov/environmental-protection/recycling-composting/businesses",
+            "title": "Waste Reduction and Recycling for Businesses (Bag Waste Reduction Act)",
+            "publisher": "NYS Department of Environmental Conservation",
+            "verified": "web_search"
+          }
+        ],
+        "confidence": "medium"
+      }
+    }
+  },
+  {
+    "id": "typhoon-day-off",
+    "category": "daily-life",
+    "layer": "national",
+    "trigger": {
+      "osm": [],
+      "context": "typhoon season conversation filler; never imply one is happening now",
+      "photo_concepts": ["typhoon news", "closed school notice", "empty street in rain"]
+    },
+    "title": {
+      "en": "The mayor decides your typhoon day off",
+      "zh-TW": "颱風假是市長宣布的",
+      "ja": "台風休みは市長が決める"
+    },
+    "fact": {
+      "en": "When a typhoon nears, each city or county chief decides whether offices and schools close, so neighbouring cities can disagree. The central personnel agency only compiles the announcements; since 2013 the official name is disaster-prevention leave, not typhoon holiday.",
+      "zh-TW": "颱風來時放不放假，由各縣市首長宣布，隔壁縣市可能不同調。人事行政總處只負責彙整公告；2013年起官方正名叫「災防假」，不是颱風假。",
+      "ja": "台風が近づくと休みかどうかは各県・市長が決めるので、隣同士で違うこともあります。中央の人事行政総処は取りまとめるだけで、2013年から正式名は「防災休暇」です。"
+    },
+    "sources": [
+      {
+        "url": "https://zh.wikipedia.org/wiki/%E5%A4%A9%E7%84%B6%E7%81%BD%E5%AE%B3%E5%81%9C%E6%AD%A2%E4%B8%8A%E7%8F%AD%E5%8F%8A%E4%B8%8A%E8%AA%B2%E4%BD%9C%E6%A5%AD%E8%BE%A6%E6%B3%95",
+        "title": "天然災害停止上班及上課作業辦法",
+        "publisher": "Wikipedia (Chinese)",
+        "verified": "web_search"
+      },
+      {
+        "url": "https://dep-personnel.hccg.gov.tw/uploaddowndoc?file=training/202102041126030.pdf&filedisplay=%E5%A4%A9%E7%84%B6%E7%81%BD%E5%AE%B3%E5%81%9C%E6%AD%A2%E4%B8%8A%E7%8F%AD%E5%8F%8A%E4%B8%8A%E8%AA%B2%E4%BD%9C%E6%A5%AD%E8%BE%A6%E6%B3%95%28108.4.29%E4%BF%AE%E6%AD%A3%E7%99%BC%E5%B8%83%29.pdf&flag=doc",
+        "title": "天然災害停止上班及上課作業辦法 (full regulation text)",
+        "publisher": "Hsinchu City Personnel Department (hosting the regulation)",
+        "verified": "web_search"
+      }
+    ],
+    "confidence": "medium",
+    "disputed": false,
+    "caveats": "National filler only; never suggest a typhoon is coming. Wind and rain thresholds were deliberately left out. JP/US school-closure comparisons still need sources.",
+    "hometown": {
+      "JP": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      },
+      "US": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      }
+    }
+  },
+  {
+    "id": "scooter-helmet-law-1997",
+    "category": "transport",
+    "layer": "national",
+    "trigger": {
+      "osm": [],
+      "context": "any street full of scooters, day or night",
+      "photo_concepts": ["scooter riders", "motorcycle helmets", "scooters at intersection"]
+    },
+    "title": {
+      "en": "Helmets have been mandatory since 1997",
+      "zh-TW": "1997年起騎車就要戴安全帽",
+      "ja": "1997年からヘルメット義務"
+    },
+    "fact": {
+      "en": "Since 1 June 1997, every scooter rider and passenger in Taiwan must wear a helmet, with a NT$500 fine for going without. That is why the sea of scooters at every red light is also a sea of helmets.",
+      "zh-TW": "1997年6月1日起，全台騎機車前後座都要戴安全帽，沒戴罰500元。所以每個紅燈前的機車海，也是一片安全帽海。",
+      "ja": "1997年6月1日から、台湾ではバイクの運転者も同乗者もヘルメットが義務で、違反は500元の罰金です。だから赤信号前のバイクの群れは、ヘルメットの群れでもあります。"
+    },
+    "sources": [
+      {
+        "url": "http://gazette.nat.gov.tw/EG_FileManager/eguploadpub/eg011140/ch06/type3/gov50/num2/Eg.pdf",
+        "title": "機器腳踏車駕駛人及附載座人戴安全帽實施及宣導辦法 (announcement of 1 June 1997 enforcement)",
+        "publisher": "Ministry of Transportation and Communications (via Executive Yuan Gazette)",
+        "verified": "web_search"
+      },
+      {
+        "url": "https://zh.wikibooks.org/zh-hant/%E4%B8%AD%E8%8F%AF%E6%B0%91%E5%9C%8B%E6%B3%95%E5%BE%8B%E8%A8%BB%E8%A7%A3/%E9%81%93%E8%B7%AF%E4%BA%A4%E9%80%9A%E7%AE%A1%E7%90%86%E8%99%95%E7%BD%B0%E6%A2%9D%E4%BE%8B/%E7%AC%AC31%E6%A2%9D",
+        "title": "道路交通管理處罰條例/第31條 (NT$500 helmet fine)",
+        "publisher": "Wikibooks (quoting the Act)",
+        "verified": "web_search"
+      }
+    ],
+    "confidence": "medium",
+    "disputed": false,
+    "caveats": "Do not quote injury-reduction percentages; the only sourced figure is secondhand. The JP motorbike-helmet comparison still needs an official source (a 1986 start date is unverified chatter).",
+    "hometown": {
+      "JP": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      },
+      "US": {
+        "status": "same",
+        "comparison": {
+          "en": "New York requires every rider and passenger to wear a DOT-approved helmet; novelty helmets are illegal on its roads. So a New Yorker also never rides bare-headed, at least at home.",
+          "zh-TW": "紐約州規定騎士和乘客都要戴合格安全帽，裝飾用的 novelty 安全帽上路違法。紐約客在家鄉也要戴，只是街上機車少得多。",
+          "ja": "ニューヨーク州も運転者・同乗者とも公認ヘルメットが義務で、おもちゃのヘルメットは違法です。違うのは街にバイクが少ないことです。"
+        },
+        "sources": [
+          {
+            "url": "https://trafficsafety.ny.gov/what-can-you-do-about-motorcycle-safety",
+            "title": "Motorcycle safety tips (DOT-approved helmet requirement)",
+            "publisher": "NYS Governor's Traffic Safety Committee",
+            "verified": "web_search"
+          }
+        ],
+        "confidence": "medium"
+      }
+    }
+  },
+  {
+    "id": "easycard-2002",
+    "category": "transport",
+    "layer": "national",
+    "trigger": {
+      "osm": [],
+      "context": "metro gates, bus readers and convenience store counters, anywhere a card tap happens",
+      "photo_concepts": ["tapping a transit card", "fare gate", "EasyCard", "card reader"]
+    },
+    "title": {
+      "en": "One card for trains, buses and snacks since 2002",
+      "zh-TW": "2002年起一卡搭車買東西",
+      "ja": "2002年から1枚で電車も買い物も"
+    },
+    "fact": {
+      "en": "EasyCard launched on Taipei transit in June 2002 and spread to convenience stores and other retailers from April 2010. Japan's Suica came a year earlier in 2001, while New York's tap-to-pay OMNY only arrived in 2019.",
+      "zh-TW": "悠遊卡2002年6月在台北交通上路，2010年4月擴大到超商等小額店家。日本Suica早一年（2001），紐約嗶信用卡進站的OMNY則晚到2019年。",
+      "ja": "悠遊カードは2002年6月に台北の交通で始まり、2010年4月からコンビニなどでも使えます。日本のSuicaは1年早い2001年、ニューヨークのOMNYは遅れて2019年です。"
+    },
+    "sources": [
+      {
+        "url": "https://en.wikipedia.org/wiki/EasyCard",
+        "title": "EasyCard",
+        "publisher": "Wikipedia",
+        "verified": "full-text"
+      }
+    ],
+    "confidence": "medium",
+    "disputed": false,
+    "caveats": "Keep the year order right: Suica 2001 first, EasyCard 2002, OMNY 2019. Card-issue counts and transaction shares age fast, so none are quoted here.",
+    "hometown": {
+      "JP": {
+        "status": "same",
+        "comparison": {
+          "en": "Suica launched on 18 November 2001 at 424 JR East stations and works the same way: tap in, tap out, and pay at station shops.",
+          "zh-TW": "Suica 2001年11月18日在424個JR東日本車站上路，用法一樣：進出嗶卡，還能在站內商店付款。",
+          "ja": "Suicaは2001年11月18日にJR東日本の424駅で始まり、使い方は同じです。改札でタッチして、駅の店でも払えます。"
+        },
+        "sources": [
+          {
+            "url": "https://en.wikipedia.org/wiki/Suica",
+            "title": "Suica",
+            "publisher": "Wikipedia",
+            "verified": "web_search"
+          }
+        ],
+        "confidence": "medium"
+      },
+      "US": {
+        "status": "same",
+        "comparison": {
+          "en": "New York's OMNY tap-to-pay began its public rollout on 31 May 2019 and now works across the subway and buses, so a New Yorker taps too, just with a bank card or phone.",
+          "zh-TW": "紐約OMNY 2019年5月31日開始試營運，現在地鐵公車都能嗶信用卡或手機。紐約客也嗶，只是嗶的是銀行卡。",
+          "ja": "ニューヨークのOMNYは2019年5月31日に始まり、今は地下鉄もバスもタッチ決済です。ニューヨーカーもタッチしますが、使うのは銀行カードです。"
+        },
+        "sources": [
+          {
+            "url": "https://en.wikipedia.org/wiki/OMNY",
+            "title": "OMNY",
+            "publisher": "Wikipedia",
+            "verified": "web_search"
+          },
+          {
+            "url": "https://apps.cio.ny.gov/apps/mediacontent/public/download.cfm?attachment_uuid=F0DB3E0A-009F-1893-0593CA967BE2FEB3",
+            "title": "Tap and Ride Key Milestones",
+            "publisher": "NYS Office of Information Technology Services",
+            "verified": "web_search"
+          }
+        ],
+        "confidence": "medium"
+      }
+    }
+  },
+  {
+    "id": "dintaifeng-oil-shop-1972",
+    "category": "shop",
+    "layer": "area",
+    "trigger": {
+      "osm": [],
+      "context": "Yongkang Street near the Xinyi Road flagship; the queue itself is the landmark",
+      "photo_concepts": ["Din Tai Fung queue", "xiaolongbao restaurant", "steamer baskets"]
+    },
+    "title": {
+      "en": "The dumpling empire started as a cooking-oil shop",
+      "zh-TW": "小籠包帝國前身是油行",
+      "ja": "小籠包帝国は油屋だった"
+    },
+    "fact": {
+      "en": "Din Tai Fung opened in 1958 as a cooking-oil retailer and only split half its shop into a xiaolongbao counter in 1972. Its first overseas branch opened in Tokyo in 1996, and its first US branch in Arcadia, California in 2000.",
+      "zh-TW": "鼎泰豐1958年是賣油的油行，1972年分一半店面賣小籠包才轉型。第一家海外店1996年開在東京，美國第一家2000年在加州阿卡迪亞。",
+      "ja": "鼎泰豊は1958年には食用油の小売店で、1972年に店の半分で小籠包を売り始めて転身しました。初の海外店は1996年の東京、全米初は2000年のカリフォルニア州アーケイディアです。"
+    },
+    "sources": [
+      {
+        "url": "https://zh.wikipedia.org/wiki/%E9%BC%8E%E6%B3%B0%E8%B1%90",
+        "title": "鼎泰豐",
+        "publisher": "Wikipedia (Chinese)",
+        "verified": "web_search"
+      },
+      {
+        "url": "https://en.wikipedia.org/wiki/Din_Tai_Fung",
+        "title": "Din Tai Fung",
+        "publisher": "Wikipedia",
+        "verified": "web_search"
+      }
+    ],
+    "confidence": "medium",
+    "disputed": false,
+    "caveats": "History topic: keep it to the visible shopfront and the queue, not a restaurant review. Do not quote store counts or wait times; they change constantly.",
+    "hometown": {
+      "JP": {
+        "status": "same",
+        "comparison": {
+          "en": "Japan got there first: Tokyo hosted the first overseas Din Tai Fung in 1996, and Japan now has 28 branches.",
+          "zh-TW": "日本最早：1996年東京開了第一家海外店，現在日本有28家分店。",
+          "ja": "日本が最初です。1996年に東京に初の海外店が開き、今は国内に28店舗あります。"
+        },
+        "sources": [
+          {
+            "url": "https://en.wikipedia.org/wiki/Din_Tai_Fung",
+            "title": "Din Tai Fung",
+            "publisher": "Wikipedia",
+            "verified": "web_search"
+          }
+        ],
+        "confidence": "medium"
+      },
+      "US": {
+        "status": "same",
+        "comparison": {
+          "en": "The first North American branch opened in Arcadia, California in 2000, so a visitor from the US may already have queued at one back home.",
+          "zh-TW": "北美第一家2000年開在加州阿卡迪亞，美國來的遊客可能在家鄉就排過了。",
+          "ja": "北米初は2000年のカリフォルニア州アーケイディアで、米国からの方は地元で並んだことがあるかもしれません。"
+        },
+        "sources": [
+          {
+            "url": "https://en.wikipedia.org/wiki/Din_Tai_Fung",
+            "title": "Din Tai Fung",
+            "publisher": "Wikipedia",
+            "verified": "web_search"
+          }
+        ],
+        "confidence": "medium"
+      }
+    }
+  },
+  {
+    "id": "rongjin-prison-dorms",
+    "category": "architecture",
+    "layer": "area",
+    "trigger": {
+      "osm": [],
+      "context": "Jinhua Street lanes, where wooden Japanese-era houses with tiled roofs line the street",
+      "photo_concepts": ["Japanese wooden house", "tiled roof dormitory", "old dormitory lane", "Rongjin park"]
+    },
+    "title": {
+      "en": "These Japanese houses were a prison's dormitories",
+      "zh-TW": "這些日式木屋是監獄宿舍",
+      "ja": "この日本家屋は刑務所の官舎だった"
+    },
+    "fact": {
+      "en": "The wooden houses around Jinhua Street were staff dormitories of Taihoku Prison from the Japanese era, kept by the justice ministry after the war. Restored and reopened as the Rongjin Time park, they now hold food shops and craft stores.",
+      "zh-TW": "金華街一帶的日式木屋，是日治時期台北刑務所的官舍，戰後由法務部繼續使用。整修後變成榕錦時光生活園區，現在是餐飲和文創店。",
+      "ja": "金華街一帯の木造家屋は、日本時代の台北刑務所の官舎で、戦後も法務部が使い続けました。修復されて「榕錦時光」として開園し、今は飲食店や雑貨店が入っています。"
+    },
+    "sources": [
+      {
+        "url": "https://zh.wikipedia.org/wiki/%E5%8E%9F%E8%87%BA%E5%8C%97%E5%88%91%E5%8B%99%E6%89%80%E5%AE%98%E8%88%8D",
+        "title": "原臺北刑務所官舍",
+        "publisher": "Wikipedia (Chinese)",
+        "verified": "web_search"
+      },
+      {
+        "url": "https://english.gov.taipei/News_Content.aspx?n=A11F01CFC9F58C83&sms=DFFA119D1FD5602C&s=F442F76A45ECAB5E",
+        "title": "Restored Japanese Colonial Era Officer Dormitory Reopens to the Public",
+        "publisher": "Taipei City Government",
+        "verified": "web_search"
+      }
+    ],
+    "confidence": "medium",
+    "disputed": false,
+    "caveats": "The 2013 demolition controversy is deliberately left out; keep the tone to visible reuse. Do not present the shops inside as historic.",
+    "hometown": {
+      "JP": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      },
+      "US": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      }
+    }
+  },
+  {
+    "id": "daan-park-no7",
+    "category": "architecture",
+    "layer": "area",
+    "trigger": {
+      "osm": [],
+      "context": "edges of Daan Forest Park, where the grid of old lanes meets the park",
+      "photo_concepts": ["forest park", "park trees", "old neighbourhood by park"]
+    },
+    "title": {
+      "en": "This forest was a neighbourhood until 1992",
+      "zh-TW": "這座森林1992年前是住家",
+      "ja": "この森は1992年まで住宅地だった"
+    },
+    "fact": {
+      "en": "Daan Forest Park was zoned as Park No. 7 back in 1932 but only opened on 29 March 1994, after the military villages and the International House on the site were cleared from 1992. Before the trees, thousands of families lived here for decades.",
+      "zh-TW": "大安森林公園1932年就劃為七號公園預定地，但1992年拆遷眷村和國際學舍後，1994年3月29日才開園。長出樹之前，這裡住了幾千個家庭幾十年。",
+      "ja": "大安森林公園は1932年に7号公園として計画されながら、眷村や国際学舎の立退きを経て1994年3月29日にやっと開園しました。木が生える前は、何千もの家族が何十年も暮らしていました。"
+    },
+    "sources": [
+      {
+        "url": "https://zh.wikipedia.org/wiki/%E5%A4%A7%E5%AE%89%E6%A3%AE%E6%9E%97%E5%85%AC%E5%9C%92",
+        "title": "大安森林公園",
+        "publisher": "Wikipedia (Chinese)",
+        "verified": "web_search"
+      },
+      {
+        "url": "https://irlib.pccu.edu.tw/ir/retrieve/68579/228-7.pdf",
+        "title": "大安森林公園活動與周邊都市開發特性 (thesis chapter)",
+        "publisher": "Chinese Culture University (edu.tw)",
+        "verified": "web_search"
+      }
+    ],
+    "confidence": "medium",
+    "disputed": false,
+    "caveats": "Keep it light: homes for thousands of families, cleared in 1992. Do not dwell on the eviction conflict or quote compensation figures; the 12,000-resident figure differs between sources and is not quoted here.",
+    "hometown": {
+      "JP": {
+        "status": "unknown",
+        "comparison": null,
+        "sources": [],
+        "confidence": "low"
+      },
+      "US": {
+        "status": "different",
+        "comparison": {
+          "en": "New York's Central Park has a parallel past: Seneca Village, a community founded by free Black New Yorkers in 1825, was removed by eminent domain in 1857 to build the park. Two beloved parks, both built where neighbourhoods stood.",
+          "zh-TW": "紐約中央公園有類似的過去：1825年自由黑人建立的塞內卡村，1857年因徵收拆除改建公園。兩個受喜愛的公園，腳下都曾是住家。",
+          "ja": "ニューヨークのセントラルパークにも似た過去があります。1825年に自由黒人が築いたセネカ村が1857年に収用で取り除かれ、公園になりました。愛される2つの公園は、どちらも住宅地の跡にあります。"
+        },
+        "sources": [
+          {
+            "url": "https://www.nps.gov/articles/seneca-village-new-york-city.htm",
+            "title": "Seneca Village, New York City",
+            "publisher": "US National Park Service",
+            "verified": "web_search"
+          }
+        ],
+        "confidence": "low"
+      }
+    }
+  }
+]

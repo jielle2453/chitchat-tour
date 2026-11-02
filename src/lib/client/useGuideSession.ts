@@ -4,16 +4,18 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createGpsSource, createSimulatedSource, type SimulatedSource } from "@/lib/geo";
 import type { TriggerConfig } from "@/lib/trigger";
-import type { AskResponse, DetectedObject, Discovery, DiscoveryOrigin, ExplainRequest, GeoFix, Narration, RouteDef, UserProfile, WalkRecord } from "@/lib/types";
+import type { AskResponse, DetectedObject, Discovery, DiscoveryOrigin, ExplainRequest, GeoFix, LocationSource, Narration, RouteDef, UserProfile, WalkRecord } from "@/lib/types";
 import { postJson } from "./api";
 import { unlockAudio } from "./audio";
 import { pauseSpeaking, resumeSpeaking, setSpeechRate, speak, speechProgress, stopSpeaking } from "./speech";
 import { addHeard, readWalks, saveDiscovery, upsertWalk, useDiscoveries, useHeard, useToday } from "./storage";
 import type { Frequency } from "./storageFormat";
 import { estimateSpeechMs } from "./text";
+import { useDiscover } from "./useDiscover";
 import { useWalk } from "./useWalk";
 import { appendThinned, dayKey, hiddenTooLong, type LatLon } from "./walkPath";
 import { startWakeLock, stopWakeLock } from "./wakelock";
+import type { WalkDestination } from "./useDestinationWalk";
 
 export type SheetState = "hidden" | "open" | "mini";
 export type PlayState = "idle" | "loading" | "playing" | "paused";
@@ -29,7 +31,7 @@ export interface SessionOptions {
 }
 
 const COOLDOWN_S: Record<Frequency, number> = { often: 60, normal: 150, rarely: 300 };
-export const SIM_CFG: TriggerConfig = { cooldownMs: 20_000, maxCandidates: 5, nationalItemIdleMs: 60_000 };
+export const SIM_CFG: TriggerConfig = { cooldownMs: 20_000, maxCandidates: 5, nationalItemIdleMs: 60_000, areaItemIdleMs: 60_000 };
 
 export function triggerConfig(frequency: Frequency): TriggerConfig {
   const ms = COOLDOWN_S[frequency] * 1000;
@@ -65,8 +67,12 @@ export function useGuideSession(options: SessionOptions) {
   const pendingStickerRef = useRef<string | undefined>(undefined);
   const hiddenAtRef = useRef<number | null>(null);
   const simSpeedRef = useRef(1);
+  const [destMode, setDestMode] = useState(false);
+  const [routeCorridor, setRouteCorridor] = useState<[number, number][] | null>(null);
 
-  const cfg = options.sim ? SIM_CFG : triggerConfig(options.frequency);
+  const baseCfg = options.sim ? SIM_CFG : triggerConfig(options.frequency);
+  // Destination mode: the guide talks a bit less, turns do the talking.
+  const cfg: TriggerConfig = destMode ? { ...baseCfg, cooldownMs: Math.round(baseCfg.cooldownMs * 1.5) } : baseCfg;
 
   // ---------- walk record ----------
   const flushRecord = useCallback(() => {
@@ -173,42 +179,106 @@ export function useGuideSession(options: SessionOptions) {
     onFix,
   });
 
+  // ---------- live discovery: research places ahead, deliver when close ----------
+  // KB point matches always win: KB-covered POIs are never researched, and a
+  // cached live narration only speaks when no KB pin is waiting nearby.
+  const discover = useDiscover({
+    profile: options.profile,
+    fix: walk.fix,
+    running: active && walk.status === "running",
+    canSpeak: active && walk.status === "running" && !walk.busy && playback.state === "idle",
+    kbPins: walk.pins,
+    onDeliver: (n) => present(n, "guide", walk.getFix()),
+    routeCorridor,
+  });
+  const walkWithTrace = useMemo(() => {
+    if (discover.trace.length === 0) return walk;
+    return { ...walk, trace: [...walk.trace, ...discover.trace].sort((a, b) => a.at - b.at).slice(-300) };
+  }, [walk, discover.trace]);
+
   // ---------- lifecycle ----------
+  const launch = useCallback(
+    (
+      makeSource: () => LocationSource,
+      opts: { reset: boolean; simulated: boolean; mode: "wander" | "destination"; destination: WalkDestination | null },
+    ) => {
+      // called from a click: audio and wake lock must be set up synchronously here
+      unlockAudio();
+      startWakeLock();
+      const rec: WalkRecord = {
+        id: uid("w"),
+        startedAt: Date.now(),
+        endedAt: null,
+        areaName: null,
+        distanceM: 0,
+        path: [],
+        discoveryIds: [],
+        simulated: opts.simulated,
+      };
+      recordRef.current = rec;
+      setPath([]);
+      setDistanceM(0);
+      setActive(true);
+      simSourceRef.current = null;
+      walk.start(makeSource, { reset: opts.reset });
+      flushRecord();
+      // Mode + destination ride on the walk record (lead-owned contract).
+      rec.mode = opts.mode;
+      const dest = opts.destination;
+      rec.destination = dest ? { name: dest.name, lat: dest.lat, lon: dest.lon } : null;
+    },
+    [walk, flushRecord],
+  );
+
+  const simFactory = useCallback(
+    (route: RouteDef) => () => {
+      const s = createSimulatedSource(route);
+      s.setSpeedMultiplier(simSpeedRef.current);
+      simSourceRef.current = s;
+      return s;
+    },
+    [],
+  );
+
   const begin = useCallback(() => {
-    // called from a click: audio and wake lock must be set up synchronously here
-    unlockAudio();
-    startWakeLock();
     const o = optsRef.current;
-    const rec: WalkRecord = {
-      id: uid("w"),
-      startedAt: Date.now(),
-      endedAt: null,
-      areaName: null,
-      distanceM: 0,
-      path: [],
-      discoveryIds: [],
-      simulated: !!o.sim,
-    };
-    recordRef.current = rec;
-    setPath([]);
-    setDistanceM(0);
-    setActive(true);
-    simSourceRef.current = null;
+    setDestMode(false);
+    setRouteCorridor(null);
     const route = o.sim;
-    walk.start(
-      () => {
-        if (route) {
-          const s = createSimulatedSource(route);
-          s.setSpeedMultiplier(simSpeedRef.current);
-          simSourceRef.current = s;
-          return s;
-        }
-        return createGpsSource();
-      },
-      { reset: !!route },
-    );
-    flushRecord();
-  }, [walk, flushRecord]);
+    launch(route ? simFactory(route) : () => createGpsSource(), {
+      reset: !!route,
+      simulated: !!route,
+      mode: "wander",
+      destination: null,
+    });
+  }, [launch, simFactory]);
+
+  // Destination walk: in demo mode the computed route is simulated so the
+  // demo works indoors; otherwise the walk follows GPS along the route.
+  const beginDestination = useCallback(
+    (def: RouteDef, dest: WalkDestination) => {
+      const demo = !!optsRef.current.sim;
+      setDestMode(true);
+      setRouteCorridor(def.coordinates);
+      launch(demo ? simFactory(def) : () => createGpsSource(), {
+        reset: false,
+        simulated: demo,
+        mode: "destination",
+        destination: dest,
+      });
+    },
+    [launch, simFactory],
+  );
+
+  // Stop the current narration without hiding its card, so an urgent turn
+  // cue can speak. The narration stays on screen for replay.
+  const interruptForCue = useCallback(() => {
+    playKeyRef.current++;
+    stopSpeaking();
+    setPlayback((p) => (p.state === "playing" || p.state === "loading" ? { ...p, state: "idle" } : p));
+    setProgress(0);
+  }, []);
+
 
   const end = useCallback(() => {
     walk.stop();
@@ -222,6 +292,8 @@ export function useGuideSession(options: SessionOptions) {
     recordRef.current = null;
     simSourceRef.current = null;
     setActive(false);
+    setDestMode(false);
+    setRouteCorridor(null);
     setPlayback((p) => ({ ...p, state: "idle" }));
   }, [walk, flushRecord]);
 
@@ -301,6 +373,7 @@ export function useGuideSession(options: SessionOptions) {
         const res = await postJson<AskResponse>("/api/explain", req);
         pendingStickerRef.current = stickerDataUrl;
         walk.push(res.narration, "photo", res.trace);
+        walk.recordSighting(obj.label, "photo");
         return true;
       } catch {
         return false;
@@ -349,7 +422,7 @@ export function useGuideSession(options: SessionOptions) {
   );
 
   return {
-    walk,
+    walk: walkWithTrace,
     active,
     path,
     distanceM,
@@ -364,7 +437,14 @@ export function useGuideSession(options: SessionOptions) {
     simSpeed,
     simPlaying: walk.status === "running",
     begin,
+    beginDestination,
+    interruptForCue,
+    destMode,
+    setDestinationMode: setDestMode,
+    setRouteCorridor,
+    live: discover.researched,
     end,
+
     togglePlay,
     replay,
     skip,

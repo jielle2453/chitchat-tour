@@ -4,7 +4,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { areaNameAt, nearbyPois } from "@/lib/geo";
 import { getItem, getKnowledgeItems } from "@/lib/kb";
-import { rankCandidates, shouldSpeak, type TriggerConfig } from "@/lib/trigger";
+import { addSighting, findConceptsInText, rankCandidates, shouldSpeak, type TriggerConfig } from "@/lib/trigger";
 import type {
   AskRequest,
   AskResponse,
@@ -22,9 +22,10 @@ import type {
   WalkState,
 } from "@/lib/types";
 import { isNotReady, postForm, postJson } from "./api";
+import { ASK_ACK_DELAY_MS, ASK_ACK_FINISH_TIMEOUT_MS, pickAskAck } from "./askAck";
 import { t } from "./i18n";
 import { startRecording, type Recording } from "./recorder";
-import { stopSpeaking } from "./speech";
+import { speak, stopSpeaking } from "./speech";
 import { readStored, writeStored } from "./storage";
 import { KEYS } from "./storageFormat";
 
@@ -49,6 +50,45 @@ export interface WalkOptions {
 }
 
 const RADIUS_M = 150;
+const MAX_ASK_SIGHTINGS = 3;
+
+// Routine position/user chatter is only worth a trace line when something
+// changed (new candidate set, new area) or at most every ~60 s.
+export const ROUTINE_TRACE_MS = 60_000;
+
+export function routineTraceKey(areaName: string | null, candidates: { itemId: string }[]): string {
+  return `${areaName ?? "?"}|${candidates.map((c) => c.itemId).join(",")}`;
+}
+
+export function shouldEmitRoutineTrace(prev: { at: number; key: string } | null, key: string, nowMs: number): boolean {
+  return !prev || prev.key !== key || nowMs - prev.at >= ROUTINE_TRACE_MS;
+}
+
+// Routine steps the server restates on every guide call.
+export function isRoutineStep(kind: TraceStep["kind"]): boolean {
+  return kind === "position" || kind === "user";
+}
+
+// Concepts worth remembering from a spoken question: the answered item's own
+// photo concepts first (mapped back from the answer's itemId), then any known
+// photo concepts mentioned verbatim in the question text.
+function askSightings(question: string, itemId: string | null): string[] {
+  const answered = itemId ? getItem(itemId) : undefined;
+  const concepts = answered?.trigger.photo_concepts;
+  const q = question.toLowerCase();
+  const answerConcept = concepts?.find((c) => q.includes(c.toLowerCase())) ?? concepts?.[0];
+  const known = getKnowledgeItems().flatMap((i) => i.trigger.photo_concepts ?? []);
+  const out: string[] = [];
+  const seen = new Set<string>();
+  for (const c of [...(answerConcept ? [answerConcept] : []), ...findConceptsInText(question, known)]) {
+    const key = c.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(c);
+    if (out.length >= MAX_ASK_SIGHTINGS) break;
+  }
+  return out;
+}
 const MAX_TRACE = 300;
 const MAX_PINS = 3;
 const EMPTY_STATE: WalkState = { toldItemIds: [], lastSpokenAt: null, history: [] };
@@ -85,7 +125,9 @@ export function useWalk(options: WalkOptions) {
   const pinKeyRef = useRef("");
   const recentRef = useRef<Narration[]>([]);
   const recordingRef = useRef<Recording | null>(null);
+  const askCountRef = useRef(0);
   const holdingRef = useRef(false);
+  const lastRoutineRef = useRef<{ at: number; key: string } | null>(null);
 
   const stateKey = () => `${KEYS.walkState}.${optsRef.current.storageKey ?? "walk"}`;
 
@@ -148,16 +190,21 @@ export function useWalk(options: WalkOptions) {
           data: c,
         });
       }
+      const routineKey = routineTraceKey(areaName, candidates);
+      const emitRoutine = shouldEmitRoutineTrace(lastRoutineRef.current, routineKey, t0);
+      if (emitRoutine) lastRoutineRef.current = { at: t0, key: routineKey };
       if (!candidates.length) {
         local.push({ kind: "skip", message: "Nothing nearby is worth telling this walker right now", at: t0 });
-        addTrace(local);
+        if (emitRoutine) addTrace(local);
         return;
       }
       const req: GuideRequest = { profile: o.profile, fix: f, candidates, state, areaName };
       const res = await postJson<GuideResponse>("/api/guide", req);
       if (token !== tokenRef.current) return;
       // The agent's trace already restates position, user and candidates.
-      addTrace(res.trace.length ? res.trace : local);
+      let steps = res.trace.length ? res.trace : local;
+      if (!emitRoutine) steps = steps.filter((s) => !isRoutineStep(s.kind));
+      addTrace(steps);
       if (res.narration) deliver(res.narration, "guide");
     },
     [addTrace, deliver],
@@ -229,6 +276,7 @@ export function useWalk(options: WalkOptions) {
         recentRef.current = [];
         candidatesRef.current = [];
         pinKeyRef.current = "";
+        lastRoutineRef.current = null;
         setPins([]);
         setChecked([]);
         setTrace([]);
@@ -271,6 +319,19 @@ export function useWalk(options: WalkOptions) {
       const o = optsRef.current;
       stopSpeaking();
       setVoice("thinking");
+      const lang = o.profile.lang;
+      const cueText = pickAskAck(lang, askCountRef.current++);
+      let settled: boolean = false;
+      let cueDone: Promise<void> | null = null;
+      let cueStarted: boolean = false;
+      const cueTimer = setTimeout(() => {
+        if (settled) return;
+        cueDone = speak(cueText, lang, {
+          onStart: () => {
+            cueStarted = true;
+          },
+        }).catch(() => undefined);
+      }, ASK_ACK_DELAY_MS);
       try {
         const req: AskRequest = {
           profile: o.profile,
@@ -279,9 +340,33 @@ export function useWalk(options: WalkOptions) {
           recent: recentRef.current,
         };
         const res = await postJson<AskResponse>("/api/ask", req);
+        settled = true;
+        clearTimeout(cueTimer);
+        const pendingCue: Promise<void> | null = cueDone;
+        if (pendingCue && !cueStarted) {
+          stopSpeaking();
+        } else if (pendingCue) {
+          let timer: ReturnType<typeof setTimeout> | undefined;
+          const timeout = new Promise<void>((resolve) => {
+            timer = setTimeout(() => {
+              stopSpeaking();
+              resolve();
+            }, ASK_ACK_FINISH_TIMEOUT_MS);
+          });
+          await Promise.race([pendingCue, timeout]);
+          if (timer) clearTimeout(timer);
+          stopSpeaking();
+        }
         addTrace(res.trace);
         deliver(res.narration, "ask");
+        for (const c of askSightings(question, res.narration.itemId)) {
+          stateRef.current = addSighting(stateRef.current, c, "ask", now());
+        }
+        if (optsRef.current.persist !== false) writeStored(stateKey(), stateRef.current);
       } catch (err) {
+        settled = true;
+        clearTimeout(cueTimer);
+        if (cueDone) stopSpeaking();
         addTrace([{ kind: "error", message: err instanceof Error ? err.message : String(err), at: now() }]);
       } finally {
         setVoice("idle");
@@ -295,6 +380,12 @@ export function useWalk(options: WalkOptions) {
   }, [ask]);
 
   // Used by the photo flow, which calls /api/explain itself.
+  const recordSighting = useCallback((concept: string, source: "photo" | "ask") => {
+    const next = addSighting(stateRef.current, concept, source, now());
+    stateRef.current = next;
+    if (optsRef.current.persist !== false) writeStored(stateKey(), next);
+  }, []);
+
   const push = useCallback(
     (narration: Narration, origin: DiscoveryOrigin, steps: TraceStep[] = []) => {
       addTrace(steps);
@@ -387,6 +478,7 @@ export function useWalk(options: WalkOptions) {
     startListening,
     stopListening,
     ask,
+    recordSighting,
     push,
     getFix,
   };

@@ -29,7 +29,7 @@ export async function chatText(oc: ChatBackend, system: string, user: string): P
         { role: "system", content: system },
         { role: "user", content: user },
       ],
-      max_tokens: 900,
+      max_tokens: 1500,
     },
     { signal: timeoutSignal() },
   )) as { choices?: { message?: { content?: string | null } }[] };

@@ -1,13 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #f4f4f2;
+  --bg: #f4f4f5;
   --surface: #ffffff;
   --ink: #111111;
   --sub: #6b6b6b;
-  --line: #e6e6e3;
-  --accent: #ffd23f;
-  --shadow: 0 8px 28px rgba(17, 17, 17, 0.12);
+  --line: #e5e5e8;
+  --accent: #111111;
+  --fill: #ededf0;
+  --shadow: 0 16px 48px rgba(17, 17, 17, 0.1);
 }
 
 @theme inline {
@@ -17,6 +18,7 @@
   --color-sub: var(--sub);
   --color-line: var(--line);
   --color-accent: var(--accent);
+  --color-fill: var(--fill);
   --radius-card: 20px;
   --font-sans: "Noto Sans TC", "Noto Sans JP", system-ui, -apple-system, "Segoe UI", "Hiragino Sans", "PingFang TC", "Microsoft JhengHei", sans-serif;
 }
@@ -29,10 +31,22 @@ body {
   background: var(--bg);
   color: var(--ink);
   font-family: var(--font-sans);
-  font-size: 16px;
-  line-height: 1.5;
+  font-size: 15px;
+  line-height: 1.6;
   -webkit-tap-highlight-color: transparent;
   overscroll-behavior: none;
+}
+
+/* ---------- type system ----------
+   Page titles 26px/600 tight · card titles 20-21px/600 · body 15px/400/1.6 ·
+   secondary 13px grey · meta/eyebrow 12px/500 grey, sentence case. */
+h1 {
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+
+::selection {
+  background: rgba(17, 17, 17, 0.12);
 }
 
 button,
@@ -51,10 +65,19 @@ button {
   outline-offset: 2px;
 }
 
+/* ---------- floating controls: one glass system over the map ---------- */
+.glass {
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: saturate(1.6) blur(16px);
+  -webkit-backdrop-filter: saturate(1.6) blur(16px);
+  border: 1px solid rgba(17, 17, 17, 0.06);
+  box-shadow: 0 1px 2px rgba(17, 17, 17, 0.05), 0 8px 24px rgba(17, 17, 17, 0.08);
+}
+
 /* ---------- map ---------- */
 .leaflet-container {
   font-family: var(--font-sans);
-  background: #e9e9e6;
+  background: #f0f0f2;
 }
 .rg-me {
   position: relative;
@@ -84,7 +107,7 @@ button {
   width: 30px;
   height: 30px;
   border-radius: 999px;
-  background: var(--accent);
+  background: #fff;
   border: 2.5px solid var(--ink);
   font-weight: 800;
   font-size: 16px;
@@ -98,10 +121,9 @@ button {
   width: 22px;
   height: 22px;
   border-radius: 999px;
-  background: var(--accent);
+  background: var(--ink);
   border: 2px solid #fff;
   outline: 1.5px solid var(--ink);
-  transform: rotate(-8deg);
 }
 
 /* ---------- motion ---------- */
@@ -131,6 +153,17 @@ button {
     opacity: 1;
   }
 }
+@keyframes rg-halo {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.04);
+  }
+}
+.rg-halo {
+  animation: rg-halo 2.4s ease-in-out infinite alternate;
+}
 .rg-sheet-in {
   animation: rg-sheet-in 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
@@ -143,7 +176,8 @@ button {
 @media (prefers-reduced-motion: reduce) {
   .rg-sheet-in,
   .rg-fade-in,
-  .rg-pop {
+  .rg-pop,
+  .rg-halo {
     animation: none;
   }
 }

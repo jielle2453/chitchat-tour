@@ -87,7 +87,9 @@ export interface HometownComparison {
 export interface KnowledgeItem {
   id: string;
   category: "street" | "transport" | "shop" | "architecture" | "daily-life";
-  layer: "point" | "area" | "national";
+  // point: a matching OSM POI is nearby. area/national: fits the neighbourhood/city, used to fill quiet stretches.
+  // sighting: only after the walker has shown (photo) or asked about the thing, e.g. a passing garbage truck.
+  layer: "point" | "area" | "national" | "sighting";
   trigger: { osm: string[]; context?: string; photo_concepts?: string[] };
   title: LocalizedText;
   fact: LocalizedText;
@@ -96,6 +98,8 @@ export interface KnowledgeItem {
   disputed: boolean;
   caveats: string | null;
   hometown: Record<CountryCode, HometownComparison>;
+  // Set on a facet of a bigger topic: never triggered on its own, only used for "tell me more" and questions.
+  parent?: string;
 }
 
 // ---------- Walk state (kept on the phone, sent with each request) ----------
@@ -104,6 +108,13 @@ export interface WalkState {
   toldItemIds: string[];
   lastSpokenAt: number | null; // ms epoch
   history: { itemId: string; at: number }[];
+  sightings?: Sighting[]; // recent things the walker photographed or asked about
+}
+
+export interface Sighting {
+  concept: string; // matched against KnowledgeItem.trigger.photo_concepts, e.g. "garbage truck"
+  at: number; // ms epoch
+  source: "photo" | "ask";
 }
 
 export interface Candidate {
@@ -163,6 +174,8 @@ export interface WalkRecord {
   path: [number, number][]; // [lat, lon], thinned
   discoveryIds: string[];
   simulated: boolean;
+  mode?: WalkMode; // absent on older records = wander
+  destination?: { name: string; lat: number; lon: number } | null;
 }
 
 // ---------- API contracts ----------
@@ -243,3 +256,38 @@ export interface TtsRequest {
   text: string;
   lang: Lang;
 }
+
+// ---------- Destination walks ----------
+
+// GET /api/geocode?q=<text>&lat=&lon=&lang= -> GeocodeResponse (Taipei-biased place search).
+export interface GeocodeResult {
+  id: string; // e.g. "osm:way/1376486000"
+  name: string;
+  label: string; // short address/district line
+  lat: number;
+  lon: number;
+  kind?: string; // OSM category/type, e.g. "marketplace"
+}
+export interface GeocodeResponse {
+  results: GeocodeResult[];
+}
+
+// GET /api/route?from=<lat,lon>&to=<lat,lon>&lang= -> RouteResponse (walking route).
+export interface RouteStep {
+  type: string; // OSRM maneuver type: depart, turn, continue, end of road, arrive, ...
+  modifier?: string; // left, right, slight left, straight, uturn, ...
+  location: [number, number]; // [lon, lat] of the maneuver
+  name: string; // street name after the maneuver ("" when unnamed)
+  distanceM: number; // length of this step
+}
+export interface WalkRoute {
+  coordinates: [number, number][]; // [lon, lat], same convention as RouteDef
+  distanceM: number;
+  durationS: number;
+  steps: RouteStep[];
+}
+export interface RouteResponse {
+  route: WalkRoute;
+}
+
+export type WalkMode = "wander" | "destination";

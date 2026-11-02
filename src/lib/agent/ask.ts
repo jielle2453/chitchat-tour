@@ -4,7 +4,7 @@ import { getItem, getKnowledgeItems } from "@/lib/kb";
 import { isMockMode } from "@/lib/meta/client";
 import type { AskRequest, AskResponse, ExplainRequest, GeoFix, KnowledgeItem, Lang, Narration, Source, UserProfile } from "@/lib/types";
 import { extractCitations, trustedSources } from "@/lib/verify";
-import { composeFromItem, itemConfidence, itemSources, LANG_NAME, LENGTH_HINT, MSG, pickText, Trace } from "./common";
+import { composeFromItem, itemConfidence, itemSources, LANG_NAME, LENGTH_HINT, MSG, parseModelJson, pickText, Trace } from "./common";
 import { MAX_TOOL_CALLS } from "./guard";
 import { responsesText } from "./llm";
 import { loadPrompt } from "./prompts";
@@ -14,7 +14,7 @@ function newId(): string {
 }
 
 function tooLong(text: string, lang: Lang): boolean {
-  return lang === "en" ? text.split(/\s+/).length > 180 : text.length > 320;
+  return lang === "en" ? text.split(/\s+/).length > 100 : text.length > 170;
 }
 
 function kbNarration(item: KnowledgeItem, profile: UserProfile, text: string, title: string, lang: Lang): Narration {
@@ -77,12 +77,12 @@ async function webAnswer(opts: { profile: UserProfile; prompt: string; title: st
       instructions: `${system}\n\nAnswer in ${LANG_NAME[profile.lang]}, ${LENGTH_HINT[profile.lang]}. The visitor's hometown is ${profile.hometown}.${place}\n\n${ANSWER_FIELDS}`,
       input: prompt,
       tools: [tool],
-      include: ["web_search_call.action.sources"],
+      include: ["web_search_call.action.sources", "web_search_call.results"],
       max_tool_calls: MAX_TOOL_CALLS,
-      max_output_tokens: 1500,
+      max_output_tokens: 2500,
       text: { format: { type: "json_schema", name: "sourced_answer", strict: true, schema: ANSWER_JSON_SCHEMA } },
     });
-    answer = AnswerSchema.parse(JSON.parse(stripFences(out)));
+    answer = parseModelJson(out, AnswerSchema);
     const citations = extractCitations(raw);
     const trusted = trustedSources(citations);
     sources = rankSources(trusted, answer.used_urls).slice(0, MAX_SOURCES);
@@ -129,10 +129,6 @@ const ANSWER_JSON_SCHEMA = {
     used_urls: { type: "array", items: { type: "string" } },
   },
 } as const;
-
-function stripFences(s: string): string {
-  return s.replace(/^\s*```(?:json)?\s*/i, "").replace(/\s*```\s*$/, "");
-}
 
 // The URLs the model lists rarely match the search results byte for byte (encoding, mobile hosts),
 // so compare host + decoded path, falling back to the same site. Trusted pages from sites the
