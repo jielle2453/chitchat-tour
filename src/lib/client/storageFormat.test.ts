@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { Discovery } from "@/lib/types";
 import {
+  DEFAULT_QUIET_S,
   DEFAULT_SETTINGS,
   migrateDiscoveries,
   migrateProfile,
@@ -53,7 +54,22 @@ describe("profile migration", () => {
 describe("settings migration", () => {
   it("fills defaults and clamps bad values", () => {
     expect(migrateSettings({})).toEqual(DEFAULT_SETTINGS);
-    expect(migrateSettings({ frequency: "often", voiceRate: 9, demo: true, routeId: "r" })).toEqual({ frequency: "often", voiceRate: 1, demo: true, routeId: "r" });
+    expect(migrateSettings({ quietS: 60, voiceRate: 9, demo: true, routeId: "r" })).toEqual({ quietS: 60, voiceRate: 1, demo: true, routeId: "r" });
+  });
+  it("maps the old frequency values to quiet seconds", () => {
+    expect(migrateSettings({ frequency: "often" })).toMatchObject({ quietS: 10 });
+    expect(migrateSettings({ frequency: "normal" })).toMatchObject({ quietS: 15 });
+    expect(migrateSettings({ frequency: "rarely" })).toMatchObject({ quietS: 30 });
+    expect(migrateSettings({ frequency: "sometimes" })).toMatchObject({ quietS: DEFAULT_QUIET_S });
+  });
+  it("prefers quietS and snaps it to the 5–120 s slider range", () => {
+    expect(migrateSettings({ quietS: 60, frequency: "often" })).toMatchObject({ quietS: 60 });
+    expect(migrateSettings({ quietS: 7 })).toMatchObject({ quietS: 5 });
+    expect(migrateSettings({ quietS: 8 })).toMatchObject({ quietS: 10 });
+    expect(migrateSettings({ quietS: 1000 })).toMatchObject({ quietS: 120 });
+    expect(migrateSettings({ quietS: 0 })).toMatchObject({ quietS: 5 });
+    expect(migrateSettings({ quietS: "often" })).toMatchObject({ quietS: DEFAULT_QUIET_S });
+    expect(migrateSettings({ quietS: NaN, frequency: "rarely" })).toMatchObject({ quietS: 30 });
   });
 });
 

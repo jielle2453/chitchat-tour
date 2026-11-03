@@ -44,7 +44,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
   const session = useGuideSession({
     profile,
-    frequency: settings.frequency,
+    quietS: settings.quietS,
     voiceRate: settings.voiceRate,
     speak: true,
     sim: route,

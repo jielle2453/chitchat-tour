@@ -9,7 +9,7 @@ import { postJson } from "./api";
 import { unlockAudio } from "./audio";
 import { pauseSpeaking, resumeSpeaking, setSpeechRate, speak, speechProgress, stopSpeaking } from "./speech";
 import { addHeard, readWalks, saveDiscovery, upsertWalk, useDiscoveries, useHeard, useToday } from "./storage";
-import type { Frequency } from "./storageFormat";
+import { sanitizeQuietS } from "./storageFormat";
 import { estimateSpeechMs } from "./text";
 import { useDiscover } from "./useDiscover";
 import { useWalk } from "./useWalk";
@@ -22,7 +22,7 @@ export type PlayState = "idle" | "loading" | "playing" | "paused";
 
 export interface SessionOptions {
   profile: UserProfile;
-  frequency: Frequency;
+  quietS: number;
   voiceRate: number;
   speak: boolean; // false = silent session (compare mode second phone): subtitles run on a virtual clock
   sim: RouteDef | null; // simulated walk on this route
@@ -30,12 +30,27 @@ export interface SessionOptions {
   storageKey: string;
 }
 
-const COOLDOWN_S: Record<Frequency, number> = { often: 60, normal: 150, rarely: 300 };
-export const SIM_CFG: TriggerConfig = { cooldownMs: 20_000, maxCandidates: 5, nationalItemIdleMs: 60_000, areaItemIdleMs: 60_000 };
+// Quiet-stretch filler thresholds: an area fact after 2 min of quiet, a national fact after 4 min.
+export const AREA_IDLE_MS = 120_000;
+export const NATIONAL_IDLE_MS = 240_000;
 
-export function triggerConfig(frequency: Frequency): TriggerConfig {
-  const ms = COOLDOWN_S[frequency] * 1000;
-  return { cooldownMs: ms, maxCandidates: 5, nationalItemIdleMs: Math.round(ms * 1.6) };
+export function triggerConfig(quietS: number): TriggerConfig {
+  return {
+    cooldownMs: sanitizeQuietS(quietS) * 1000,
+    maxCandidates: 5,
+    nationalItemIdleMs: NATIONAL_IDLE_MS,
+    areaItemIdleMs: AREA_IDLE_MS,
+  };
+}
+
+// Simulated walks move fast; keep a short fixed quiet so the demo keeps talking.
+export function simTriggerConfig(quietS: number): TriggerConfig {
+  return {
+    cooldownMs: Math.min(sanitizeQuietS(quietS), 10) * 1000,
+    maxCandidates: 5,
+    nationalItemIdleMs: 60_000,
+    areaItemIdleMs: 60_000,
+  };
 }
 
 let counter = 0;
@@ -70,7 +85,7 @@ export function useGuideSession(options: SessionOptions) {
   const [destMode, setDestMode] = useState(false);
   const [routeCorridor, setRouteCorridor] = useState<[number, number][] | null>(null);
 
-  const baseCfg = options.sim ? SIM_CFG : triggerConfig(options.frequency);
+  const baseCfg = options.sim ? simTriggerConfig(options.quietS) : triggerConfig(options.quietS);
   // Destination mode: the guide talks a bit less, turns do the talking.
   const cfg: TriggerConfig = destMode ? { ...baseCfg, cooldownMs: Math.round(baseCfg.cooldownMs * 1.5) } : baseCfg;
 
@@ -178,6 +193,14 @@ export function useGuideSession(options: SessionOptions) {
     onNarration: present,
     onFix,
   });
+
+  // The walk cooldown counts from the END of a narration: whenever playback
+  // goes idle (finished, skipped, stopped, or cut off), stamp it into the walk.
+  const walkRef = useRef(walk);
+  useEffect(() => {
+    walkRef.current = walk;
+    if (playback.state === "idle") walkRef.current.markNarrationEnded();
+  }, [walk, playback.state]);
 
   // ---------- live discovery: research places ahead, deliver when close ----------
   // KB point matches always win: KB-covered POIs are never researched, and a

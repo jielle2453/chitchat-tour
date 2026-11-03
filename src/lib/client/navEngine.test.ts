@@ -6,10 +6,16 @@ import {
   ARRIVE_M,
   arrivalText,
   detourText,
+  displayName,
   etaMinutes,
   fetchGeocode,
   fetchNearby,
   fetchWalkRoute,
+  fetchWalkRouteOptions,
+  PICK_PLACES_LIMIT,
+  PICK_PLACES_RADIUS_M,
+  selectPickPlaces,
+  TakeLatest,
   isDetourWorthy,
   isOffRoute,
   navCue,
@@ -220,5 +226,103 @@ describe("api wrappers", () => {
     expect((await fetchWalkRoute({ lat: 25, lon: 121 }, { lat: 25.01, lon: 121.01 }, "en")).steps).toHaveLength(3);
     mockFetch({ route: { coordinates: [] } });
     await expect(fetchWalkRoute({ lat: 25, lon: 121 }, { lat: 25.01, lon: 121.01 }, "en")).rejects.toThrow();
+  });
+});
+
+describe("displayName", () => {
+  const stop = poi({
+    id: "stop",
+    kind: "bus_stop",
+    name: "Xinyi and Xinsheng Intersection",
+    tags: { name: "信義新生路口", "name:en": "Xinyi and Xinsheng Intersection", "name:ja": "信義新生路" },
+  });
+  it("prefers the name tag for the UI language", () => {
+    expect(displayName(stop, "zh-TW")).toBe("信義新生路口");
+    expect(displayName(stop, "ja")).toBe("信義新生路");
+    expect(displayName(stop, "en")).toBe("Xinyi and Xinsheng Intersection");
+  });
+  it("falls back through stored name, local tag and brand", () => {
+    expect(displayName(poi({ name: "7-Eleven", brand: "7-Eleven", tags: { shop: "convenience" } }), "zh-TW")).toBe("7-Eleven");
+    expect(displayName(poi({ name: undefined, brand: undefined, tags: { name: "東門市場" } }), "en")).toBe("東門市場");
+    expect(displayName(poi({ name: undefined, brand: "FamilyMart", tags: {} }), "zh-TW")).toBe("FamilyMart");
+  });
+});
+
+describe("selectPickPlaces", () => {
+  const near = (over: Partial<NearbyPoi> = {}): NearbyPoi => poi({ distanceM: 15, ...over });
+  it("keeps the closest named places within the radius, at most the limit", () => {
+    const pois = [
+      near({ id: "far", distanceM: 61 }),
+      near({ id: "a", distanceM: 40 }),
+      near({ id: "b", distanceM: 10 }),
+      near({ id: "c", distanceM: 25 }),
+      near({ id: "d", distanceM: 5 }),
+      near({ id: "noname", name: undefined, brand: undefined, distanceM: 2 }),
+      near({ id: "blank", name: "  ", distanceM: 3 }),
+      near({ id: "nan", distanceM: NaN }),
+    ];
+    expect(selectPickPlaces(pois).map((p) => p.id)).toEqual(["d", "b", "c"]);
+    expect(PICK_PLACES_LIMIT).toBe(3);
+    expect(PICK_PLACES_RADIUS_M).toBe(60);
+  });
+  it("falls back to brand names and honours custom radius/limit", () => {
+    const brand = near({ id: "brand", name: undefined, brand: "FamilyMart", distanceM: 50 });
+    expect(selectPickPlaces([brand]).map((p) => p.id)).toEqual(["brand"]);
+    expect(selectPickPlaces([brand], 40)).toEqual([]);
+    expect(selectPickPlaces([near({ id: "x", distanceM: 5 })], 60, 0)).toEqual([]);
+  });
+  it("excludes signals, crossings, bus stops and bike docks", () => {
+    const pois = [
+      near({ id: "signal", kind: "traffic_signals", distanceM: 5 }),
+      near({ id: "live-signal", kind: "other", distanceM: 6, tags: { highway: "traffic_signals", name: "Signals" } }),
+      near({ id: "crossing", kind: "other", distanceM: 7, tags: { highway: "crossing", name: "Crossing" } }),
+      near({ id: "stop", kind: "bus_stop", distanceM: 8 }),
+      near({ id: "dock", kind: "bicycle_rental", distanceM: 9 }),
+      near({ id: "shop", distanceM: 10 }),
+    ];
+    expect(selectPickPlaces(pois).map((p) => p.id)).toEqual(["shop"]);
+  });
+});
+
+describe("TakeLatest", () => {
+  it("only the newest token is current; reset invalidates all", () => {
+    const guard = new TakeLatest();
+    const first = guard.issue();
+    const second = guard.issue();
+    expect(guard.isLatest(first)).toBe(false);
+    expect(guard.isLatest(second)).toBe(true);
+    guard.reset();
+    expect(guard.isLatest(second)).toBe(false);
+    expect(guard.isLatest(guard.issue())).toBe(true);
+  });
+});
+
+describe("fetchWalkRouteOptions", () => {
+  it("asks for alternatives and maps fastest + hear-more", async () => {
+    const fastest = straightRoute();
+    const longer = { ...straightRoute(), distanceM: fastest.distanceM * 1.2 };
+    let seenUrl = "";
+    const g = globalThis as unknown as { fetch: unknown };
+    g.fetch = vi.fn().mockImplementation((url: string) => {
+      seenUrl = url;
+      return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve({ route: fastest, routes: [fastest, longer], stories: [1, 4] }) });
+    });
+    const opts = await fetchWalkRouteOptions({ lat: 25, lon: 121 }, { lat: 25.01, lon: 121.01 }, "en", "JP");
+    expect(seenUrl).toContain("alternatives=1");
+    expect(seenUrl).toContain("hometown=JP");
+    expect(opts.fastest).toEqual(fastest);
+    expect(opts.hearMore).toEqual(longer);
+    expect(opts.stories).toEqual([1, 4]);
+  });
+  it("falls back to a single route without extras", async () => {
+    mockFetch({ route: straightRoute() });
+    const opts = await fetchWalkRouteOptions({ lat: 25, lon: 121 }, { lat: 25.01, lon: 121.01 }, "en");
+    expect(opts.hearMore).toBeNull();
+    expect(opts.routes).toHaveLength(1);
+    expect(opts.stories).toEqual([0]);
+  });
+  it("rejects invalid shapes", async () => {
+    mockFetch({ routes: [] });
+    await expect(fetchWalkRouteOptions({ lat: 25, lon: 121 }, { lat: 25.01, lon: 121.01 }, "en")).rejects.toThrow();
   });
 });

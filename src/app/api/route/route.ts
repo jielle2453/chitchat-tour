@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { getRoute, RouteTooLongError } from "@/lib/geo/routing";
+import { getRouteOptions } from "@/lib/geo/routeOptions";
 
 export const maxDuration = 60;
 
@@ -9,6 +10,11 @@ const querySchema = z.object({
   from: pairSchema,
   to: pairSchema,
   lang: z.enum(["en", "ja", "zh-TW", "ko"]).optional(),
+  alternatives: z.enum(["0", "1"]).optional(),
+  hometown: z
+    .string()
+    .regex(/^[A-Z]{2}$/)
+    .optional(),
 });
 
 function parseLatLon(value: string | null): [number, number] | undefined {
@@ -18,13 +24,21 @@ function parseLatLon(value: string | null): [number, number] | undefined {
   return [parts[0], parts[1]];
 }
 
+// Pure param parsing (exported for tests): from/to as "lat,lon",
+// alternatives=1 for fastest + "hear more" options, hometown as ISO code.
+export function parseRouteParams(search: URLSearchParams) {
+  return querySchema.safeParse({
+    from: parseLatLon(search.get("from")),
+    to: parseLatLon(search.get("to")),
+    lang: search.get("lang") ?? undefined,
+    alternatives: search.get("alternatives") ?? undefined,
+    hometown: search.get("hometown") ?? undefined,
+  });
+}
+
 export async function GET(request: Request): Promise<Response> {
   const url = new URL(request.url);
-  const parsed = querySchema.safeParse({
-    from: parseLatLon(url.searchParams.get("from")),
-    to: parseLatLon(url.searchParams.get("to")),
-    lang: url.searchParams.get("lang") ?? undefined,
-  });
+  const parsed = parseRouteParams(url.searchParams);
   if (!parsed.success) {
     const first = parsed.error.issues[0];
     return Response.json(
@@ -32,10 +46,17 @@ export async function GET(request: Request): Promise<Response> {
       { status: 400 },
     );
   }
-  const from = { lat: parsed.data.from[0], lon: parsed.data.from[1] };
-  const to = { lat: parsed.data.to[0], lon: parsed.data.to[1] };
   try {
-    const { route, fallback } = await getRoute(from, to);
+    if (parsed.data.alternatives === "1") {
+      const origin = { lat: parsed.data.from[0], lon: parsed.data.from[1] };
+      const dest = { lat: parsed.data.to[0], lon: parsed.data.to[1] };
+      const { fastest, hearMore, stories, fallback } = await getRouteOptions(origin, dest, parsed.data.hometown);
+      const body = hearMore ? { route: fastest, routes: [fastest, hearMore], stories } : { route: fastest, routes: [fastest], stories };
+      return Response.json(body, fallback ? { headers: { "x-route-fallback": "straight-line" } } : undefined);
+    }
+    const origin = { lat: parsed.data.from[0], lon: parsed.data.from[1] };
+    const dest = { lat: parsed.data.to[0], lon: parsed.data.to[1] };
+    const { route, fallback } = await getRoute(origin, dest);
     if (fallback) {
       console.error("route: served straight-line fallback");
       return Response.json({ route }, { headers: { "x-route-fallback": "straight-line" } });

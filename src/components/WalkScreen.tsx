@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { unlockAudio } from "@/lib/client/audio";
 import { formatDistance, t } from "@/lib/client/i18n";
-import { etaMinutes, fetchNearby } from "@/lib/client/navEngine";
+import { etaMinutes } from "@/lib/client/navEngine";
 import { useDestinationWalk } from "@/lib/client/useDestinationWalk";
 import { useDetour } from "@/lib/client/useDetour";
 import { useNavigation } from "@/lib/client/useNavigation";
@@ -88,7 +88,7 @@ export default function WalkScreen({
       { enableHighAccuracy: true, timeout: 8000, maximumAge: 60_000 },
     );
   }, [modeOpen, route, gpsFix]);
-  const dest = useDestinationWalk({ lang, getFix: originFix });
+  const dest = useDestinationWalk({ lang, getFix: originFix, hometown: profile.hometown });
   const walkingDest = !embedded && session.active && session.destMode && dest.status === "walking";
 
   const nav = useNavigation({
@@ -140,19 +140,22 @@ export default function WalkScreen({
     dest.reset();
   };
 
-  const handleMapPick = (lat: number, lon: number) => {
+  const handleMapPick = (lat: number, lon: number, name?: string) => {
     if (!dest.pickArmed || dest.status !== "picking") return;
-    const from = originFix();
-    const pinName = t(lang, "destPinName");
-    // Prefer a nearby named place as the label when there is one.
-    void fetchNearby(lat, lon, 120)
-      .then((pois) => {
-        const named = pois
-          .filter((p) => p.name ?? p.brand)
-          .sort((a, b) => a.distanceM - b.distanceM)[0];
-        dest.choosePoint(lat, lon, named && named.distanceM <= 60 ? (named.name ?? named.brand ?? pinName) : pinName, from);
-      })
-      .catch(() => dest.choosePoint(lat, lon, pinName, from));
+    // Respond to the tap at once: the hook plans instantly, then resolves
+    // the closest named places (a tapped place label keeps its own name).
+    dest.choosePoint(lat, lon, name ?? t(lang, "destPinName"), originFix(), Boolean(name));
+  };
+
+  // The unselected route option, drawn faint under the selected one.
+  const altRouteCoords =
+    dest.routes && dest.routes.length > 1 ? dest.routes[dest.routeIndex === 0 ? 1 : 0]?.coordinates : undefined;
+
+  // Tapping a "?" pin tells that story now, and stops the map from sliding away.
+  const handlePinTap = (pin: { itemId: string; label: string }) => {
+    setFollow(false);
+    if (session.explaining) return;
+    void session.explain({ label: pin.label, itemId: pin.itemId });
   };
 
   const voiceBusy = walk.voice !== "idle";
@@ -172,18 +175,21 @@ export default function WalkScreen({
 
   return (
     <div className="relative h-full w-full overflow-hidden bg-bg">
-      <div className="absolute inset-0 isolate z-0">
+      {/* before a walk the collage sits on the map centre: hide the position dot behind it */}
+      <div className={`absolute inset-0 isolate z-0 ${!embedded && !session.active ? "rg-hide-me" : ""}`}>
         <GuideMap
           path={session.path}
           fix={walk.fix}
           pins={walk.pins}
           checked={walk.checked}
-          routePreview={route?.coordinates}
+          routePreview={session.active && !session.destMode ? route?.coordinates : undefined}
           planRoute={dest.status === "idle" ? undefined : dest.route?.coordinates}
+          planRouteAlt={dest.status === "idle" ? undefined : altRouteCoords}
           planDoneM={nav.progress?.distanceAlongM ?? 0}
-          destination={dest.destination}
+          destination={dest.status === "idle" ? null : dest.destination}
           pickMode={!embedded && dest.pickArmed && dest.status === "picking"}
           onPick={handleMapPick}
+          onPinTap={!embedded ? handlePinTap : undefined}
           pickPoint={dest.pickPoint}
           fitKey={dest.previewKey}
           follow={follow}
@@ -479,7 +485,7 @@ export default function WalkScreen({
             onChange={(e) => setQuestion(e.target.value)}
             placeholder={t(lang, "typePlaceholder")}
             aria-label={t(lang, "typeTitle")}
-            className="h-12 min-w-0 flex-1 rounded-full border border-line bg-bg px-4 text-[15px] outline-none focus:border-ink"
+            className="h-12 min-w-0 flex-1 rounded-full border border-line bg-bg px-4 text-[15px] outline-none focus:border-ink focus:ring-1 focus:ring-ink"
           />
           <button type="submit" disabled={!question.trim()} aria-label={t(lang, "send")} className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-ink text-white disabled:opacity-40">
             <Send size={18} aria-hidden />

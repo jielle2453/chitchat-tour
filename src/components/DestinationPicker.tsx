@@ -2,9 +2,9 @@
 // Destination picker bottom sheet: search, nearby worth-visiting places,
 // tap-the-map, then a route preview with distance + minutes and Start.
 import { Loader2, MapPin, Navigation, Search } from "lucide-react";
-import type { DestinationWalk } from "@/lib/client/useDestinationWalk";
+import { PICK_SPOT, type DestinationWalk } from "@/lib/client/useDestinationWalk";
 import { formatDistance, t } from "@/lib/client/i18n";
-import { etaMinutes } from "@/lib/client/navEngine";
+import { displayName, etaMinutes } from "@/lib/client/navEngine";
 import type { GeoFix, Lang } from "@/lib/types";
 import Sheet from "./Sheet";
 
@@ -25,7 +25,7 @@ export default function DestinationPicker({
   return (
     <Sheet open={open} title={t(lang, "destTitle")} lang={lang} onClose={onClose}>
       {dest.status === "preview" && dest.destination ? (
-        <Preview lang={lang} dest={dest} onStart={onStart} onRetry={() => dest.retryRoute(fix)} />
+        <Preview lang={lang} dest={dest} fix={fix} onStart={onStart} onRetry={() => dest.retryRoute(fix)} />
       ) : (
         <Pick lang={lang} dest={dest} fix={fix} />
       )}
@@ -102,7 +102,7 @@ function Pick({ lang, dest, fix }: { lang: Lang; dest: DestinationWalk; fix: Geo
                 >
                   <MapPin size={16} aria-hidden className="shrink-0 text-sub" />
                   <span className="min-w-0 flex-1">
-                    <span className="block truncate text-[15px] font-medium">{p.name ?? p.brand ?? p.kind}</span>
+                    <span className="block truncate text-[15px] font-medium">{displayName(p, lang)}</span>
                   </span>
                   <span className="shrink-0 text-xs text-sub">{formatDistance(p.distanceM)}</span>
                 </button>
@@ -126,7 +126,7 @@ function Pick({ lang, dest, fix }: { lang: Lang; dest: DestinationWalk; fix: Geo
   );
 }
 
-function Preview({ lang, dest, onStart, onRetry }: { lang: Lang; dest: DestinationWalk; onStart: () => void; onRetry: () => void }) {
+function Preview({ lang, dest, fix, onStart, onRetry }: { lang: Lang; dest: DestinationWalk; fix: GeoFix | null; onStart: () => void; onRetry: () => void }) {
   const route = dest.route;
   return (
     <div className="space-y-3 pb-2">
@@ -144,6 +144,11 @@ function Preview({ lang, dest, onStart, onRetry }: { lang: Lang; dest: Destinati
           )}
         </p>
       </div>
+      {dest.pickPoint && (dest.pickPlacesLoading || dest.pickPlaces) ? <PickPlaces lang={lang} dest={dest} fix={fix} /> : null}
+      {dest.routes && dest.routes.length > 1 && !dest.routing ? <RouteOptions lang={lang} dest={dest} /> : null}
+      {dest.routes && dest.routes.length === 1 && !dest.routing && !dest.routeError && route ? (
+        <p className="px-1 text-[13px] text-sub">{t(lang, "destOnlyFastest")}</p>
+      ) : null}
       {dest.routeError && !dest.routing ? (
         <div className="space-y-2">
           <p role="alert" className="text-[13px] text-red-700">
@@ -175,6 +180,87 @@ function Preview({ lang, dest, onStart, onRetry }: { lang: Lang; dest: Destinati
           {t(lang, "destStart")}
         </button>
       </div>
+    </div>
+  );
+}
+
+function PickPlaces({ lang, dest, fix }: { lang: Lang; dest: DestinationWalk; fix: GeoFix | null }) {
+  const places = dest.pickPlaces ?? [];
+  const spotSelected = dest.pickChoice === PICK_SPOT;
+  return (
+    <section aria-label={t(lang, "destNearTap")} className="space-y-1.5">
+      <h3 className="px-1 text-xs font-medium text-sub">{t(lang, "destNearTap")}</h3>
+      {dest.pickPlacesLoading ? (
+        <p className="flex items-center gap-2 px-1 py-2 text-[13px] text-sub">
+          <Loader2 size={14} aria-hidden className="animate-spin" />
+          {t(lang, "destSpotLoading")}
+        </p>
+      ) : (
+        <ul className="space-y-1.5">
+          {places.map((p) => {
+            const selected = dest.pickChoice === p.id;
+            return (
+              <li key={p.id}>
+                <button
+                  type="button"
+                  aria-pressed={selected}
+                  onClick={() => dest.choosePickPlace(p, fix)}
+                  className={`flex min-h-11 w-full items-center gap-2.5 rounded-2xl px-3.5 py-2 text-left ${selected ? "bg-ink text-white" : "bg-fill/70"}`}
+                >
+                  <MapPin size={16} aria-hidden className="shrink-0" />
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-[15px] font-medium">{displayName(p, lang)}</span>
+                  </span>
+                  <span className={`shrink-0 text-xs ${selected ? "text-white/70" : "text-sub"}`}>{formatDistance(p.distanceM)}</span>
+                </button>
+              </li>
+            );
+          })}
+          <li>
+            <button
+              type="button"
+              aria-pressed={spotSelected}
+              onClick={() => dest.chooseSpot(t(lang, "destPinName"), fix)}
+              className={`flex min-h-11 w-full items-center gap-2.5 rounded-2xl px-3.5 py-2 text-left ${spotSelected ? "bg-ink text-white" : "bg-fill/70"}`}
+            >
+              <MapPin size={16} aria-hidden className="shrink-0" />
+              <span className="block truncate text-[15px] font-medium">{t(lang, "destUseSpot")}</span>
+            </button>
+          </li>
+        </ul>
+      )}
+    </section>
+  );
+}
+
+function RouteOptions({ lang, dest }: { lang: Lang; dest: DestinationWalk }) {
+  const routes = dest.routes ?? [];
+  return (
+    <div className="grid grid-cols-2 gap-2" role="radiogroup" aria-label={t(lang, "destTitle")}>
+      {routes.map((r, i) => {
+        const hearMore = i === 1;
+        const selected = i === dest.routeIndex;
+        return (
+          <button
+            key={i}
+            type="button"
+            role="radio"
+            aria-checked={selected}
+            onClick={() => dest.selectRoute(i)}
+            className={`min-h-16 rounded-2xl px-3.5 py-2.5 text-left ${selected ? "bg-ink text-white" : "bg-fill/70"}`}
+          >
+            <span className="block text-[15px] font-medium">{hearMore ? t(lang, "destHearMore") : t(lang, "destFastest")}</span>
+            <span className={`block text-xs ${selected ? "text-white/70" : "text-sub"}`}>
+              {t(lang, "destEta", { d: formatDistance(r.distanceM), n: etaMinutes(r, r.distanceM) })}
+            </span>
+            <span className={`mt-0.5 block text-xs ${selected ? "text-white/70" : "text-sub"}`}>
+              {hearMore
+                ? t(lang, "destHearMoreSub", { n: Math.max(0, (dest.storyCounts[1] ?? 0) - (dest.storyCounts[0] ?? 0)) })
+                : t(lang, "destFastestSub", { n: dest.storyCounts[0] ?? 0 })}
+            </span>
+          </button>
+        );
+      })}
     </div>
   );
 }

@@ -93,6 +93,21 @@ const MAX_TRACE = 300;
 const MAX_PINS = 3;
 const EMPTY_STATE: WalkState = { toldItemIds: [], lastSpokenAt: null, history: [] };
 
+// Pure narration bookkeeping, exported for tests. The cooldown counts from the
+// END of a narration: delivery stamps the start (so a restart keeps a sane
+// value), and applyGuideEnd moves the stamp to the moment playback ended.
+export function applyGuideStart(state: WalkState, itemId: string | null, at: number): WalkState {
+  return {
+    toldItemIds: itemId && !state.toldItemIds.includes(itemId) ? [...state.toldItemIds, itemId] : state.toldItemIds,
+    lastSpokenAt: at,
+    history: itemId ? [...state.history, { itemId, at }] : state.history,
+  };
+}
+
+export function applyGuideEnd(state: WalkState, at: number): WalkState {
+  return { ...state, lastSpokenAt: at };
+}
+
 function now() {
   return Date.now();
 }
@@ -148,24 +163,50 @@ export function useWalk(options: WalkOptions) {
     [addTrace],
   );
 
+  // A narration was delivered and its playback has not ended yet. While set, no
+  // new guide narration starts, so stories never overlap.
+  const speakingRef = useRef(false);
+  const activeOriginRef = useRef<DiscoveryOrigin | null>(null);
+
   const deliver = useCallback((narration: Narration, origin: DiscoveryOrigin) => {
     recentRef.current = [...recentRef.current, narration].slice(-3);
+    const at = now();
+    let s = stateRef.current;
+    let dirty = false;
+    // A new narration cuts off whatever was playing: a cut-off guide story's quiet starts now.
+    if (speakingRef.current && activeOriginRef.current === "guide") {
+      s = applyGuideEnd(s, at);
+      dirty = true;
+    }
+    speakingRef.current = true;
+    activeOriginRef.current = origin;
     if (origin === "guide") {
-      const at = now();
-      const s = stateRef.current;
-      const next: WalkState = {
-        toldItemIds: narration.itemId && !s.toldItemIds.includes(narration.itemId) ? [...s.toldItemIds, narration.itemId] : s.toldItemIds,
-        lastSpokenAt: at,
-        history: narration.itemId ? [...s.history, { itemId: narration.itemId, at }] : s.history,
-      };
-      stateRef.current = next;
-      if (optsRef.current.persist !== false) writeStored(stateKey(), next);
+      s = applyGuideStart(s, narration.itemId, at);
+      dirty = true;
       // the pin for this story becomes a check mark
       const c = candidatesRef.current.find((x) => x.itemId === narration.itemId && x.poiId);
       const poi = c ? poisRef.current.find((p) => p.id === c.poiId) : undefined;
       if (poi) setChecked((prev) => (prev.some((x) => x.poiId === poi.id) ? prev : [...prev, { poiId: poi.id, lat: poi.lat, lon: poi.lon }]));
     }
+    if (dirty) {
+      stateRef.current = s;
+      if (optsRef.current.persist !== false) writeStored(stateKey(), s);
+    }
     optsRef.current.onNarration?.(narration, origin, fixRef.current);
+  }, []);
+
+  // The session calls this when playback goes idle (finished, skipped,
+  // stopped, or cut off): the quiet gap counts from here. Only guide
+  // narrations move the stamp; answers to the walker's own questions never did.
+  const markNarrationEnded = useCallback(() => {
+    if (!speakingRef.current) return;
+    speakingRef.current = false;
+    if (activeOriginRef.current === "guide") {
+      const s = applyGuideEnd(stateRef.current, now());
+      stateRef.current = s;
+      if (optsRef.current.persist !== false) writeStored(stateKey(), s);
+    }
+    activeOriginRef.current = null;
   }, []);
 
   const attempt = useCallback(
@@ -249,7 +290,7 @@ export function useWalk(options: WalkOptions) {
         setPins(nextPins);
       }
 
-      if (!ok || busyRef.current) return;
+      if (!ok || busyRef.current || speakingRef.current) return;
       busyRef.current = true;
       setBusy(true);
       attempt(f, areaName, nearby, candidates, token)
@@ -277,6 +318,8 @@ export function useWalk(options: WalkOptions) {
         candidatesRef.current = [];
         pinKeyRef.current = "";
         lastRoutineRef.current = null;
+        speakingRef.current = false;
+        activeOriginRef.current = null;
         setPins([]);
         setChecked([]);
         setTrace([]);
@@ -474,6 +517,7 @@ export function useWalk(options: WalkOptions) {
     start,
     pause,
     stop,
+    markNarrationEnded,
     tellMeMore,
     startListening,
     stopListening,

@@ -3,7 +3,15 @@
 // signs, footprints, a walker…), then START is spelled in cut-out letters,
 // each a different real material. Once assembled it keeps a small idle
 // motion so it invites a tap.
-import DieCutImg from "./DieCutImg";
+// Stickers ship pre-cut (transparent WebP with white border and shadow) in
+// /start/cut/, exported from the browser die-cut, so nothing flashes white.
+function CutImg({ src, size }: { src: string; size: number }) {
+  const name = src.slice(src.lastIndexOf("/") + 1);
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src={`/start/cut/${name}`} alt="" draggable={false} width={size} height={size} className="block object-contain" style={{ width: size, height: size }} />
+  );
+}
 
 type Piece = {
   src: string;
@@ -28,11 +36,11 @@ const SCENE: Piece[] = [
   { src: "/start/walker.webp", size: 150, left: 96, top: 0, rot: 0, idle: "rg-bob" },
 ];
 
-// Three small footprints leading up-right from the last letter, left and right feet staggered.
+// Three small footprints curving up from the last letter, left and right feet staggered.
 const STEPS: Piece[] = [
-  { src: "/start/shoeprint.webp", size: 50, left: 281, top: 145, rot: 37, flip: true, idle: "rg-print", idleDelay: 0 },
-  { src: "/start/shoeprint.webp", size: 50, left: 309, top: 128, rot: 37, idle: "rg-print", idleDelay: 0.4 },
-  { src: "/start/shoeprint.webp", size: 50, left: 312, top: 100, rot: 37, flip: true, idle: "rg-print", idleDelay: 0.8 },
+  { src: "", size: 24, left: 309, top: 211, rot: 61, flip: true, idle: "rg-print", idleDelay: 0.0 },
+  { src: "", size: 24, left: 337, top: 189, rot: 20, idle: "rg-print", idleDelay: 0.3 },
+  { src: "", size: 24, left: 333, top: 144, rot: -7, flip: true, idle: "rg-print", idleDelay: 0.6 },
 ];
 
 // Cut-paper stars: a camera flash and a few sparkles to fill the left.
@@ -137,14 +145,32 @@ function Stamp() {
   );
 }
 
+// A printed sneaker sole: forefoot and heel as two ink shapes with tread gaps.
+function ShoePrint({ size }: { size: number }) {
+  return (
+    <svg width={size * 0.55} height={size} viewBox="0 0 22 40" style={{ overflow: "visible", filter: "drop-shadow(0 1px 1.5px rgba(0,0,0,0.25))" }}>
+      <g stroke="#fff" strokeWidth={3} strokeLinejoin="round" paintOrder="stroke" fill="#2A2A2E">
+        <path d="M11.5 1 C17.5 1 20.5 6 20 12 C19.6 17 18 21.5 17.5 24 L5 24 C4 20.5 2 16.5 2 11.5 C2 5 6 1 11.5 1 Z" />
+        <path d="M5.5 28 L17 28 C17.5 33 16 38.5 11 38.5 C6.5 38.5 5 34 5.5 28 Z" />
+      </g>
+      <g stroke="#F4F4F5" strokeWidth={1.1} strokeLinecap="round" opacity={0.55}>
+        <path d="M5 8 L17.5 8" />
+        <path d="M4.2 12.5 L18.6 12.5" />
+        <path d="M4.8 17 L18 17" />
+        <path d="M7.5 32.5 L15 32.5" />
+      </g>
+    </svg>
+  );
+}
+
 const LETTERS = ["letter-s", "letter-t1", "letter-a", "letter-r", "letter-t2"];
 const LETTER_ROT = [-10, 6, -4, 9, -7];
 const LETTER_Y = [0, -8, 5, -4, 7];
 const LETTER_SIZE = 84;
 
-const STEP = 0.18;
+const STEP = 0.09;
 const LETTERS_AT = SCENE.length * STEP + 0.1;
-const IDLE_AT = LETTERS_AT + LETTERS.length * 0.13 + STEPS.length * 0.14 + 0.8;
+const IDLE_AT = LETTERS_AT + LETTERS.length * 0.08 + STEPS.length * 0.08 + 0.8;
 
 function Sticker({ p, delay }: { p: Piece; delay: number }) {
   return (
@@ -157,15 +183,15 @@ function Sticker({ p, delay }: { p: Piece; delay: number }) {
         className={`block ${p.idle ?? ""}`}
         style={{ animationDelay: `${IDLE_AT + (p.idleDelay ?? 0)}s`, transform: p.flip ? "scaleX(-1)" : undefined }}
       >
-        <DieCutImg src={p.src} size={p.size} />
+        <CutImg src={p.src} size={p.size} />
       </span>
     </span>
   );
 }
 
 export default function StartCollage({ label, onStart }: { label: string; onStart: () => void }) {
-  const stepsAt = LETTERS_AT + LETTERS.length * 0.13 + 0.1;
-  const tapeAt = stepsAt + STEPS.length * 0.14 + 0.1;
+  const stepsAt = LETTERS_AT + LETTERS.length * 0.08 + 0.1;
+  const tapeAt = stepsAt + STEPS.length * 0.08 + 0.1;
   return (
     <button
       type="button"
@@ -187,17 +213,26 @@ export default function StartCollage({ label, onStart }: { label: string; onStar
           <span
             key={name}
             className="rg-slap -mx-[13px]"
-            style={{ ["--rot" as string]: `${LETTER_ROT[i]}deg`, animationDelay: `${LETTERS_AT + i * 0.13}s`, marginTop: LETTER_Y[i] }}
+            style={{ ["--rot" as string]: `${LETTER_ROT[i]}deg`, animationDelay: `${LETTERS_AT + i * 0.08}s`, marginTop: LETTER_Y[i] }}
           >
             <span className="rg-wiggle block" style={{ animationDelay: `${IDLE_AT + 1.5 + i * 0.12}s` }}>
-              <DieCutImg src={`/start/${name}.webp`} size={LETTER_SIZE} />
+              <CutImg src={`/start/${name}.webp`} size={LETTER_SIZE} />
             </span>
           </span>
         ))}
       </span>
 
       {STEPS.map((p, i) => (
-        <Sticker key={i} p={p} delay={stepsAt + i * 0.14} />
+        <span
+          key={i}
+          aria-hidden
+          className="rg-slap absolute"
+          style={{ left: p.left, top: p.top, ["--rot" as string]: `${p.rot}deg`, animationDelay: `${stepsAt + i * 0.08}s` }}
+        >
+          <span className={`block ${p.idle ?? ""}`} style={{ animationDelay: `${IDLE_AT + (p.idleDelay ?? 0)}s`, transform: p.flip ? "scaleX(-1)" : undefined }}>
+            <ShoePrint size={p.size} />
+          </span>
+        </span>
       ))}
       {SPARKS.map((sp, i) => (
         <PaperStar key={i} s={sp} delay={tapeAt + i * 0.12} />

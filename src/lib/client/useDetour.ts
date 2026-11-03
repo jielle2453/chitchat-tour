@@ -4,7 +4,7 @@
 // Max ~1 per 5 minutes, max 3 per walk.
 import { useEffect, useRef, useState } from "react";
 import type { GeoFix, Lang, Narration, NearbyPoi } from "@/lib/types";
-import { DETOUR_GAP_MS, DETOUR_MAX_PER_WALK, detourText, selectDetourCandidate, type DetourDir } from "./navEngine";
+import { DETOUR_FIRST_MS, DETOUR_GAP_MS, DETOUR_MAX_PER_WALK, detourText, selectDetourCandidate, type DetourDir } from "./navEngine";
 import { speak } from "./speech";
 
 export interface DetourEntry {
@@ -47,7 +47,8 @@ export function useDetour(options: UseDetourOptions) {
     const o = optsRef.current;
     if (o.active && !wasActiveRef.current) {
       skipRef.current = new Set();
-      lastAtRef.current = 0;
+      // the first card waits until the walk has settled in
+      lastAtRef.current = Date.now() - DETOUR_GAP_MS + DETOUR_FIRST_MS;
       countRef.current = 0;
       setSuggestion(null);
     }
@@ -76,21 +77,15 @@ export function useDetour(options: UseDetourOptions) {
   }, [fix, active, canSpeak, entries, suggestion]);
 
   const take = () => {
-    const o = optsRef.current;
-    setSuggestion((s) => {
-      if (s) {
-        skipRef.current.add(s.poi.id);
-        o.onTake(s.poi);
-      }
-      return null;
-    });
+    if (!suggestion) return;
+    skipRef.current.add(suggestion.poi.id);
+    setSuggestion(null);
+    optsRef.current.onTake(suggestion.poi);
   };
 
   const dismiss = () => {
-    setSuggestion((s) => {
-      if (s) skipRef.current.add(s.poi.id);
-      return null;
-    });
+    if (suggestion) skipRef.current.add(suggestion.poi.id);
+    setSuggestion(null);
   };
 
   return { suggestion, take, dismiss };

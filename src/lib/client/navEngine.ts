@@ -35,6 +35,7 @@ export const DETOUR_MIN_M = 60;
 export const DETOUR_MAX_M = 200;
 export const DETOUR_AHEAD_DEG = 50;
 export const DETOUR_GAP_MS = 5 * 60_000;
+export const DETOUR_FIRST_MS = 3 * 60_000; // no detour card in the first minutes of a walk
 export const DETOUR_MAX_PER_WALK = 3;
 // POIs within this corridor of the planned route count as "along the route".
 export const ROUTE_CORRIDOR_M = 60;
@@ -187,4 +188,119 @@ export function etaMinutes(route: Pick<WalkRoute, "durationS" | "distanceM">, re
   if (route.distanceM <= 0) return 0;
   const total = Math.max(1, Math.round(route.durationS / 60));
   return Math.max(1, Math.round((remainingM / route.distanceM) * total));
+}
+
+// ---------- localized names ----------
+
+// The static extract and live Overpass both store English in `name` but keep
+// the full OSM tag set, which usually carries the local name. Prefer the tag
+// for the UI language, then the stored name/brand. Falls back to `kind` so
+// callers can always render something.
+const NAME_TAG_KEYS: Record<Lang, string[]> = {
+  "zh-TW": ["name:zh-TW", "name:zh-Hant", "name:zh", "name"],
+  ja: ["name:ja"],
+  en: ["name:en"],
+  ko: ["name:ko", "name:en"],
+};
+
+export function displayName(poi: Pick<NearbyPoi, "kind" | "name" | "brand" | "tags">, lang: Lang): string {
+  const tags = poi.tags ?? {};
+  for (const key of NAME_TAG_KEYS[lang] ?? NAME_TAG_KEYS.en) {
+    const v = tags[key]?.trim();
+    if (v) return v;
+  }
+  // The stored `name` is English in this dataset; the OSM default name tag
+  // underneath is usually the local name, so it outranks the brand.
+  const name = poi.name?.trim();
+  if (name) return name;
+  const local = tags.name?.trim();
+  if (local) return local;
+  const brand = poi.brand?.trim();
+  if (brand) return brand;
+  return poi.kind;
+}
+
+// ---------- map-tap pick places ----------
+
+// Named places offered right after a map tap: the closest named POIs
+// within this radius of the tap.
+export const PICK_PLACES_RADIUS_M = 60;
+export const PICK_PLACES_LIMIT = 3;
+
+// Road furniture and transit stops are named after intersections but are not
+// places to walk to: signals, crossings, bus stops and bike docks.
+function isNonPlace(poi: Pick<NearbyPoi, "kind" | "tags">): boolean {
+  if (poi.kind === "traffic_signals" || poi.kind === "bus_stop" || poi.kind === "bicycle_rental") return true;
+  const tags = poi.tags ?? {};
+  const get = (k: string): string => String(tags[k] ?? "").toLowerCase();
+  if (get("highway") === "traffic_signals" || get("highway") === "crossing") return true;
+  if (get("railway") === "crossing" || get("railway") === "level_crossing") return true;
+  if (Object.keys(tags).some((k) => k.toLowerCase() === "crossing")) return true;
+  return false;
+}
+
+// Closest named places first, at most `limit`. The caller measures
+// distanceM from the tap (e.g. /api/nearby with the tap as the fix).
+export function selectPickPlaces(
+  pois: NearbyPoi[],
+  radiusM: number = PICK_PLACES_RADIUS_M,
+  limit: number = PICK_PLACES_LIMIT,
+): NearbyPoi[] {
+  return pois
+    .filter((p) => !isNonPlace(p))
+    .filter((p) => (p.name ?? p.brand)?.trim() && Number.isFinite(p.distanceM) && p.distanceM <= radiusM)
+    .sort((a, b) => a.distanceM - b.distanceM)
+    .slice(0, Math.max(0, limit));
+}
+
+// Latest-wins guard for overlapping async requests (tap plans, nearby
+// lookups, route fetches): each request takes a token with issue(), and a
+// response is applied only while its token isLatest(). Stale responses are
+// dropped, so rapid taps never apply out of order.
+export class TakeLatest {
+  private seq = 0;
+  issue(): number {
+    this.seq += 1;
+    return this.seq;
+  }
+  isLatest(token: number): boolean {
+    return token === this.seq;
+  }
+  // Invalidate every outstanding token (e.g. leaving the flow).
+  reset(): void {
+    this.seq += 1;
+  }
+}
+
+// ---------- route options ----------
+
+// Extra response fields when GET /api/route is called with alternatives=1.
+// Defined here (not in lib/types, which is lead-owned): routes[0] is always
+// the fastest route; routes[1] is the "hear more" route when one qualified.
+export interface RouteOptions {
+  fastest: WalkRoute;
+  hearMore: WalkRoute | null;
+  routes: WalkRoute[];
+  stories: number[]; // story-worthy places per route, same order as routes
+}
+
+export async function fetchWalkRouteOptions(
+  from: { lat: number; lon: number },
+  to: { lat: number; lon: number },
+  lang: Lang,
+  hometown?: string,
+): Promise<RouteOptions> {
+  const params = new URLSearchParams({ from: `${from.lat},${from.lon}`, to: `${to.lat},${to.lon}`, lang, alternatives: "1" });
+  if (hometown) params.set("hometown", hometown);
+  const body = await readJson(await fetch(`/api/route?${params.toString()}`));
+  const fastest = body.route as WalkRoute | undefined;
+  if (!fastest || !Array.isArray(fastest.coordinates) || fastest.coordinates.length === 0 || !Array.isArray(fastest.steps)) {
+    throw new Error("Invalid route");
+  }
+  const routes = (Array.isArray(body.routes) ? body.routes : [fastest]).filter(
+    (r): r is WalkRoute => !!r && Array.isArray(r.coordinates) && r.coordinates.length > 0 && Array.isArray(r.steps),
+  );
+  if (routes.length === 0) throw new Error("Invalid route");
+  const stories = Array.isArray(body.stories) ? body.stories.map((n) => (Number.isFinite(n) ? Math.max(0, Math.round(n as number)) : 0)) : routes.map(() => 0);
+  return { fastest: routes[0], hearMore: routes.length > 1 ? routes[1] : null, routes, stories };
 }

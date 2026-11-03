@@ -19,12 +19,12 @@ export default function ModeChoice({
     <div className="absolute inset-0 z-40 grid place-items-center p-6">
       <button type="button" aria-label={t(lang, "close")} onClick={onClose} className="rg-fade-in absolute inset-0 bg-ink/30" />
       <div role="dialog" aria-modal="true" aria-label={t(lang, "modeTitle")} className="glass rg-fade-in relative w-full max-w-[300px] rounded-[20px] p-4">
-        <h2 className="px-1 pb-2 text-center text-[17px] font-semibold">{t(lang, "modeTitle")}</h2>
-        <div className="space-y-2">
+        <h2 className="px-1 pb-3 text-center text-[17px] font-semibold">{t(lang, "modeTitle")}</h2>
+        <div className="space-y-3">
           <button
             type="button"
             onClick={onWander}
-            className="flex h-11 w-full items-center gap-3 rounded-full bg-ink px-4 text-left text-[15px] font-medium text-white"
+            className="flex h-14 w-full items-center gap-3 rounded-full bg-ink px-4 text-left text-[15px] font-medium text-white"
           >
             <Footprints size={20} aria-hidden className="shrink-0" />
             <span>
@@ -35,7 +35,7 @@ export default function ModeChoice({
           <button
             type="button"
             onClick={onDestination}
-            className="flex h-11 w-full items-center gap-3 rounded-full border border-[rgba(17,17,17,0.12)] bg-white px-4 text-left text-[15px] font-medium text-ink"
+            className="flex h-14 w-full items-center gap-3 rounded-full border border-[rgba(17,17,17,0.12)] bg-white px-4 text-left text-[15px] font-medium text-ink"
           >
             <MapPin size={20} aria-hidden className="shrink-0" />
             <span>

@@ -5,7 +5,16 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { GeocodeResult, GeoFix, Lang, NearbyPoi, WalkRoute } from "@/lib/types";
 import { t } from "./i18n";
-import { fetchGeocode, fetchNearby, fetchWalkRoute, worthVisiting } from "./navEngine";
+import {
+  displayName,
+  fetchGeocode,
+  fetchNearby,
+  fetchWalkRouteOptions,
+  PICK_PLACES_RADIUS_M,
+  selectPickPlaces,
+  TakeLatest,
+  worthVisiting,
+} from "./navEngine";
 export interface WalkDestination {
   name: string;
   label: string;
@@ -15,6 +24,9 @@ export interface WalkDestination {
 
 export type DestStatus = "idle" | "picking" | "preview" | "walking" | "arrived";
 
+// Picked-place choice: a NearbyPoi id, or "spot" for the raw tapped point.
+export const PICK_SPOT = "spot";
+
 const SEARCH_DEBOUNCE_MS = 400;
 const NEARBY_RADIUS_M = 500;
 const NEARBY_LIMIT = 8;
@@ -22,6 +34,7 @@ const NEARBY_LIMIT = 8;
 export interface UseDestinationWalkOptions {
   lang: Lang;
   getFix: () => GeoFix | null;
+  hometown?: string;
 }
 
 export function useDestinationWalk(options: UseDestinationWalkOptions) {
@@ -34,8 +47,14 @@ export function useDestinationWalk(options: UseDestinationWalkOptions) {
   const [nearbyLoading, setNearbyLoading] = useState(false);
   const [pickArmed, setPickArmed] = useState(false);
   const [pickPoint, setPickPoint] = useState<{ lat: number; lon: number } | null>(null);
+  const [pickPlaces, setPickPlaces] = useState<NearbyPoi[] | null>(null);
+  const [pickPlacesLoading, setPickPlacesLoading] = useState(false);
+  const [pickChoice, setPickChoice] = useState<string | null>(null);
   const [destination, setDestination] = useState<WalkDestination | null>(null);
   const [route, setRoute] = useState<WalkRoute | null>(null);
+  const [routes, setRoutes] = useState<WalkRoute[] | null>(null);
+  const [routeIndex, setRouteIndex] = useState(0);
+  const [storyCounts, setStoryCounts] = useState<number[]>([]);
   const [routing, setRouting] = useState(false);
   const [routeError, setRouteError] = useState<string | null>(null);
   const [previewKey, setPreviewKey] = useState(0); // bumped per planned route: the map fits bounds
@@ -45,6 +64,20 @@ export function useDestinationWalk(options: UseDestinationWalkOptions) {
     optsRef.current = options;
   });
   const searchToken = useRef(0);
+  const planGuard = useRef(new TakeLatest());
+  const pickGuard = useRef(new TakeLatest());
+  const destinationRef = useRef<WalkDestination | null>(null);
+  useEffect(() => {
+    destinationRef.current = destination;
+  }, [destination]);
+
+  const clearPick = useCallback(() => {
+    pickGuard.current.reset();
+    setPickPoint(null);
+    setPickPlaces(null);
+    setPickPlacesLoading(false);
+    setPickChoice(null);
+  }, []);
 
   const open = useCallback(() => {
     setStatus("picking");
@@ -54,9 +87,20 @@ export function useDestinationWalk(options: UseDestinationWalkOptions) {
   }, []);
 
   const cancelPick = useCallback(() => {
+    planGuard.current.reset();
+    pickGuard.current.reset();
     setStatus((s) => (s === "picking" || s === "preview" ? "idle" : s));
     setPickArmed(false);
     setPickPoint(null);
+    setPickPlaces(null);
+    setPickPlacesLoading(false);
+    setPickChoice(null);
+    setDestination(null);
+    setRoute(null);
+    setRoutes(null);
+    setRouteIndex(0);
+    setStoryCounts([]);
+    setRouteError(null);
   }, []);
 
   const loadNearby = useCallback(() => {
@@ -121,9 +165,13 @@ export function useDestinationWalk(options: UseDestinationWalkOptions) {
 
   const planTo = useCallback((dest: WalkDestination, from: GeoFix | null) => {
     const o = optsRef.current;
+    const token = planGuard.current.issue();
     setDestination(dest);
     setPickArmed(false);
     setRoute(null);
+    setRoutes(null);
+    setRouteIndex(0);
+    setStoryCounts([]);
     setRouteError(null);
     setStatus("preview");
     setPreviewKey((k) => k + 1);
@@ -132,32 +180,118 @@ export function useDestinationWalk(options: UseDestinationWalkOptions) {
       return;
     }
     setRouting(true);
-    fetchWalkRoute(from, dest, o.lang)
-      .then((r) => setRoute(r))
-      .catch(() => setRouteError(t(optsRef.current.lang, "destRouteFail")))
-      .finally(() => setRouting(false));
+    fetchWalkRouteOptions(from, dest, o.lang, o.hometown)
+      .then((opts) => {
+        if (!planGuard.current.isLatest(token)) return; // stale: a newer tap won
+        setRoutes(opts.routes);
+        setStoryCounts(opts.stories);
+        setRouteIndex(0);
+        setRoute(opts.fastest);
+        // The pre-fetch previewKey bump fired with no route yet: bump again
+        // now that the lines exist so the map fits them.
+        setPreviewKey((k) => k + 1);
+      })
+      .catch(() => {
+        if (!planGuard.current.isLatest(token)) return;
+        setRouteError(t(optsRef.current.lang, "destRouteFail"));
+      })
+      .finally(() => {
+        if (planGuard.current.isLatest(token)) setRouting(false);
+      });
   }, []);
 
   const chooseResult = useCallback(
     (r: GeocodeResult, from: GeoFix | null) => {
+      clearPick();
       planTo({ name: r.name, label: r.label, lat: r.lat, lon: r.lon }, from);
     },
-    [planTo],
+    [clearPick, planTo],
   );
 
   const choosePoi = useCallback(
     (p: NearbyPoi, from: GeoFix | null) => {
-      planTo({ name: p.name ?? p.brand ?? p.kind, label: "", lat: p.lat, lon: p.lon }, from);
+      clearPick();
+      planTo({ name: displayName(p, optsRef.current.lang), label: "", lat: p.lat, lon: p.lon }, from);
+    },
+    [clearPick, planTo],
+  );
+
+  // Map tap: plan instantly to the tapped point, then resolve the closest
+  // named places. The closest one lends its name to the destination (the
+  // coordinates stay on the tap until the walker picks a place).
+  const choosePoint = useCallback(
+    (lat: number, lon: number, name: string, from: GeoFix | null, named = false) => {
+      const token = pickGuard.current.issue();
+      setPickPoint({ lat, lon });
+      setPickPlaces(null);
+      setPickChoice(null);
+      setPickPlacesLoading(true);
+      planTo({ name, label: "", lat, lon }, from);
+      fetchNearby(lat, lon, PICK_PLACES_RADIUS_M)
+        .then((pois) => {
+          if (!pickGuard.current.isLatest(token)) return;
+          const places = selectPickPlaces(pois);
+          setPickPlaces(places);
+          setPickPlacesLoading(false);
+          const top = places[0];
+          if (named) {
+            // the user tapped a place label: keep that name, highlight it if listed
+            const same = places.find((p) => displayName(p, optsRef.current.lang) === name);
+            setPickChoice(same ? same.id : PICK_SPOT);
+          } else if (top) {
+            setPickChoice(top.id);
+            // Preselect the closest name; keep the tapped coordinates.
+            // A newer planTo (search, another tap) wins: only rename a
+            // destination that is still on this tap.
+            setDestination((d) =>
+              d && d.lat === lat && d.lon === lon ? { ...d, name: displayName(top, optsRef.current.lang) } : d,
+            );
+          } else {
+            setPickChoice(PICK_SPOT);
+          }
+        })
+        .catch(() => {
+          if (!pickGuard.current.isLatest(token)) return;
+          setPickPlaces([]);
+          setPickPlacesLoading(false);
+          setPickChoice(PICK_SPOT);
+        });
     },
     [planTo],
   );
 
-  const choosePoint = useCallback(
-    (lat: number, lon: number, name: string, from: GeoFix | null) => {
-      setPickPoint({ lat, lon });
-      planTo({ name, label: "", lat, lon }, from);
+  // Pick one of the named places near the tap: the destination moves to the
+  // POI itself and the route is replanned (skipped when already there).
+  const choosePickPlace = useCallback(
+    (p: NearbyPoi, from: GeoFix | null) => {
+      if (!pickPoint) return;
+      pickGuard.current.reset();
+      setPickPlacesLoading(false);
+      setPickChoice(p.id);
+      const d = destinationRef.current;
+      const name = displayName(p, optsRef.current.lang);
+      if (!d || d.lat !== p.lat || d.lon !== p.lon || d.name !== name) {
+        planTo({ name, label: "", lat: p.lat, lon: p.lon }, from);
+      }
     },
-    [planTo],
+    [pickPoint, planTo],
+  );
+
+  // "Just this spot": the destination stays on (or returns to) the tap.
+  const chooseSpot = useCallback(
+    (name: string, from: GeoFix | null) => {
+      if (!pickPoint) return;
+      pickGuard.current.reset();
+      setPickPlacesLoading(false);
+      setPickChoice(PICK_SPOT);
+      const d = destinationRef.current;
+      if (d && d.lat === pickPoint.lat && d.lon === pickPoint.lon) {
+        if (d.name !== name) setDestination({ ...d, name });
+      } else {
+        planTo({ name, label: "", lat: pickPoint.lat, lon: pickPoint.lon }, from);
+      }
+    },
+    [pickPoint, planTo],
   );
 
   const retryRoute = useCallback(
@@ -172,11 +306,29 @@ export function useDestinationWalk(options: UseDestinationWalkOptions) {
     setRouteError(null);
   }, []);
 
+  const selectRoute = useCallback(
+    (index: number) => {
+      if (!routes || index < 0 || index >= routes.length || index === routeIndex) return;
+      setRouteIndex(index);
+      setRoute(routes[index]);
+      // The selected line changed: refit the map to it.
+      setPreviewKey((k) => k + 1);
+    },
+    [routes, routeIndex],
+  );
+
   const backToPick = useCallback(() => {
+    planGuard.current.reset();
     setStatus("picking");
     setRoute(null);
+    setRoutes(null);
+    setRouteIndex(0);
+    setStoryCounts([]);
     setRouteError(null);
     setPickPoint(null);
+    setPickPlaces(null);
+    setPickPlacesLoading(false);
+    setPickChoice(null);
   }, []);
 
   const startWalking = useCallback(() => {
@@ -187,14 +339,22 @@ export function useDestinationWalk(options: UseDestinationWalkOptions) {
 
   const reset = useCallback(() => {
     searchToken.current++;
+    planGuard.current.reset();
+    pickGuard.current.reset();
     setStatus("idle");
     setQuery("");
     setResults([]);
     setSearched(false);
     setPickArmed(false);
     setPickPoint(null);
+    setPickPlaces(null);
+    setPickPlacesLoading(false);
+    setPickChoice(null);
     setDestination(null);
     setRoute(null);
+    setRoutes(null);
+    setRouteIndex(0);
+    setStoryCounts([]);
     setRouteError(null);
   }, []);
 
@@ -210,8 +370,14 @@ export function useDestinationWalk(options: UseDestinationWalkOptions) {
     pickArmed,
     setPickArmed,
     pickPoint,
+    pickPlaces,
+    pickPlacesLoading,
+    pickChoice,
     destination,
     route,
+    routes,
+    routeIndex,
+    storyCounts,
     routing,
     routeError,
     previewKey,
@@ -222,8 +388,11 @@ export function useDestinationWalk(options: UseDestinationWalkOptions) {
     chooseResult,
     choosePoi,
     choosePoint,
+    choosePickPlace,
+    chooseSpot,
     retryRoute,
     replaceRoute,
+    selectRoute,
     backToPick,
     startWalking,
     markArrived,

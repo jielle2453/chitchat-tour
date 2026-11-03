@@ -7,7 +7,7 @@ import Sheet from "@/components/Sheet";
 import { fillNotebookWithSampleWalk } from "@/lib/client/demoSeed";
 import { COUNTRIES, countryName, localized, t, UI_LANGS, type I18nKey } from "@/lib/client/i18n";
 import { clearNotebook, useProfile, useSettings } from "@/lib/client/storage";
-import type { Frequency } from "@/lib/client/storageFormat";
+import { QUIET_MAX_S, QUIET_MIN_S, QUIET_STEP_S } from "@/lib/client/storageFormat";
 import type { Lang } from "@/lib/types";
 
 function Group({ title, children }: { title: string; children: React.ReactNode }) {
@@ -49,6 +49,14 @@ function Segmented<T extends string | number>({ value, options, onChange, label 
   );
 }
 
+function formatQuiet(totalS: number, lang: Lang): string {
+  const m = Math.floor(totalS / 60);
+  const r = totalS % 60;
+  if (lang === "ja") return m === 0 ? `${totalS}秒` : r === 0 ? `${m}分` : `${m}分${r}秒`;
+  if (lang === "zh-TW") return m === 0 ? `${totalS} 秒` : r === 0 ? `${m} 分` : `${m} 分 ${r} 秒`;
+  return m === 0 ? `${totalS} s` : r === 0 ? `${m} min` : `${m} min ${r} s`;
+}
+
 const selectCls = "h-11 w-full rounded-xl bg-fill px-3.5 text-[15px]";
 
 export default function MePage() {
@@ -62,11 +70,6 @@ export default function MePage() {
   const routes = useMemo(() => safeRoutes(), []);
   const countries = useMemo(() => [...COUNTRIES], []);
 
-  const freq: { v: Frequency; key: I18nKey }[] = [
-    { v: "often", key: "freqOften" },
-    { v: "normal", key: "freqNormal" },
-    { v: "rarely", key: "freqRarely" },
-  ];
   const speeds: { v: number; key: I18nKey }[] = [
     { v: 0.85, key: "speedSlow" },
     { v: 1, key: "speedNormal" },
@@ -96,8 +99,23 @@ export default function MePage() {
             onChange={(v) => setProfile({ ...profile, lang: v })}
           />
         </Row>
-        <Row label={t(lang, "frequency")}>
-          <Segmented label={t(lang, "frequency")} value={settings.frequency} options={freq.map((f) => ({ v: f.v, label: t(lang, f.key) }))} onChange={(v) => update({ frequency: v })} />
+        <Row label={t(lang, "quietTime")}>
+          <div className="flex h-11 items-center gap-3">
+            <input
+              type="range"
+              min={QUIET_MIN_S}
+              max={QUIET_MAX_S}
+              step={QUIET_STEP_S}
+              value={settings.quietS}
+              aria-label={t(lang, "quietTime")}
+              aria-valuetext={formatQuiet(settings.quietS, lang)}
+              onChange={(e) => update({ quietS: Number(e.target.value) })}
+              className="h-11 w-full accent-ink"
+            />
+            <span aria-hidden className="w-28 shrink-0 text-right text-[15px] tabular-nums">
+              {formatQuiet(settings.quietS, lang)}
+            </span>
+          </div>
         </Row>
         <Row label={t(lang, "voiceSpeed")}>
           <Segmented label={t(lang, "voiceSpeed")} value={settings.voiceRate} options={speeds.map((s) => ({ v: s.v, label: t(lang, s.key) }))} onChange={(v) => update({ voiceRate: v })} />

@@ -87,24 +87,36 @@ function mapStep(s: OsrmStep): RouteStep {
   };
 }
 
-async function fetchRoute(from: { lat: number; lon: number }, to: { lat: number; lon: number }): Promise<WalkRoute> {
+// All router paths through the given points in order. With alternatives,
+// the router returns up to a few distinct paths between the first and last
+// point (OSRM ignores alternatives together with waypoints, so pass exactly
+// two points then). Throws when the router has no route.
+export async function fetchOsrmRoutes(
+  points: { lat: number; lon: number }[],
+  alternatives = false,
+): Promise<WalkRoute[]> {
+  if (points.length < 2) throw new Error("foot router: need at least two points");
   const url =
-    `${ROUTER_BASE}/${from.lon},${from.lat};${to.lon},${to.lat}` +
-    "?overview=full&geometries=geojson&steps=true";
+    `${ROUTER_BASE}/${points.map((p) => `${p.lon},${p.lat}`).join(";")}` +
+    `?overview=full&geometries=geojson&steps=true${alternatives ? "&alternatives=true" : ""}`;
   const res = await fetch(url, {
     headers: { "User-Agent": USER_AGENT, Accept: "application/json" },
     signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
   });
   if (!res.ok) throw new Error(`foot router ${res.status}`);
   const json = (await res.json()) as OsrmResponse;
-  const best = json.code === "Ok" ? json.routes?.[0] : undefined;
-  if (!best) throw new Error(`foot router: ${json.code ?? "no route"}`);
-  return {
-    coordinates: best.geometry.coordinates,
-    distanceM: best.distance,
-    durationS: best.duration,
-    steps: best.legs.flatMap((leg) => leg.steps.map(mapStep)),
-  };
+  const routes = json.code === "Ok" ? (json.routes ?? []) : [];
+  if (routes.length === 0) throw new Error(`foot router: ${json.code ?? "no route"}`);
+  return routes.map((r) => ({
+    coordinates: r.geometry.coordinates,
+    distanceM: r.distance,
+    durationS: r.duration,
+    steps: r.legs.flatMap((leg) => leg.steps.map(mapStep)),
+  }));
+}
+
+async function fetchRoute(from: { lat: number; lon: number }, to: { lat: number; lon: number }): Promise<WalkRoute> {
+  return (await fetchOsrmRoutes([from, to]))[0];
 }
 
 export function straightLineRoute(from: { lat: number; lon: number }, to: { lat: number; lon: number }): WalkRoute {

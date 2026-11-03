@@ -58,20 +58,38 @@ export function sanitizeProfile(x: unknown): UserProfile | null {
   return { lang, hometown };
 }
 
-export type Frequency = "often" | "normal" | "rarely";
+export const QUIET_MIN_S = 5;
+export const QUIET_MAX_S = 120;
+export const QUIET_STEP_S = 5;
+export const DEFAULT_QUIET_S = 15;
+
+// Old frequency values map to a quiet gap in seconds.
+const FREQUENCY_TO_QUIET_S: Record<string, number> = { often: 10, normal: 15, rarely: 30 };
+
+export function sanitizeQuietS(x: unknown): number {
+  if (typeof x !== "number" || !Number.isFinite(x)) return DEFAULT_QUIET_S;
+  const stepped = Math.round(x / QUIET_STEP_S) * QUIET_STEP_S;
+  return Math.min(QUIET_MAX_S, Math.max(QUIET_MIN_S, stepped));
+}
+
 export interface Settings {
-  frequency: Frequency;
+  quietS: number; // seconds of silence after a story ends before the next may start
   voiceRate: number;
   demo: boolean;
   routeId: string | null;
 }
-export const DEFAULT_SETTINGS: Settings = { frequency: "normal", voiceRate: 1, demo: false, routeId: null };
+export const DEFAULT_SETTINGS: Settings = { quietS: DEFAULT_QUIET_S, voiceRate: 1, demo: false, routeId: null };
 
 export function sanitizeSettings(x: unknown): Settings | null {
   if (!isObj(x)) return null;
-  const frequency: Frequency = x.frequency === "often" || x.frequency === "rarely" ? x.frequency : "normal";
+  const quietS =
+    typeof x.quietS === "number" && Number.isFinite(x.quietS)
+      ? sanitizeQuietS(x.quietS)
+      : typeof x.frequency === "string" && x.frequency in FREQUENCY_TO_QUIET_S
+        ? FREQUENCY_TO_QUIET_S[x.frequency]
+        : DEFAULT_QUIET_S;
   const rate = typeof x.voiceRate === "number" && x.voiceRate >= 0.5 && x.voiceRate <= 2 ? x.voiceRate : 1;
-  return { frequency, voiceRate: rate, demo: x.demo === true, routeId: typeof x.routeId === "string" ? x.routeId : null };
+  return { quietS, voiceRate: rate, demo: x.demo === true, routeId: typeof x.routeId === "string" ? x.routeId : null };
 }
 
 function validDiscovery(d: unknown): d is Discovery {
