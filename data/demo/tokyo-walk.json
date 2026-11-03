@@ -1,173 +1,206 @@
 {
- "id": "tokyo-walk",
- "note": "Pre-recorded simulated walk: Tokyo visitor, English, real Muse Spark narrations on the demo-walk route (recorded 2026-11-03). Area-level stories that pointed at places not on this route (Da-an Park, Din Tai Fung, Rongjin) were removed.",
- "profile": {
-  "hometown": "JP",
-  "lang": "en"
- },
- "route": "demo-walk",
- "events": [
-  {
-   "atM": 0,
-   "lat": 25.033815,
-   "lon": 121.529903,
-   "poiId": "node/3270313561",
-   "narration": {
-    "id": "n_mw0qa02zbz3c",
-    "itemId": "mrt-no-eating",
-    "title": "Even water counts in the MRT",
-    "text": "That MRT entrance? Don't even think about finishing your water bottle down there. Sipping plain water past the gates can get you fined NT$1,500 to NT$7,500. The official worry is crumbs luring insects that chew cables and mess with the automation. In Tokyo, meanwhile, the rulebook just says: eat if you must, don't bother others.",
-    "lang": "en",
-    "sources": [
-     {
-      "url": "https://www.nownews.com/news/6633871",
-      "title": "Taipei Metro eating and drinking ban explained",
-      "publisher": "NOWnews",
-      "verified": "full-text"
-     },
-     {
-      "url": "https://ssl.tokyometro.jp/support/faq_answer?lang=ja&faqno=OpenFAQ-000176",
-      "title": "FAQ: eating and drinking in trains",
-      "publisher": "Tokyo Metro",
-      "verified": "snippet"
-     },
-     {
-      "url": "https://www.mintetsu.or.jp/activity/enquete/2025.html",
-      "title": "FY2025 ranking of nuisance behavior in stations and trains",
-      "publisher": "Japan Private Railway Association",
-      "verified": "snippet"
-     }
-    ],
-    "confidence": "medium",
-    "category": "transport",
-    "contrast": {
-     "here": "No eating or drinking, even water, past gates",
-     "elsewhere": "In Tokyo, no ban, just don't bother others"
-    }
-   }
+  "id": "tokyo-walk",
+  "note": "Pre-recorded simulated walk: Tokyo visitor, English, real Muse Spark narrations (recorded 2026-11-03), placed every ~40 m on the short demo route straight down Yongkang Street to Yongkang Park.",
+  "profile": {
+    "hometown": "JP",
+    "lang": "en"
   },
-  {
-   "atM": 68,
-   "lat": 25.033260388606266,
-   "lon": 121.52988405246568,
-   "poiId": "node/2597965495",
-   "narration": {
-    "id": "n_mw0qa5xbjbb5",
-    "itemId": "convenience-store-density",
-    "title": "Convenience store forest",
-    "text": "Bet that 7-Eleven across the street has another one practically waving at it from the next block. Taiwan counted about one convenience store for every 1,659 people in 2025, with 14,236 stores island-wide. In Japan it was about one per 2,180 people, so you're walking through an even denser forest of midnight snacks.",
-    "lang": "en",
-    "sources": [
-     {
-      "url": "https://news.pts.org.tw/article/775582",
-      "title": "Taiwan convenience store density vs Japan",
-      "publisher": "PTS News (citing Ministry of Economic Affairs, 2025-10)",
-      "verified": "full-text"
-     }
-    ],
-    "confidence": "high",
-    "category": "shop",
-    "contrast": {
-     "here": "One store per 1,659 people",
-     "elsewhere": "Japan: about one per 2,180"
+  "route": "demo-walk",
+  "events": [
+    {
+      "atM": 0,
+      "lat": 25.033567,
+      "lon": 121.529936,
+      "poiId": "node/3270313561",
+      "narration": {
+        "id": "n_mw0qa02zbz3c",
+        "itemId": "mrt-no-eating",
+        "title": "Even water counts in the MRT",
+        "text": "That MRT entrance? Don't even think about finishing your water bottle down there. Sipping plain water past the gates can get you fined NT$1,500 to NT$7,500. The official worry is crumbs luring insects that chew cables and mess with the automation. In Tokyo, meanwhile, the rulebook just says: eat if you must, don't bother others.",
+        "lang": "en",
+        "sources": [
+          {
+            "url": "https://www.nownews.com/news/6633871",
+            "title": "Taipei Metro eating and drinking ban explained",
+            "publisher": "NOWnews",
+            "verified": "full-text"
+          },
+          {
+            "url": "https://ssl.tokyometro.jp/support/faq_answer?lang=ja&faqno=OpenFAQ-000176",
+            "title": "FAQ: eating and drinking in trains",
+            "publisher": "Tokyo Metro",
+            "verified": "snippet"
+          },
+          {
+            "url": "https://www.mintetsu.or.jp/activity/enquete/2025.html",
+            "title": "FY2025 ranking of nuisance behavior in stations and trains",
+            "publisher": "Japan Private Railway Association",
+            "verified": "snippet"
+          }
+        ],
+        "confidence": "medium",
+        "category": "transport",
+        "contrast": {
+          "here": "No eating or drinking, even water, past gates",
+          "elsewhere": "In Tokyo, no ban, just don't bother others"
+        }
+      }
+    },
+    {
+      "atM": 40,
+      "lat": 25.033212,
+      "lon": 121.529875,
+      "poiId": "node/661201435",
+      "narration": {
+        "id": "n_mw0qb00z6k44",
+        "itemId": "pedestrian-flashing-green-rule",
+        "title": "The softer flashing green",
+        "text": "That blinking walk man got a softer job description since this March. If you haven't stepped off the curb yet, you're now told to avoid entering, not prohibited from entering — which effectively removes the old NT$500 fine. In Japan the rule is the same — flashing means wait like a yellow — except the light is officially called blue, not green.",
+        "lang": "en",
+        "sources": [
+          {
+            "url": "https://newtalk.tw/news/view/2026-03-12/1023862",
+            "title": "Pedestrian signal rule amendment",
+            "publisher": "Newtalk",
+            "verified": "full-text"
+          },
+          {
+            "url": "https://www.keishicho.metro.tokyo.lg.jp/kotsu/jikoboshi/bicycle/rule.html",
+            "title": "Bicycle traffic rules",
+            "publisher": "Tokyo Metropolitan Police Department",
+            "verified": "full-text"
+          },
+          {
+            "url": "https://trafficnews.jp/post/664581",
+            "title": "Pedestrian signal countdown displays in Japan",
+            "publisher": "Traffic News (Japan)",
+            "verified": "full-text"
+          }
+        ],
+        "confidence": "high",
+        "category": "street",
+        "contrast": {
+          "here": "Told to avoid entering on flashing green",
+          "elsewhere": "In Japan: wait, and it's called blue"
+        }
+      }
+    },
+    {
+      "atM": 80,
+      "lat": 25.032858,
+      "lon": 121.529803,
+      "poiId": "node/13607292075",
+      "narration": {
+        "id": "n_mw0qbgcim4h6",
+        "itemId": "youbike-origin",
+        "title": "Orange YouBikes' Xinyi start",
+        "text": "Those chunky orange bikes parked on every corner started life as a tiny 2009 trial in Xinyi. The city still runs the system together with Giant Bicycles, so the hardware is solid local stock. In Tokyo, for example, the docks look different — mostly docomo bike share and HELLO CYCLING rigs.",
+        "lang": "en",
+        "sources": [
+          {
+            "url": "https://en.wikipedia.org/wiki/YouBike",
+            "title": "YouBike",
+            "publisher": "Wikipedia",
+            "verified": "full-text"
+          },
+          {
+            "url": "https://docomo-cycle.jp/",
+            "title": "docomo bike share official site",
+            "publisher": "docomo bike share",
+            "verified": "full-text"
+          }
+        ],
+        "confidence": "medium",
+        "category": "transport",
+        "contrast": {
+          "here": "City with Giant runs YouBike since 2009",
+          "elsewhere": "Tokyo: docomo bike share, HELLO CYCLING"
+        }
+      }
+    },
+    {
+      "atM": 120,
+      "lat": 25.032503,
+      "lon": 121.529737,
+      "poiId": "node/2597965495",
+      "narration": {
+        "id": "n_mw0qa5xbjbb5",
+        "itemId": "convenience-store-density",
+        "title": "Convenience store forest",
+        "text": "Bet that 7-Eleven across the street has another one practically waving at it from the next block. Taiwan counted about one convenience store for every 1,659 people in 2025, with 14,236 stores island-wide. In Japan it was about one per 2,180 people, so you're walking through an even denser forest of midnight snacks.",
+        "lang": "en",
+        "sources": [
+          {
+            "url": "https://news.pts.org.tw/article/775582",
+            "title": "Taiwan convenience store density vs Japan",
+            "publisher": "PTS News (citing Ministry of Economic Affairs, 2025-10)",
+            "verified": "full-text"
+          }
+        ],
+        "confidence": "high",
+        "category": "shop",
+        "contrast": {
+          "here": "One store per 1,659 people",
+          "elsewhere": "Japan: about one per 2,180"
+        }
+      }
+    },
+    {
+      "atM": 160,
+      "lat": 25.032148,
+      "lon": 121.529673,
+      "poiId": null,
+      "narration": {
+        "id": "n_mw0qakjf5i6e",
+        "itemId": "motorcycles-out-of-arcades",
+        "title": "Scooters Off the Arcade",
+        "text": "That covered arcade along the shopfronts was meant as your sidewalk. Back in 1999 Taipei started shooing scooters off these walkways to give them back to walkers. So if this stretch feels oddly strollable for scooter-central, that's why — enjoy the cover while the rain decides what to do.",
+        "lang": "en",
+        "sources": [
+          {
+            "url": "https://www-ws.gov.taipei/001/Upload/367/relfile/46908/7951005/e2effc94-9372-4efb-9631-03c6ea77eaf1.pdf",
+            "title": "Taipei traffic bureau briefing",
+            "publisher": "Taipei City Government",
+            "verified": "snippet"
+          }
+        ],
+        "confidence": "medium",
+        "category": "transport",
+        "contrast": null
+      }
+    },
+    {
+      "atM": 195,
+      "lat": 25.031838,
+      "lon": 121.529613,
+      "poiId": "way/55259184",
+      "narration": {
+        "id": "n_mw0u9agzy5yw",
+        "itemId": "rooftop-water-tank",
+        "title": "Rooftop water tubs",
+        "text": "Those chunky grey tubs crowning the roofs up here? They're commonly explained as a buffer for outages and wobbly pressure. Word is a one-ton tank keeps a family of four going for a day or so. Japan has similar gravity-fed rooftop tanks too, though some cities now push direct supply.",
+        "lang": "en",
+        "sources": [
+          {
+            "url": "https://www.pro360.com.tw/guide/water_tower_cleaning",
+            "title": "Water tower cleaning guide",
+            "publisher": "PRO360 (commercial)",
+            "verified": "snippet"
+          },
+          {
+            "url": "https://www.city.niihama.lg.jp/uploaded/life/105060_433539_misc.pdf",
+            "title": "Water tank management guidance",
+            "publisher": "Niihama City, Japan",
+            "verified": "snippet"
+          }
+        ],
+        "confidence": "low",
+        "category": "architecture",
+        "contrast": {
+          "here": "Buffer for outages and shaky pressure",
+          "elsewhere": "Japan also uses gravity tanks; some cities push direct supply"
+        }
+      }
     }
-   }
-  },
-  {
-   "atM": 263,
-   "lat": 25.031533585471866,
-   "lon": 121.52955284344512,
-   "poiId": null,
-   "narration": {
-    "id": "n_mw0qakjf5i6e",
-    "itemId": "motorcycles-out-of-arcades",
-    "title": "Scooters Off the Arcade",
-    "text": "That covered arcade along the shopfronts was meant as your sidewalk. Back in 1999 Taipei started shooing scooters off these walkways to give them back to walkers. So if this stretch feels oddly strollable for scooter-central, that's why — enjoy the cover while the rain decides what to do.",
-    "lang": "en",
-    "sources": [
-     {
-      "url": "https://www-ws.gov.taipei/001/Upload/367/relfile/46908/7951005/e2effc94-9372-4efb-9631-03c6ea77eaf1.pdf",
-      "title": "Taipei traffic bureau briefing",
-      "publisher": "Taipei City Government",
-      "verified": "snippet"
-     }
-    ],
-    "confidence": "medium",
-    "category": "transport",
-    "contrast": null
-   }
-  },
-  {
-   "atM": 452,
-   "lat": 25.029838,
-   "lon": 121.529535,
-   "poiId": "node/661201435",
-   "narration": {
-    "id": "n_mw0qb00z6k44",
-    "itemId": "pedestrian-flashing-green-rule",
-    "title": "The softer flashing green",
-    "text": "That blinking walk man got a softer job description since this March. If you haven't stepped off the curb yet, you're now told to avoid entering, not prohibited from entering — which effectively removes the old NT$500 fine. In Japan the rule is the same — flashing means wait like a yellow — except the light is officially called blue, not green.",
-    "lang": "en",
-    "sources": [
-     {
-      "url": "https://newtalk.tw/news/view/2026-03-12/1023862",
-      "title": "Pedestrian signal rule amendment",
-      "publisher": "Newtalk",
-      "verified": "full-text"
-     },
-     {
-      "url": "https://www.keishicho.metro.tokyo.lg.jp/kotsu/jikoboshi/bicycle/rule.html",
-      "title": "Bicycle traffic rules",
-      "publisher": "Tokyo Metropolitan Police Department",
-      "verified": "full-text"
-     },
-     {
-      "url": "https://trafficnews.jp/post/664581",
-      "title": "Pedestrian signal countdown displays in Japan",
-      "publisher": "Traffic News (Japan)",
-      "verified": "full-text"
-     }
-    ],
-    "confidence": "high",
-    "category": "street",
-    "contrast": {
-     "here": "Told to avoid entering on flashing green",
-     "elsewhere": "In Japan: wait, and it's called blue"
-    }
-   }
-  },
-  {
-   "atM": 633,
-   "lat": 25.028377,
-   "lon": 121.529616,
-   "poiId": "node/13607292075",
-   "narration": {
-    "id": "n_mw0qbgcim4h6",
-    "itemId": "youbike-origin",
-    "title": "Orange YouBikes' Xinyi start",
-    "text": "Those chunky orange bikes parked on every corner started life as a tiny 2009 trial in Xinyi. The city still runs the system together with Giant Bicycles, so the hardware is solid local stock. In Tokyo, for example, the docks look different — mostly docomo bike share and HELLO CYCLING rigs.",
-    "lang": "en",
-    "sources": [
-     {
-      "url": "https://en.wikipedia.org/wiki/YouBike",
-      "title": "YouBike",
-      "publisher": "Wikipedia",
-      "verified": "full-text"
-     },
-     {
-      "url": "https://docomo-cycle.jp/",
-      "title": "docomo bike share official site",
-      "publisher": "docomo bike share",
-      "verified": "full-text"
-     }
-    ],
-    "confidence": "medium",
-    "category": "transport",
-    "contrast": {
-     "here": "City with Giant runs YouBike since 2009",
-     "elsewhere": "Tokyo: docomo bike share, HELLO CYCLING"
-    }
-   }
-  }
- ]
+  ]
 }

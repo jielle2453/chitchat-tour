@@ -1,6 +1,6 @@
 {
-  "name": "Roadside Guide",
-  "short_name": "Roadside",
+  "name": "Chitchat Tour",
+  "short_name": "Chitchat",
   "description": "A walking guide for the everyday things on the street.",
   "start_url": "/",
   "display": "standalone",

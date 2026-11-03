@@ -52,7 +52,25 @@ const LETTER_STYLE =
   "a plain pure white background with white margin around it, no shadow on the background. " +
   "Only this one letter, no other letters, words, numbers or logos.";
 
-const LETTER_IDS = new Set(["letter-s", "letter-t1", "letter-a", "letter-r", "letter-t2"]);
+// Style suffix for finish-card distance digit prompts (verbatim).
+const DIGIT_STYLE =
+  "A single character only, filling most of the frame, photographed straight on as a real physical object, " +
+  "like a cut-out from a magazine, crisp edges, true colours, soft even studio light, isolated and centred on " +
+  "a plain pure white background with white margin around it, no shadow on the background. " +
+  "Only this one character, no other letters, words, digits or logos.";
+
+const LETTER_IDS = new Set([
+  "letter-s", "letter-t1", "letter-a", "letter-r", "letter-t2",
+  "letter-c1", "letter-c2", "letter-h1", "letter-h2", "letter-i",
+  "letter-t3", "letter-t4", "letter-o", "letter-u",
+  "letter-a2", "letter-o2", "letter-u2", "letter-r2", "letter-i2",
+]);
+
+const DIGIT_IDS = new Set([
+  "digit-0", "digit-1", "digit-2", "digit-3", "digit-4",
+  "digit-5", "digit-6", "digit-7", "digit-8", "digit-9",
+  "digit-m",
+]);
 
 const DESCRIPTIONS = {
   walker:
@@ -97,10 +115,49 @@ const DESCRIPTIONS = {
     "the capital letter R printed in bold black on a round white plastic keyboard keycap seen from above",
   "letter-t2":
     "the capital letter T as an embroidered fabric patch with yellow and green thread and a stitched border",
+  "letter-c1":
+    "the capital letter C cut from brown corrugated cardboard with a visible fluted cut edge",
+  "letter-c2":
+    "the capital letter C painted in navy blue on a square cream ceramic tile",
+  "letter-h1":
+    "the capital letter H cut from a dark green metal highway sign, white reflective paint on green",
+  "letter-h2":
+    "the capital letter H as a white chenille varsity letter with a red felt border on cream fabric",
+  "letter-i":
+    "the capital letter I as a black rubber-stamp print on a small scrap of kraft paper",
+  "letter-t3":
+    "the capital letter T painted in white on a square of weathered blue-grey driftwood",
+  "letter-t4":
+    "the capital letter T cut from cream watercolour paper with a soft pale-blue painted wash",
+  "letter-o":
+    "the capital letter O as a glossy black vinyl record with a small plain red paper label in the middle",
+  "letter-u":
+    "the capital letter U as a glossy sky-blue plastic fridge magnet letter",
+  "letter-a2":
+    "the capital letter A moulded from a glossy thick bar of dark chocolate with bevelled edges",
+  "letter-o2":
+    "the capital letter O as a glazed ring doughnut with pink frosting and rainbow sprinkles seen from above",
+  "letter-u2":
+    "the capital letter U cut from brushed brass metal with a thin engraved edge",
+  "letter-r2":
+    "the capital letter R cut from holographic iridescent rainbow foil with a crinkled shine",
+  "letter-i2":
+    "the capital letter I as a tall thin strip of torn olive-green washi tape",
+  "digit-0": "the digit 0 cut from a sheet of cherry-red glossy paper",
+  "digit-1": "the digit 1 cut from a sheet of royal-blue matte paper",
+  "digit-2": "the digit 2 cut from a sheet of mustard-yellow card",
+  "digit-3": "the digit 3 cut from a sheet of forest-green felt",
+  "digit-4": "the digit 4 cut from a sheet of bright-orange paper",
+  "digit-5": "the digit 5 cut from a sheet of pale-pink paper",
+  "digit-6": "the digit 6 cut from blue denim fabric with visible weave",
+  "digit-7": "the digit 7 as white chalk on a small square of black chalkboard",
+  "digit-8": "the digit 8 as a shiny inflated gold foil party balloon",
+  "digit-9": "the digit 9 printed in bold white on a round black wooden disc",
+  "digit-m": "the lowercase letter m cut from a sheet of teal paper",
 };
 
 async function generateOne(id, description) {
-  const style = LETTER_IDS.has(id) ? LETTER_STYLE : STYLE;
+  const style = LETTER_IDS.has(id) ? LETTER_STYLE : DIGIT_IDS.has(id) ? DIGIT_STYLE : STYLE;
   const prompt = `${description}. ${style}`;
   const res = await fetch(`${BASE}/images/generations`, {
     method: "POST",

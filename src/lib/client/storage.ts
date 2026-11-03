@@ -139,14 +139,18 @@ export function notebookItemIds(): string[] {
 
 export function saveDiscovery(d: Discovery): boolean {
   const existing = readDiscoveries();
-  if (existing.some((x) => x.id !== d.id && !x.id.startsWith("demo-") && sameStory(x, d))) return true;
-  const list = existing.filter((x) => x.id !== d.id);
-  if (!writeStored(KEYS.discoveries, [d, ...list])) return false;
+  // a story already in the notebook keeps its one sticker; this walk's page just points at it
+  const dup = existing.find((x) => x.id !== d.id && !x.id.startsWith("demo-") && sameStory(x, d));
+  if (!dup) {
+    const list = existing.filter((x) => x.id !== d.id);
+    if (!writeStored(KEYS.discoveries, [d, ...list])) return false;
+  }
+  const id = dup?.id ?? d.id;
   if (d.walkId) {
     const walks = readWalks();
     const w = walks.find((x) => x.id === d.walkId);
-    if (w && !w.discoveryIds.includes(d.id)) {
-      writeStored(KEYS.walks, walks.map((x) => (x.id === w.id ? { ...x, discoveryIds: [...x.discoveryIds, d.id] } : x)));
+    if (w && !w.discoveryIds.includes(id)) {
+      writeStored(KEYS.walks, walks.map((x) => (x.id === w.id ? { ...x, discoveryIds: [...x.discoveryIds, id] } : x)));
     }
   }
   return true;

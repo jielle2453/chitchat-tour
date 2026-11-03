@@ -123,7 +123,7 @@ export function useWalk(options: WalkOptions) {
   const [fix, setFix] = useState<GeoFix | null>(null);
   const [area, setArea] = useState<string | null>(null);
   const [pins, setPins] = useState<Pin[]>([]);
-  const [checked, setChecked] = useState<{ poiId: string; lat: number; lon: number }[]>([]);
+  const [checked, setChecked] = useState<{ poiId: string; itemId: string; lat: number; lon: number }[]>([]);
   const [progress, setProgress] = useState(0);
   const [trace, setTrace] = useState<TraceStep[]>([]);
   const [status, setStatus] = useState<WalkStatus>("idle");
@@ -170,7 +170,7 @@ export function useWalk(options: WalkOptions) {
   const speakingRef = useRef(false);
   const activeOriginRef = useRef<DiscoveryOrigin | null>(null);
 
-  const deliver = useCallback((narration: Narration, origin: DiscoveryOrigin) => {
+  const deliver = useCallback((narration: Narration, origin: DiscoveryOrigin, place?: { poiId: string; lat: number; lon: number }) => {
     recentRef.current = [...recentRef.current, narration].slice(-3);
     const at = now();
     let s = stateRef.current;
@@ -185,10 +185,11 @@ export function useWalk(options: WalkOptions) {
     if (origin === "guide") {
       s = applyGuideStart(s, narration.itemId, at);
       dirty = true;
-      // the pin for this story becomes a check mark
+      // the pin for this story becomes its sticker
       const c = candidatesRef.current.find((x) => x.itemId === narration.itemId && x.poiId);
       const poi = c ? poisRef.current.find((p) => p.id === c.poiId) : undefined;
-      if (poi) setChecked((prev) => (prev.some((x) => x.poiId === poi.id) ? prev : [...prev, { poiId: poi.id, lat: poi.lat, lon: poi.lon }]));
+      const spot = place ?? (poi ? { poiId: poi.id, lat: poi.lat, lon: poi.lon } : undefined);
+      if (spot) setChecked((prev) => (prev.some((x) => x.poiId === spot.poiId) ? prev : [...prev, { ...spot, itemId: narration.itemId ?? "" }]));
     }
     if (dirty) {
       stateRef.current = s;
@@ -361,6 +362,7 @@ export function useWalk(options: WalkOptions) {
   const stop = useCallback(() => {
     halt("idle");
     setPins([]);
+    setChecked([]);
     pinKeyRef.current = "";
   }, [halt]);
 
@@ -437,9 +439,9 @@ export function useWalk(options: WalkOptions) {
   }, []);
 
   const push = useCallback(
-    (narration: Narration, origin: DiscoveryOrigin, steps: TraceStep[] = []) => {
+    (narration: Narration, origin: DiscoveryOrigin, steps: TraceStep[] = [], place?: { poiId: string; lat: number; lon: number }) => {
       addTrace(steps);
-      deliver(narration, origin);
+      deliver(narration, origin, place);
     },
     [addTrace, deliver],
   );

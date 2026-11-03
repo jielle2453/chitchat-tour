@@ -59,6 +59,7 @@ export function useNavigation(options: UseNavigationOptions) {
   });
   const spokenRef = useRef<Set<number>>(new Set());
   const pendingRef = useRef<{ index: number; text: string } | null>(null);
+  const arrivalPendingRef = useRef<string | null>(null);
   const arrivedRef = useRef(false);
   const offSinceRef = useRef<number | null>(null);
   const lastRerouteRef = useRef(0);
@@ -79,6 +80,7 @@ export function useNavigation(options: UseNavigationOptions) {
   useEffect(() => {
     spokenRef.current = new Set();
     pendingRef.current = null;
+    arrivalPendingRef.current = null;
     arrivedRef.current = false;
     offSinceRef.current = null;
     progressRef.current = null;
@@ -88,7 +90,15 @@ export function useNavigation(options: UseNavigationOptions) {
 
   // A deferred cue fires as soon as the narration ends.
   useEffect(() => {
-    if (speaking || !active || arrivedRef.current) return;
+    if (speaking) return;
+    // the arrival line waits even though navigation has stopped by now
+    if (arrivalPendingRef.current) {
+      const text = arrivalPendingRef.current;
+      arrivalPendingRef.current = null;
+      void speak(text, optsRef.current.lang).catch(() => undefined);
+      return;
+    }
+    if (!active || arrivedRef.current) return;
     const pending = pendingRef.current;
     if (!pending) return;
     const p = progressRef.current;
@@ -114,8 +124,10 @@ export function useNavigation(options: UseNavigationOptions) {
       pendingRef.current = null;
       setArrived(true);
       setCue(null);
-      if (o.speaking) o.onInterrupt();
-      void speak(arrivalText(o.destination?.name ?? "", o.lang), o.lang).catch(() => undefined);
+      // arriving is not urgent: a story in progress finishes first
+      const text = arrivalText(o.destination?.name ?? "", o.lang);
+      if (o.speaking) arrivalPendingRef.current = text;
+      else void speak(text, o.lang).catch(() => undefined);
       o.onArrived();
       return;
     }

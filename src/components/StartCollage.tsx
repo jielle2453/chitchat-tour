@@ -136,7 +136,7 @@ function Stamp() {
         <path d="M -9 19 q -4 -3 -8 0 t -8 0 t -8 0 t -8 0" />
       </g>
       <text fontSize={4} fontWeight={700} letterSpacing={0.5} fill="#2A2A2E" fillOpacity={0.72}>
-        <textPath href="#rg-pm-ring">ROADSIDE · GUIDE ·</textPath>
+        <textPath href="#rg-pm-ring">CHITCHAT · TOUR ·</textPath>
       </text>
       <text x={8} y={14.4} textAnchor="middle" fontSize={6} fill="#2A2A2E" fillOpacity={0.72}>
         ★

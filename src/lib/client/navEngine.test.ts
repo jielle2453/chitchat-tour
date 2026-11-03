@@ -113,7 +113,9 @@ describe("navCue", () => {
     );
   });
   it("arrival text names the place when known", () => {
-    expect(arrivalText("東門市場", "zh-TW")).toBe("到了，東門市場。");
+    expect(arrivalText("東門市場", "zh-TW")).toBe("到了，東門市場。貼紙都收在筆記裡了。");
+    expect(arrivalText("Yongkang Park", "en")).toBe("We've arrived at Yongkang Park. Your stickers are in the notebook.");
+    expect(arrivalText("永康公園", "ja")).toBe("永康公園に到着しました。ステッカーはノートに貼ってあります。");
     expect(arrivalText("", "en")).toBe("Arrived");
   });
 });

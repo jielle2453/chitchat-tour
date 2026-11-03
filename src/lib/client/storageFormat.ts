@@ -78,7 +78,7 @@ export interface Settings {
   demo: boolean;
   routeId: string | null;
 }
-export const DEFAULT_SETTINGS: Settings = { quietS: DEFAULT_QUIET_S, voiceRate: 1, demo: false, routeId: null };
+export const DEFAULT_SETTINGS: Settings = { quietS: DEFAULT_QUIET_S, voiceRate: 1.2, demo: false, routeId: null };
 
 export function sanitizeSettings(x: unknown): Settings | null {
   if (!isObj(x)) return null;
@@ -88,7 +88,8 @@ export function sanitizeSettings(x: unknown): Settings | null {
       : typeof x.frequency === "string" && x.frequency in FREQUENCY_TO_QUIET_S
         ? FREQUENCY_TO_QUIET_S[x.frequency]
         : DEFAULT_QUIET_S;
-  const rate = typeof x.voiceRate === "number" && x.voiceRate >= 0.5 && x.voiceRate <= 2 ? x.voiceRate : 1;
+  // the old "slower" (0.85) is now the plain 1x; out-of-range falls back to the default
+  const rate = typeof x.voiceRate === "number" && x.voiceRate >= 0.5 && x.voiceRate <= 2 ? Math.max(1, x.voiceRate) : DEFAULT_SETTINGS.voiceRate;
   return { quietS, voiceRate: rate, demo: x.demo === true, routeId: typeof x.routeId === "string" ? x.routeId : null };
 }
 

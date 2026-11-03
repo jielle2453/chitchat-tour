@@ -1,8 +1,8 @@
-# Roadside Guide
+# Chitchat Tour
 
-**A walking guide that knows where you are, and where you come from.**
+**Little sourced stories about the street you're on.**
 
-You put your phone in your pocket and walk. When you pass something ordinary — a convenience store, a garbage truck playing Für Elise, a scooter waiting box, a red-and-green postbox — Roadside Guide tells you one short, sourced piece of trivia about it. It only picks things that are likely to be *new to you*, and it compares them with how things work elsewhere.
+You put your phone in your pocket and walk. When you pass something ordinary — a convenience store, a garbage truck playing Für Elise, a scooter waiting box, a red-and-green postbox — Chitchat Tour tells you one short, sourced piece of trivia about it. It only picks things that are likely to be *new to you*, and it compares them with how things work elsewhere.
 
 Built for the Meta Global AI Developer Hackathon, Indie Developer track, theme "Build for Your World". The demo city is Taipei, on a route around Yongkang Street and Dongmen.
 

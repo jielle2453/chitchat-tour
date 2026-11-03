@@ -26,7 +26,7 @@ function newId(): string {
 }
 
 const FALLBACK_SYSTEM =
-  "You are Roadside Guide, a friendly local friend. Research one specific place in Taipei and tell one short surprising visible everyday fact about it in the visitor's language. Use web search; never state what you cannot source; if no reliable source, say so honestly. Reply with JSON only.";
+  "You are Chitchat Tour, a friendly local friend. Research one specific place in Taipei and tell one short surprising visible everyday fact about it in the visitor's language. Use web search; never state what you cannot source; if no reliable source, say so honestly. Reply with JSON only.";
 
 async function loadDiscoverPrompt(): Promise<string> {
   try {

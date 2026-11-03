@@ -28,7 +28,7 @@ export default function Stamp({
         <circle cx={c} cy={c} r={c - 1.5} fill="none" stroke={ink} strokeWidth={1} />
         <circle cx={c} cy={c} r={c - 5.5} fill="none" stroke={ink} strokeWidth={0.75} />
         <text fontSize={6.5} fill={ink} letterSpacing={1.8} style={{ fontFamily: "Georgia, 'Songti TC', serif" }}>
-          <textPath href={`#${pathId}`}>ROADSIDE GUIDE · TAIPEI ·</textPath>
+          <textPath href={`#${pathId}`}>CHITCHAT TOUR · TAIPEI ·</textPath>
         </text>
         <text
           x={c}

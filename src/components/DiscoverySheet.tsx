@@ -1,6 +1,6 @@
 "use client";
 import { ChevronUp, Pause, Play } from "lucide-react";
-import { useMemo } from "react";
+import { useMemo, useRef, useState } from "react";
 import { t } from "@/lib/client/i18n";
 import { discoveryEyebrow } from "@/lib/client/categories";
 import { sentenceIndexAt, splitSentences } from "@/lib/client/text";
@@ -67,7 +67,34 @@ export default function DiscoverySheet({
   readOnly?: boolean;
 }) {
   const d = session.current;
+  // Drag the top of the card down to fold it into the mini player.
+  const [dragY, setDragY] = useState(0);
+  const startY = useRef<number | null>(null);
   if (!d || session.sheet !== "open") return null;
+  const dragProps = {
+    onPointerDown: (e: React.PointerEvent<HTMLDivElement>) => {
+      if ((e.target as HTMLElement).closest("button:not([data-handle])")) return;
+      startY.current = e.clientY;
+      try {
+        e.currentTarget.setPointerCapture(e.pointerId);
+      } catch {
+        // pointer already gone
+      }
+    },
+    onPointerMove: (e: React.PointerEvent<HTMLDivElement>) => {
+      if (startY.current !== null) setDragY(Math.max(0, e.clientY - startY.current));
+    },
+    onPointerUp: () => {
+      if (startY.current === null) return;
+      startY.current = null;
+      if (dragY > 60) session.setSheet("mini");
+      setDragY(0);
+    },
+    onPointerCancel: () => {
+      startY.current = null;
+      setDragY(0);
+    },
+  };
   const n = d.narration;
   const live = session.playback.state === "playing" || session.playback.state === "paused" || session.playback.state === "loading";
   const eyebrow = discoveryEyebrow(lang, d.origin, n);
@@ -76,11 +103,18 @@ export default function DiscoverySheet({
       role="region"
       aria-label={n.title}
       className="rg-sheet-in absolute inset-x-0 bottom-0 z-40 flex max-h-[54%] flex-col rounded-t-card bg-surface pb-[max(12px,env(safe-area-inset-bottom))] shadow-[0_-8px_28px_rgba(17,17,17,0.14)]"
+      style={dragY ? { transform: `translateY(${dragY}px)` } : { transition: "transform 0.2s ease-out" }}
     >
-      <div className="flex justify-center pb-0.5 pt-2">
+      <div {...dragProps} className="touch-none">
+      <button
+        type="button"
+        onClick={() => session.setSheet("mini")}
+        aria-label={t(lang, "collapse")}
+        className="flex w-full cursor-grab justify-center pb-1 pt-2"
+      >
         <span aria-hidden className="h-1 w-9 rounded-full bg-line" />
-      </div>
-      <div className="flex items-center gap-3 px-4 pt-1">
+      </button>
+      <div className="flex items-center gap-3 px-4">
         <p className="min-w-0 flex-1 truncate text-xs font-medium text-sub">{eyebrow}</p>
         {readOnly ? null : (
           <>
@@ -98,6 +132,7 @@ export default function DiscoverySheet({
           </>
         )}
         <PlayButton session={session} lang={lang} size={34} />
+      </div>
       </div>
       <div className="rg-scroll min-h-0 flex-1 space-y-3.5 px-4 pb-2 pt-2.5">
         <div className="flex items-start gap-3.5">

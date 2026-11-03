@@ -57,18 +57,26 @@ export function simTriggerConfig(quietS: number): TriggerConfig {
 
 interface ReplayEvent {
   atM: number;
+  lat: number;
+  lon: number;
+  poiId: string;
   narration: Narration;
 }
 const REPLAY: ReplayEvent[] = (tokyoWalk as unknown as { events: ReplayEvent[] }).events;
 
 let counter = 0;
+// A strolling pace for simulated walks, a bit slower than commuting (1.3 m/s).
+const SIM_WALK_MPS = 1.1;
+// At 2x a simulated walk talks at 2x, about the most browser voices can do.
+const simRate = (base: number, speed: number) => (speed > 1 ? 2 : base);
 const uid = (prefix: string) => `${prefix}${Date.now().toString(36)}${(counter++).toString(36)}`;
 
 export function useGuideSession(options: SessionOptions) {
   const optsRef = useRef(options);
   useEffect(() => {
     optsRef.current = options;
-    setSpeechRate(options.voiceRate);
+    // a sped-up simulated walk talks a little faster (browser voices cannot keep up with the walk)
+    setSpeechRate(options.sim ? simRate(options.voiceRate, simSpeedRef.current) : options.voiceRate);
   });
 
   const [active, setActive] = useState(false);
@@ -132,7 +140,7 @@ export function useGuideSession(options: SessionOptions) {
     const key = ++playKeyRef.current;
     elapsedRef.current = 0;
     setProgress(0);
-    const estimate = estimateSpeechMs(d.narration.text, d.narration.lang, o.voiceRate);
+    const estimate = estimateSpeechMs(d.narration.text, d.narration.lang, o.sim ? simRate(o.voiceRate, simSpeedRef.current) : o.voiceRate);
     stopSpeaking();
     if (o.speak) {
       setPlayback({ state: "loading", key, durationMs: estimate });
@@ -235,12 +243,29 @@ export function useGuideSession(options: SessionOptions) {
   useEffect(() => {
     if (!active) replayNextRef.current = 0;
   }, [active]);
+  // Each story starts at its spot and is never cut off: if the last one is still
+  // playing when the walker reaches the next spot, the walker stops and listens.
+  const replayHoldRef = useRef(false);
   useEffect(() => {
-    if (!options.sim || !active || walk.status !== "running" || playback.state !== "idle") return;
+    if (!active) replayHoldRef.current = false;
+  }, [active]);
+  useEffect(() => {
+    if (!options.sim || !active || walk.status !== "running") return;
     const ev = REPLAY[replayNextRef.current];
     if (!ev || distanceM < ev.atM) return;
+    if (playback.state !== "idle") {
+      if (!replayHoldRef.current) {
+        replayHoldRef.current = true;
+        simSourceRef.current?.setSpeedMultiplier(0);
+      }
+      return;
+    }
+    if (replayHoldRef.current) {
+      replayHoldRef.current = false;
+      simSourceRef.current?.setSpeedMultiplier(simSpeedRef.current);
+    }
     replayNextRef.current += 1;
-    walk.push({ ...ev.narration, id: uid("r") }, "guide", [{ kind: "decision", message: `Replaying the recorded story "${ev.narration.title}" (recorded at ${ev.atM} m).`, at: Date.now() }]);
+    walk.push({ ...ev.narration, id: uid("r") }, "guide", [{ kind: "decision", message: `Replaying the recorded story "${ev.narration.title}" (recorded at ${ev.atM} m).`, at: Date.now() }], { poiId: ev.poiId, lat: ev.lat, lon: ev.lon });
   }, [options.sim, active, walk, playback.state, distanceM]);
 
   const walkWithTrace = useMemo(() => {
@@ -268,6 +293,8 @@ export function useGuideSession(options: SessionOptions) {
         simulated: opts.simulated,
       };
       recordRef.current = rec;
+      replayNextRef.current = 0;
+      replayHoldRef.current = false;
       setPath([]);
       setDistanceM(0);
       setActive(true);
@@ -284,7 +311,7 @@ export function useGuideSession(options: SessionOptions) {
 
   const simFactory = useCallback(
     (route: RouteDef) => () => {
-      const s = createSimulatedSource(route);
+      const s = createSimulatedSource(route, { speedMps: SIM_WALK_MPS });
       s.setSpeedMultiplier(simSpeedRef.current);
       simSourceRef.current = s;
       return s;
@@ -345,11 +372,16 @@ export function useGuideSession(options: SessionOptions) {
     }
     recordRef.current = null;
     simSourceRef.current = null;
+    setPath([]);
+    setDistanceM(0);
     setActive(false);
     setDestMode(false);
     setRouteCorridor(null);
     setPlayback((p) => ({ ...p, state: "idle" }));
   }, [walk, flushRecord]);
+
+  // The walk record being written now, if a walk is running.
+  const currentWalkId = useCallback((): string | null => recordRef.current?.id ?? null, []);
 
   // end a walk that was left alone for more than 30 minutes
   useEffect(() => {
@@ -441,8 +473,9 @@ export function useGuideSession(options: SessionOptions) {
   // ---------- simulated walk controls ----------
   const setSimSpeed = useCallback((s: number) => {
     simSpeedRef.current = s;
+    setSpeechRate(simRate(optsRef.current.voiceRate, s));
     setSimSpeedState(s);
-    simSourceRef.current?.setSpeedMultiplier(s);
+    if (!replayHoldRef.current) simSourceRef.current?.setSpeedMultiplier(s);
   }, []);
 
   const simToggle = useCallback(() => {
@@ -499,6 +532,7 @@ export function useGuideSession(options: SessionOptions) {
     setRouteCorridor,
     live: discover.researched,
     end,
+    currentWalkId,
 
     togglePlay,
     replay,

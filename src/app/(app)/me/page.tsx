@@ -1,5 +1,5 @@
 "use client";
-import { ChevronRight, ShieldCheck } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import Sheet from "@/components/Sheet";
@@ -66,14 +66,24 @@ export default function MePage() {
   const countries = useMemo(() => [...COUNTRIES], []);
 
   const speeds: { v: number; key: I18nKey }[] = [
-    { v: 0.85, key: "speedSlow" },
-    { v: 1, key: "speedNormal" },
-    { v: 1.2, key: "speedFast" },
+    { v: 1, key: "speedSlow" },
+    { v: 1.2, key: "speedNormal" },
+    { v: 1.4, key: "speedFast" },
   ];
 
   return (
     <div className="rg-scroll h-full space-y-5 px-4 pb-8 pt-[max(20px,env(safe-area-inset-top))]">
-      <h1 className="px-1 text-[26px] font-semibold leading-tight">{t(lang, "meTitle")}</h1>
+      <div className="flex items-center justify-between gap-3">
+        <h1 className="px-1 text-[26px] font-semibold leading-tight">{t(lang, "meTitle")}</h1>
+        <Link
+          href="/onboarding"
+          className={`flex h-9 shrink-0 items-center rounded-full px-3.5 text-[13px] font-medium ${
+            settings.demo === true ? "border-[1.5px] border-[#E5484D] bg-surface text-[#D93036]" : "border border-line bg-surface"
+          }`}
+        >
+          {settings.demo === true ? t(lang, "simExitFull") : t(lang, "simEnter")}
+        </Link>
+      </div>
 
       <Group title={t(lang, "groupGuide")}>
         <Row label={t(lang, "whereFrom")} hint={t(lang, "whereFromHint")}>
@@ -134,20 +144,16 @@ export default function MePage() {
         </div>
       </Group>
 
-      <Group title={t(lang, "groupMode")}>
-        <Link href="/onboarding" className="flex min-h-12 items-center justify-between p-3.5 text-[15px] font-medium">
-          {t(lang, "reselect")}
-          <ChevronRight size={16} aria-hidden className="text-sub" />
-        </Link>
-      </Group>
-
-      <Group title={t(lang, "groupAbout")}>
-        {(["aboutOsm", "aboutKb", "aboutMeta"] as const).map((k) => (
-          <p key={k} className="p-3.5 text-[13px] leading-relaxed text-sub">
-            {t(lang, k)}
-          </p>
-        ))}
-      </Group>
+      <section className="space-y-1.5">
+        <h2 className="px-1 text-[13px] font-medium text-sub">{t(lang, "groupAbout")}</h2>
+        <div className="space-y-2 px-1">
+          {(["aboutOsm", "aboutKb", "aboutMeta"] as const).map((k) => (
+            <p key={k} className="text-[13px] leading-relaxed text-sub">
+              {t(lang, k)}
+            </p>
+          ))}
+        </div>
+      </section>
 
       <Sheet open={confirmOpen} title={t(lang, "clearTitle")} lang={lang} onClose={() => setConfirmOpen(false)}>
         <p className="pb-4 text-[15px] text-sub">{t(lang, "clearBody")}</p>
