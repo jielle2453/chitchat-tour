@@ -144,6 +144,12 @@ export async function runGuide(req: GuideRequest): Promise<GuideResponse> {
     return speakFallback("top-ranked candidate (mock mode).");
   }
 
+  // Simulated demo walks speak the verified knowledge-base text at once: no model wait.
+  if (fix.simulated) {
+    trace.add("decision", "Simulated walk: speaking the verified knowledge-base text without a model call.");
+    return speakFallback("top-ranked candidate (simulated walk, instant).");
+  }
+
   const system = await loadPrompt("guide-system.md");
   const user = buildUserMessage(top, req);
   const open = openWeightClient();

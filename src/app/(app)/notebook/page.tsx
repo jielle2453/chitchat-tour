@@ -18,7 +18,8 @@ export default function NotebookPage() {
   const [view, setView] = useState<"walks" | "themes">("walks");
   const [openJar, setOpenJar] = useState<ThemeKey | null>(null);
 
-  const sortedWalks = useMemo(() => newestWalksFirst(walks), [walks]);
+  // walks without stickers are not shown
+  const sortedWalks = useMemo(() => newestWalksFirst(walks.filter((w) => w.discoveryIds.length > 0)), [walks]);
   const walkMonths = useMemo(() => groupWalksByMonth(sortedWalks), [sortedWalks]);
   const themes = useMemo(() => groupByTheme(discoveries).filter((g) => g.items.length > 0), [discoveries]);
   const byWalk = useMemo(() => {

@@ -1,12 +1,12 @@
 "use client";
-import { ChevronDown, ChevronUp, Pause, Play } from "lucide-react";
+import { ChevronUp, Pause, Play } from "lucide-react";
 import { useMemo } from "react";
 import { t } from "@/lib/client/i18n";
 import { discoveryEyebrow } from "@/lib/client/categories";
 import { sentenceIndexAt, splitSentences } from "@/lib/client/text";
 import type { GuideSession } from "@/lib/client/useGuideSession";
 import type { Lang } from "@/lib/types";
-import { ConfidenceBadge, ContrastChips, SourceLinks } from "./DiscoveryParts";
+import { ConfidenceBadge, SourceLinks } from "./DiscoveryParts";
 import StickerArt from "./StickerArt";
 
 function Subtitles({ text, progress, live }: { text: string; progress: number; live: boolean }) {
@@ -17,7 +17,7 @@ function Subtitles({ text, progress, live }: { text: string; progress: number; l
       {sentences.map((s, i) => (
         <span
           key={i}
-          className={`rounded-md px-0.5 transition-colors duration-200 [box-decoration-break:clone] ${i === idx ? "bg-ink/10" : ""}`}
+          className={`rounded-md px-0.5 transition-colors duration-200 [box-decoration-break:clone] ${i === idx ? "bg-khaki" : ""}`}
         >
           {s}
           {/[.!?]["')\]]?$/.test(s) ? " " : ""}
@@ -61,12 +61,10 @@ export default function DiscoverySheet({
   session,
   lang,
   readOnly = false,
-  onSaveFailed,
 }: {
   session: GuideSession;
   lang: Lang;
   readOnly?: boolean;
-  onSaveFailed?: () => void;
 }) {
   const d = session.current;
   if (!d || session.sheet !== "open") return null;
@@ -84,10 +82,22 @@ export default function DiscoverySheet({
       </div>
       <div className="flex items-center gap-3 px-4 pt-1">
         <p className="min-w-0 flex-1 truncate text-xs font-medium text-sub">{eyebrow}</p>
+        {readOnly ? null : (
+          <>
+            <button
+              type="button"
+              onClick={session.tellMore}
+              disabled={session.walk.voice !== "idle"}
+              className="h-9 shrink-0 rounded-full px-2.5 text-[13px] font-medium disabled:opacity-50"
+            >
+              {session.walk.voice === "thinking" ? t(lang, "checkingSources") : t(lang, "tellMore")}
+            </button>
+            <button type="button" onClick={session.skip} className="h-9 shrink-0 rounded-full px-2 text-[13px] font-medium text-sub">
+              {t(lang, "skip")}
+            </button>
+          </>
+        )}
         <PlayButton session={session} lang={lang} size={34} />
-        <button type="button" onClick={() => session.setSheet("mini")} aria-label={t(lang, "minimise")} className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-fill">
-          <ChevronDown size={16} aria-hidden />
-        </button>
       </div>
       <div className="rg-scroll min-h-0 flex-1 space-y-3.5 px-4 pb-2 pt-2.5">
         <div className="flex items-start gap-3.5">
@@ -100,34 +110,8 @@ export default function DiscoverySheet({
           </div>
         </div>
         <Subtitles text={n.text} progress={session.progress} live={live} />
-        <ContrastChips contrast={n.contrast} lang={lang} />
         <SourceLinks sources={n.sources} lang={lang} />
       </div>
-      {readOnly ? null : (
-        <div className="flex items-center gap-1 px-4 pt-1.5">
-          <button
-            type="button"
-            disabled={session.stuck}
-            onClick={() => {
-              if (!session.stick()) onSaveFailed?.();
-            }}
-            className="h-11 flex-1 rounded-full bg-ink text-[15px] font-medium text-white disabled:opacity-70"
-          >
-            {session.stuck ? t(lang, "stuck") : t(lang, "stickInNotebook")}
-          </button>
-          <button
-            type="button"
-            onClick={session.tellMore}
-            disabled={session.walk.voice !== "idle"}
-            className="h-11 shrink-0 rounded-full px-3.5 text-sm font-medium disabled:opacity-50"
-          >
-            {session.walk.voice === "thinking" ? t(lang, "checkingSources") : t(lang, "tellMore")}
-          </button>
-          <button type="button" onClick={session.skip} className="h-11 shrink-0 rounded-full px-3 text-sm font-medium text-sub">
-            {t(lang, "skip")}
-          </button>
-        </div>
-      )}
     </div>
   );
 }

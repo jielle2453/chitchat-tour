@@ -3,18 +3,47 @@ import { ChevronDown } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { countryName, COUNTRIES, t, UI_LANGS } from "@/lib/client/i18n";
-import { useProfile } from "@/lib/client/storage";
+import { fillNotebookWithSampleWalk, removeSampleWalks } from "@/lib/client/demoSeed";
+import { resolveOnboardingRouteId } from "@/lib/client/onboarding";
+import { useProfile, useSettings } from "@/lib/client/storage";
+import { listRoutes } from "@/lib/geo";
 import type { Lang } from "@/lib/types";
+
+function availableRouteIds(): string[] {
+  try {
+    return listRoutes().map((r) => r.id);
+  } catch {
+    return [];
+  }
+}
 
 export default function OnboardingPage() {
   const router = useRouter();
   const { profile, setProfile } = useProfile();
-  const [lang, setLang] = useState<Lang>(profile.lang);
-  const [home, setHome] = useState(profile.hometown);
+  const [settings, updateSettings] = useSettings();
+  // Null until the user changes it, so the stored profile (read after hydration) shows through.
+  const [langPick, setLang] = useState<Lang | null>(null);
+  const [homePick, setHome] = useState<string | null>(null);
+  const lang = langPick ?? profile.lang;
+  const home = homePick ?? profile.hometown;
   const countries = useMemo(() => [...COUNTRIES], []);
+  const routeIds = useMemo(() => availableRouteIds(), []);
 
-  function go() {
-    setProfile({ lang, hometown: home });
+  const [busy, setBusy] = useState(false);
+
+  // The simulated entry comes with sample walks in the notebook; the real one without.
+  async function go(simulated: boolean) {
+    if (busy) return;
+    setBusy(true);
+    // The simulated walk is a demo for visitors from anywhere: it runs in English.
+    setProfile({ lang: simulated ? "en" : lang, hometown: home });
+    if (simulated) {
+      updateSettings({ demo: true, routeId: resolveOnboardingRouteId(settings.routeId, routeIds) });
+      await fillNotebookWithSampleWalk({ lang: "en", hometown: home }).catch(() => 0);
+    } else {
+      updateSettings({ demo: false });
+      removeSampleWalks();
+    }
     router.replace("/");
   }
 
@@ -72,9 +101,19 @@ export default function OnboardingPage() {
           <p className="text-[13px] text-sub">{t(lang, "onbFromHint")}</p>
         </section>
       </div>
-      <button type="button" onClick={go} className="mt-8 h-12 w-full rounded-full bg-ink text-[15px] font-semibold text-white">
-        {t(lang, "onbStart")}
-      </button>
+      <div className="mt-8 space-y-2.5">
+        <button type="button" onClick={() => go(false)} className="h-12 w-full rounded-full bg-ink text-[15px] font-semibold text-white">
+          {t(lang, "onbReal")}
+        </button>
+        <button
+          type="button"
+          onClick={() => go(true)}
+          className="h-12 w-full rounded-full bg-surface text-[15px] font-semibold text-ink ring-1 ring-line"
+        >
+          {t(lang, "onbSim")}
+        </button>
+        <p className="text-center text-[13px] text-sub">{t(lang, "onbSimHint")}</p>
+      </div>
     </div>
   );
 }

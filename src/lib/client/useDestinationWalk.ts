@@ -335,6 +335,18 @@ export function useDestinationWalk(options: UseDestinationWalkOptions) {
     if (route && destination) setStatus("walking");
   }, [route, destination]);
 
+  // Simulated entry: a fixed destination and route, walked at once.
+  const startPreset = useCallback((dest: WalkDestination, r: WalkRoute) => {
+    setDestination(dest);
+    setRoute(r);
+    setRoutes([r]);
+    setRouteIndex(0);
+    setRouteError(null);
+    setPickArmed(false);
+    setPickPoint(null);
+    setStatus("walking");
+  }, []);
+
   const markArrived = useCallback(() => setStatus("arrived"), []);
 
   const reset = useCallback(() => {
@@ -395,6 +407,7 @@ export function useDestinationWalk(options: UseDestinationWalkOptions) {
     selectRoute,
     backToPick,
     startWalking,
+    startPreset,
     markArrived,
     reset,
   };

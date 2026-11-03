@@ -211,3 +211,10 @@ export async function fillNotebookWithSampleWalk(opts: { lang: Lang; hometown: s
   writeStored(KEYS.walks, [...data.walks, ...readWalks().filter((w) => !seededWalkIds.has(w.id))]);
   return data.discoveries.length;
 }
+
+// The sample walks belong to the simulated entry: leaving it removes them.
+export function removeSampleWalks(): void {
+  const isSample = (id: string) => id.startsWith("demo-");
+  writeStored(KEYS.discoveries, readDiscoveries().filter((d) => !isSample(d.id)));
+  writeStored(KEYS.walks, readWalks().filter((w) => !isSample(w.id)));
+}

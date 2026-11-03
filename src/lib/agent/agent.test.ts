@@ -13,7 +13,8 @@ import { runGuide } from "./guide";
 import { runAsk, runExplain } from "./ask";
 import { allowRequest, resetGuard } from "./guard";
 
-const base = (over: Partial<GuideRequest> = {}): GuideRequest => ({
+const base = (over: Partial<GuideRequest> = {}) => baseReq(over);
+const baseReq = (over: Partial<GuideRequest> = {}): GuideRequest => ({
   profile: { hometown: "JP", lang: "ja" },
   fix,
   candidates: [{ itemId: "garbage-truck", score: 0.9, reasons: ["evening", "differs from Tokyo"], distanceM: 20, bearingDeg: 90 }],
@@ -60,8 +61,15 @@ describe("runGuide (mock)", () => {
 });
 
 describe("runGuide (real path, mocked model)", () => {
+  const gps = { ...fix, simulated: false };
+  const base = (over: Partial<GuideRequest> = {}) => baseReq({ fix: gps, ...over });
   beforeEach(() => {
     process.env.META_API_KEY = "test";
+  });
+  it("speaks the KB text without a model call on a simulated walk", async () => {
+    const r = await runGuide(baseReq({ fix: { ...fix, simulated: true } }));
+    expect(r.narration?.itemId).toBe("garbage-truck");
+    expect(responsesText).not.toHaveBeenCalled();
   });
   it("uses the model text but KB sources", async () => {
     responsesText.mockResolvedValue({

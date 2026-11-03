@@ -47,6 +47,8 @@ export interface WalkOptions {
   cfg?: TriggerConfig;
   onNarration?: (narration: Narration, origin: DiscoveryOrigin, fix: GeoFix | null) => void;
   onFix?: (fix: GeoFix, areaName: string | null) => void;
+  knownItemIds?: () => string[]; // stories already in the notebook: never told again
+  autoGuide?: boolean; // false: never asks the guide on its own (replayed demo walks)
 }
 
 const RADIUS_M = 150;
@@ -267,7 +269,7 @@ export function useWalk(options: WalkOptions) {
         nearby = nearbyPois(f, RADIUS_M);
         const o = optsRef.current;
         candidates = rankCandidates({ fix: f, profile: o.profile, pois: nearby, items: getKnowledgeItems(), state: stateRef.current, now: now(), cfg: o.cfg });
-        ok = shouldSpeak(stateRef.current, now(), o.cfg);
+        ok = o.autoGuide !== false && shouldSpeak(stateRef.current, now(), o.cfg);
       } catch (err) {
         fail(err);
         return;
@@ -327,6 +329,11 @@ export function useWalk(options: WalkOptions) {
         if (optsRef.current.persist !== false) writeStored(stateKey(), EMPTY_STATE);
       } else if (optsRef.current.persist !== false) {
         stateRef.current = readStored<WalkState>(stateKey(), EMPTY_STATE);
+      }
+      const known = optsRef.current.knownItemIds?.() ?? [];
+      if (known.length) {
+        const told = new Set([...stateRef.current.toldItemIds, ...known]);
+        stateRef.current = { ...stateRef.current, toldItemIds: [...told] };
       }
       try {
         const source = createSource();

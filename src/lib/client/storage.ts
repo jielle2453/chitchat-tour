@@ -125,8 +125,22 @@ export function useWalks(): WalkRecord[] {
 }
 
 // Saves a discovery to the notebook; returns false if storage refused it.
+// A story already in the notebook (same knowledge item, or same title for
+// live/web stories) never becomes a second sticker.
+export function sameStory(a: Discovery, b: Discovery): boolean {
+  if (a.narration.itemId || b.narration.itemId) return a.narration.itemId === b.narration.itemId;
+  return a.narration.title.trim() === b.narration.title.trim();
+}
+
+// Sample walks (ids "demo-…") are examples, not things this visitor heard.
+export function notebookItemIds(): string[] {
+  return readDiscoveries().flatMap((d) => (d.narration.itemId && !d.id.startsWith("demo-") ? [d.narration.itemId] : []));
+}
+
 export function saveDiscovery(d: Discovery): boolean {
-  const list = readDiscoveries().filter((x) => x.id !== d.id);
+  const existing = readDiscoveries();
+  if (existing.some((x) => x.id !== d.id && !x.id.startsWith("demo-") && sameStory(x, d))) return true;
+  const list = existing.filter((x) => x.id !== d.id);
   if (!writeStored(KEYS.discoveries, [d, ...list])) return false;
   if (d.walkId) {
     const walks = readWalks();
@@ -136,6 +150,10 @@ export function saveDiscovery(d: Discovery): boolean {
     }
   }
   return true;
+}
+
+export function removeWalk(id: string) {
+  writeStored(KEYS.walks, readWalks().filter((w) => w.id !== id));
 }
 
 export function upsertWalk(record: WalkRecord) {

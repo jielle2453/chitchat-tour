@@ -2,10 +2,8 @@
 import { ChevronRight, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { safeRoutes } from "@/components/AppShell";
 import Sheet from "@/components/Sheet";
-import { fillNotebookWithSampleWalk } from "@/lib/client/demoSeed";
-import { COUNTRIES, countryName, localized, t, UI_LANGS, type I18nKey } from "@/lib/client/i18n";
+import { COUNTRIES, countryName, t, UI_LANGS, type I18nKey } from "@/lib/client/i18n";
 import { clearNotebook, useProfile, useSettings } from "@/lib/client/storage";
 import { QUIET_MAX_S, QUIET_MIN_S, QUIET_STEP_S } from "@/lib/client/storageFormat";
 import type { Lang } from "@/lib/types";
@@ -65,9 +63,6 @@ export default function MePage() {
   const lang: Lang = profile.lang;
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [cleared, setCleared] = useState(false);
-  const [seeding, setSeeding] = useState(false);
-  const [seeded, setSeeded] = useState(false);
-  const routes = useMemo(() => safeRoutes(), []);
   const countries = useMemo(() => [...COUNTRIES], []);
 
   const speeds: { v: number; key: I18nKey }[] = [
@@ -139,59 +134,9 @@ export default function MePage() {
         </div>
       </Group>
 
-      <Group title={t(lang, "groupDemo")}>
-        <div className="flex items-center gap-3 p-3.5">
-          <div className="min-w-0 flex-1">
-            <p className="text-[15px] font-medium">{t(lang, "simWalk")}</p>
-            <p className="mt-0.5 text-[13px] text-sub">{t(lang, "simWalkHint")}</p>
-          </div>
-          <button
-            type="button"
-            role="switch"
-            aria-checked={settings.demo}
-            aria-label={t(lang, "simWalk")}
-            onClick={() => update({ demo: !settings.demo })}
-            className={`relative h-8 w-14 shrink-0 rounded-full transition-colors ${settings.demo ? "bg-ink" : "bg-line"}`}
-          >
-            <span className={`absolute top-1 h-6 w-6 rounded-full bg-white transition-all ${settings.demo ? "left-7" : "left-1"}`} />
-          </button>
-        </div>
-        {settings.demo ? (
-          <Row label={t(lang, "simRoute")}>
-            <select aria-label={t(lang, "simRoute")} className={selectCls} value={settings.routeId ?? routes[0]?.id ?? ""} onChange={(e) => update({ routeId: e.target.value })}>
-              {routes.map((r) => (
-                <option key={r.id} value={r.id}>
-                  {localized(r.name, lang)}
-                </option>
-              ))}
-            </select>
-          </Row>
-        ) : null}
-        <Row label={t(lang, "fillSample")} hint={t(lang, "fillSampleHint")}>
-          <button
-            type="button"
-            disabled={seeding}
-            onClick={() => {
-              setSeeding(true);
-              void fillNotebookWithSampleWalk({ lang, hometown: profile.hometown })
-                .then(() => {
-                  setSeeded(true);
-                  setCleared(false);
-                })
-                .finally(() => setSeeding(false));
-            }}
-            className="h-11 w-full rounded-full bg-ink text-[15px] font-medium text-white disabled:opacity-60"
-          >
-            {t(lang, "fillSample")}
-          </button>
-          {seeded ? (
-            <p role="status" className="text-center text-[13px] text-sub">
-              {t(lang, "fillSampleDone")}
-            </p>
-          ) : null}
-        </Row>
-        <Link href="/demo/compare" className="flex min-h-12 items-center justify-between p-3.5 text-[15px] font-medium">
-          {t(lang, "compareTravellers")}
+      <Group title={t(lang, "groupMode")}>
+        <Link href="/onboarding" className="flex min-h-12 items-center justify-between p-3.5 text-[15px] font-medium">
+          {t(lang, "reselect")}
           <ChevronRight size={16} aria-hidden className="text-sub" />
         </Link>
       </Group>

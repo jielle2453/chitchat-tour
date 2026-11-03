@@ -8,9 +8,10 @@ import type { AskResponse, DetectedObject, Discovery, DiscoveryOrigin, ExplainRe
 import { postJson } from "./api";
 import { unlockAudio } from "./audio";
 import { pauseSpeaking, resumeSpeaking, setSpeechRate, speak, speechProgress, stopSpeaking } from "./speech";
-import { addHeard, readWalks, saveDiscovery, upsertWalk, useDiscoveries, useHeard, useToday } from "./storage";
+import { addHeard, notebookItemIds, readWalks, removeWalk, saveDiscovery, upsertWalk, useDiscoveries, useHeard, useToday } from "./storage";
 import { sanitizeQuietS } from "./storageFormat";
 import { estimateSpeechMs } from "./text";
+import tokyoWalk from "@data/demo/tokyo-walk.json";
 import { useDiscover } from "./useDiscover";
 import { useWalk } from "./useWalk";
 import { appendThinned, dayKey, hiddenTooLong, type LatLon } from "./walkPath";
@@ -53,6 +54,13 @@ export function simTriggerConfig(quietS: number): TriggerConfig {
   };
 }
 
+
+interface ReplayEvent {
+  atM: number;
+  narration: Narration;
+}
+const REPLAY: ReplayEvent[] = (tokyoWalk as unknown as { events: ReplayEvent[] }).events;
+
 let counter = 0;
 const uid = (prefix: string) => `${prefix}${Date.now().toString(36)}${(counter++).toString(36)}`;
 
@@ -73,6 +81,7 @@ export function useGuideSession(options: SessionOptions) {
   const [progress, setProgress] = useState(0);
   const [simSpeed, setSimSpeedState] = useState(1);
   const [explaining, setExplaining] = useState(false);
+  const [saveFailedAt, setSaveFailedAt] = useState<number | null>(null);
 
   const recordRef = useRef<WalkRecord | null>(null);
   const pointsSinceSaveRef = useRef(0);
@@ -85,7 +94,8 @@ export function useGuideSession(options: SessionOptions) {
   const [destMode, setDestMode] = useState(false);
   const [routeCorridor, setRouteCorridor] = useState<[number, number][] | null>(null);
 
-  const baseCfg = options.sim ? simTriggerConfig(options.quietS) : triggerConfig(options.quietS);
+  // Simulated walks replay a pre-recorded walk (data/demo): the live guide stays silent.
+  const baseCfg = triggerConfig(options.quietS);
   // Destination mode: the guide talks a bit less, turns do the talking.
   const cfg: TriggerConfig = destMode ? { ...baseCfg, cooldownMs: Math.round(baseCfg.cooldownMs * 1.5) } : baseCfg;
 
@@ -177,7 +187,11 @@ export function useGuideSession(options: SessionOptions) {
       };
       pendingStickerRef.current = undefined;
       setMem((prev) => [d, ...prev].slice(0, 40));
-      if (optsRef.current.persist) addHeard(d);
+      if (optsRef.current.persist) {
+        addHeard(d);
+        // every story goes straight into the notebook as a sticker
+        if (!saveDiscovery(d)) setSaveFailedAt(Date.now());
+      }
       setCurrent(d);
       setSheet("open");
       startPlayback(d);
@@ -192,6 +206,8 @@ export function useGuideSession(options: SessionOptions) {
     cfg,
     onNarration: present,
     onFix,
+    knownItemIds: () => (optsRef.current.persist ? notebookItemIds() : []),
+    autoGuide: !options.sim,
   });
 
   // The walk cooldown counts from the END of a narration: whenever playback
@@ -208,12 +224,25 @@ export function useGuideSession(options: SessionOptions) {
   const discover = useDiscover({
     profile: options.profile,
     fix: walk.fix,
-    running: active && walk.status === "running",
+    running: active && walk.status === "running" && !options.sim,
     canSpeak: active && walk.status === "running" && !walk.busy && playback.state === "idle",
     kbPins: walk.pins,
     onDeliver: (n) => present(n, "guide", walk.getFix()),
     routeCorridor,
   });
+  // ---------- demo replay: deliver each recorded story where it was recorded ----------
+  const replayNextRef = useRef(0);
+  useEffect(() => {
+    if (!active) replayNextRef.current = 0;
+  }, [active]);
+  useEffect(() => {
+    if (!options.sim || !active || walk.status !== "running" || playback.state !== "idle") return;
+    const ev = REPLAY[replayNextRef.current];
+    if (!ev || distanceM < ev.atM) return;
+    replayNextRef.current += 1;
+    walk.push({ ...ev.narration, id: uid("r") }, "guide", [{ kind: "decision", message: `Replaying the recorded story "${ev.narration.title}" (recorded at ${ev.atM} m).`, at: Date.now() }]);
+  }, [options.sim, active, walk, playback.state, distanceM]);
+
   const walkWithTrace = useMemo(() => {
     if (discover.trace.length === 0) return walk;
     return { ...walk, trace: [...walk.trace, ...discover.trace].sort((a, b) => a.at - b.at).slice(-300) };
@@ -311,6 +340,8 @@ export function useGuideSession(options: SessionOptions) {
     if (rec) {
       rec.endedAt = Date.now();
       flushRecord();
+      // a walk that collected no stickers is not kept
+      if (optsRef.current.persist && !readWalks().find((w) => w.id === rec.id)?.discoveryIds.length) removeWalk(rec.id);
     }
     recordRef.current = null;
     simSourceRef.current = null;
@@ -387,7 +418,7 @@ export function useGuideSession(options: SessionOptions) {
   }, [walk]);
 
   const explain = useCallback(
-    async (obj: Pick<DetectedObject, "label" | "itemId">, stickerDataUrl?: string): Promise<boolean> => {
+    async (obj: Pick<DetectedObject, "label" | "itemId">, stickerDataUrl?: string, origin: "photo" | "guide" = "photo"): Promise<boolean> => {
       unlockAudio();
       stopSpeaking();
       setExplaining(true);
@@ -395,8 +426,8 @@ export function useGuideSession(options: SessionOptions) {
         const req: ExplainRequest = { profile: optsRef.current.profile, label: obj.label, itemId: obj.itemId, fix: walk.getFix() ?? undefined };
         const res = await postJson<AskResponse>("/api/explain", req);
         pendingStickerRef.current = stickerDataUrl;
-        walk.push(res.narration, "photo", res.trace);
-        walk.recordSighting(obj.label, "photo");
+        walk.push(res.narration, origin, res.trace);
+        if (origin === "photo") walk.recordSighting(obj.label, "photo");
         return true;
       } catch {
         return false;
@@ -456,6 +487,7 @@ export function useGuideSession(options: SessionOptions) {
     progress,
     heardToday,
     stuck,
+    saveFailedAt,
     explaining,
     simSpeed,
     simPlaying: walk.status === "running",

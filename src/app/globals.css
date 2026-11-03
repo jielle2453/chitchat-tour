@@ -1,13 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #f4f4f5;
+  --bg: #f4f4f2;
   --surface: #ffffff;
   --ink: #111111;
   --sub: #6b6b6b;
-  --line: #e5e5e8;
+  --line: #e9e6e1;
   --accent: #111111;
-  --fill: #ededf0;
+  --fill: #f2f0ed;
+  --khaki: #f2f0ed; /* warm light grey: subtitle highlight */
   --shadow: 0 16px 48px rgba(17, 17, 17, 0.1);
 }
 
@@ -19,6 +20,7 @@
   --color-line: var(--line);
   --color-accent: var(--accent);
   --color-fill: var(--fill);
+  --color-khaki: var(--khaki);
   --radius-card: 20px;
   --font-sans: "Noto Sans TC", "Noto Sans JP", system-ui, -apple-system, "Segoe UI", "Hiragino Sans", "PingFang TC", "Microsoft JhengHei", sans-serif;
 }
@@ -117,17 +119,12 @@ button {
 .rg-pin {
   display: grid;
   place-items: center;
-  width: 30px;
-  height: 30px;
-  border-radius: 999px;
-  background: #fff;
-  border: 2.5px solid var(--ink);
-  font-weight: 800;
-  font-size: 16px;
-  line-height: 1;
-  color: var(--ink);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  width: 26px;
+  height: 26px;
   cursor: pointer;
+}
+.rg-pin svg {
+  animation: rg-twinkle 2.6s ease-in-out infinite;
 }
 .rg-check {
   display: grid;
@@ -271,6 +268,7 @@ button {
   .rg-step,
   .rg-print,
   .rg-twinkle,
+  .rg-pin svg,
   .rg-wiggle {
     animation: none;
   }

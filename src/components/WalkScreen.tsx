@@ -1,6 +1,7 @@
 "use client";
-import { Brain, Camera, History, Keyboard, LocateFixed, MapPin, Mic, Pause, Play, Send, X } from "lucide-react";
+import { Brain, Camera, History, Keyboard, LocateFixed, MapPin, Mic, Send, X } from "lucide-react";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { unlockAudio } from "@/lib/client/audio";
 import { formatDistance, t } from "@/lib/client/i18n";
@@ -11,7 +12,8 @@ import { useNavigation } from "@/lib/client/useNavigation";
 import type { GuideSession } from "@/lib/client/useGuideSession";
 import { routeToRouteDef } from "@/lib/geo/navigation";
 import { areaLabel } from "@/lib/geo";
-import type { GeoFix, Lang, RouteDef, UserProfile } from "@/lib/types";
+import type { GeoFix, Lang, RouteDef, UserProfile, WalkRoute } from "@/lib/types";
+import demoWalk from "@data/routes/demo-walk.json";
 import DestinationPicker from "./DestinationPicker";
 import DetourCard from "./DetourCard";
 import DiscoverySheet, { MiniPlayer } from "./DiscoverySheet";
@@ -28,7 +30,7 @@ const GuideMap = dynamic(() => import("./GuideMap"), {
   loading: () => <div className="h-full w-full bg-[#f0f0f2]" />,
 });
 
-const SPEEDS = [1, 2, 4];
+const SPEEDS: number[] = [1, 2, 4];
 
 export default function WalkScreen({
   session,
@@ -46,9 +48,11 @@ export default function WalkScreen({
   label?: string; // traveller name shown in the top card
 }) {
   const { walk } = session;
+  const router = useRouter();
   const [follow, setFollow] = useState(true);
   const [recenterKey, setRecenterKey] = useState(0);
   const [panel, setPanel] = useState<null | "type" | "trace" | "heard">(null);
+  const [simBackOpen, setSimBackOpen] = useState(false);
   const [question, setQuestion] = useState("");
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [toast, setToast] = useState<string | null>(null);
@@ -58,6 +62,19 @@ export default function WalkScreen({
     setToast(msg);
     setTimeout(() => setToast(null), 3200);
   };
+
+  // stories save themselves; say so only when storage refuses one
+  const saveFailedAt = session.saveFailedAt;
+  const [shownFailAt, setShownFailAt] = useState<number | null>(null);
+  if (saveFailedAt && saveFailedAt !== shownFailAt) {
+    setShownFailAt(saveFailedAt);
+    setToast(t(lang, "storageFull"));
+  }
+  useEffect(() => {
+    if (!toast) return;
+    const id = setTimeout(() => setToast(null), 3200);
+    return () => clearTimeout(id);
+  }, [toast]);
 
   // ---------- walk modes: wander vs destination ----------
   const [modeOpen, setModeOpen] = useState(false);
@@ -122,6 +139,15 @@ export default function WalkScreen({
     onTake: (poi) => dest.choosePoi(poi, originFix()),
   });
 
+  // Simulated entry: Start walks the preset Yongkang Street route to a fixed destination.
+  const startDemoWalk = () => {
+    const d = demoWalk.destination;
+    const name = (d.name as Partial<Record<Lang, string>>)[lang] ?? d.name.en;
+    const r = demoWalk.route as WalkRoute;
+    dest.startPreset({ name, label: "", lat: d.lat, lon: d.lon }, r);
+    session.beginDestination(routeToRouteDef(r, name), { name, label: "", lat: d.lat, lon: d.lon });
+  };
+
   const startDestination = () => {
     if (!dest.route || !dest.destination) return;
     const d = dest.destination;
@@ -155,14 +181,13 @@ export default function WalkScreen({
   const handlePinTap = (pin: { itemId: string; label: string }) => {
     setFollow(false);
     if (session.explaining) return;
-    void session.explain({ label: pin.label, itemId: pin.itemId });
+    void session.explain({ label: pin.label, itemId: pin.itemId }, undefined, "guide");
   };
 
   const voiceBusy = walk.voice !== "idle";
   const micLabel =
     walk.voice === "listening" ? t(lang, "listening") : walk.voice === "transcribing" ? t(lang, "transcribing") : walk.voice === "thinking" ? t(lang, "thinking") : t(lang, "holdToAsk");
   const barBottom = embedded ? 12 : 96;
-  const showSim = !embedded && !!route && session.active;
 
   function submitQuestion(e: React.FormEvent) {
     e.preventDefault();
@@ -210,11 +235,50 @@ export default function WalkScreen({
 
       {/* top status: glass pill, centred; end-walk is a separate pill at top-right */}
       <div className="pointer-events-none absolute inset-x-0 top-0 z-20 flex flex-col items-center gap-1.5 px-3 pt-[max(10px,env(safe-area-inset-top))]">
-        <div className="relative flex w-full justify-center">
-          {embedded || session.active ? (
-          <div
-            className={`glass pointer-events-auto flex h-9 items-center rounded-[18px] px-[14px] ${!embedded && session.active ? "max-w-[calc(100%-96px)]" : "max-w-full"}`}
-          >
+        {/* real walks: centred status pill, end-walk at top-right */}
+        {embedded || !route ? (
+          <div className="relative flex w-full justify-center">
+            {embedded || session.active ? (
+            <div
+              className={`glass pointer-events-auto flex h-9 items-center rounded-[18px] px-[14px] ${!embedded && session.active ? "max-w-[calc(100%-96px)]" : "max-w-full"}`}
+            >
+              <p className="truncate text-[13px] font-semibold text-ink">
+                {walkingDest && dest.destination ? dest.destination.name : (label ?? areaLabel(walk.area, lang) ?? t(lang, "unknownArea"))}
+                <span className="ml-1.5 font-medium text-ink/55">
+                  {walkingDest && dest.route
+                    ? t(lang, "destEta", { d: formatDistance(nav.remainingM), n: etaMinutes(dest.route, nav.remainingM) })
+                    : `${formatDistance(session.distanceM)} · ${t(lang, "nbMetCount", { n: session.heardToday.length })}`}
+                </span>
+              </p>
+            </div>
+            ) : null}
+            {!embedded && session.active ? (
+              <button
+                type="button"
+                onClick={handleEnd}
+                className="glass pointer-events-auto absolute right-0 top-1/2 h-9 shrink-0 -translate-y-1/2 rounded-[18px] px-3.5 text-[13px] font-medium text-ink"
+              >
+                {t(lang, "endWalk")}
+              </button>
+            ) : null}
+          </div>
+        ) : null}
+        {/* simulated walk: red tag with speed top-left (tap to change), exit top-right */}
+        {!embedded && route ? (
+          <div className="flex w-full items-center gap-1.5">
+            <div className="flex shrink-0 justify-start">
+              <button
+                type="button"
+                onClick={() => session.setSimSpeed(SPEEDS[(SPEEDS.indexOf(session.simSpeed) + 1) % SPEEDS.length])}
+                aria-label={t(lang, "simSpeedLabel", { n: session.simSpeed })}
+                className="pointer-events-auto flex h-9 shrink-0 items-center gap-1 whitespace-nowrap rounded-[18px] border-[1.5px] border-[#E5484D] bg-white/90 px-2.5 text-[11px] font-semibold tracking-wide text-[#D93036]"
+              >
+                <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-[#E5484D] motion-safe:animate-pulse" />
+                {t(lang, "simBadge")}
+                {session.active ? <span className="font-medium">· {t(lang, "speedPill", { n: session.simSpeed })}</span> : null}
+              </button>
+            </div>
+            {session.active ? <div className="flex min-w-0 flex-1 justify-center"><div className="glass pointer-events-auto flex h-9 min-w-0 items-center rounded-[18px] px-[14px]">
             <p className="truncate text-[13px] font-semibold text-ink">
               {walkingDest && dest.destination ? dest.destination.name : (label ?? areaLabel(walk.area, lang) ?? t(lang, "unknownArea"))}
               <span className="ml-1.5 font-medium text-ink/55">
@@ -223,45 +287,20 @@ export default function WalkScreen({
                   : `${formatDistance(session.distanceM)} · ${t(lang, "nbMetCount", { n: session.heardToday.length })}`}
               </span>
             </p>
-          </div>
-          ) : null}
-          {!embedded && session.active ? (
-            <button
-              type="button"
-              onClick={handleEnd}
-              className="glass pointer-events-auto absolute right-0 top-1/2 h-9 shrink-0 -translate-y-1/2 rounded-[18px] px-3.5 text-[13px] font-medium text-ink"
-            >
-              {t(lang, "endWalk")}
-            </button>
-          ) : null}
-        </div>
-        {walkingDest && nav.cue && !nav.arrived ? (
-          <NavBanner lang={lang} text={nav.cue.text} distanceM={nav.cue.distanceM} arrow={arrowForModifier(nav.cue.modifier)} />
-        ) : null}
-        {showSim ? (
-          <div className="flex w-full justify-start">
-            <div className="glass pointer-events-auto flex h-8 w-fit items-center gap-0.5 rounded-full pl-0.5 pr-1.5">
+          </div></div> : null}
+            <div className="flex shrink-0 justify-end">
               <button
                 type="button"
-                onClick={session.simToggle}
-                aria-label={session.simPlaying ? t(lang, "simPause") : t(lang, "simPlay")}
-                className="grid h-7 w-7 place-items-center rounded-full bg-ink text-white"
+                onClick={() => setSimBackOpen(true)}
+                className="glass pointer-events-auto h-9 shrink-0 rounded-[18px] px-3 text-[13px] font-medium text-ink"
               >
-                {session.simPlaying ? <Pause size={14} fill="currentColor" aria-hidden /> : <Play size={14} fill="currentColor" aria-hidden />}
+                {t(lang, "simExit")}
               </button>
-              {SPEEDS.map((s) => (
-                <button
-                  key={s}
-                  type="button"
-                  aria-pressed={session.simSpeed === s}
-                  onClick={() => session.setSimSpeed(s)}
-                  className={`h-7 min-w-8 rounded-full px-2 text-[13px] font-medium ${session.simSpeed === s ? "bg-[rgba(17,17,17,0.08)] text-ink" : "text-sub"}`}
-                >
-                  {t(lang, "speedPill", { n: s })}
-                </button>
-              ))}
             </div>
           </div>
+        ) : null}
+        {walkingDest && nav.cue && !nav.arrived ? (
+          <NavBanner lang={lang} text={nav.cue.text} distanceM={nav.cue.distanceM} arrow={arrowForModifier(nav.cue.modifier)} />
         ) : null}
         {walk.error ? (
           <p role="alert" className="glass pointer-events-auto rounded-2xl px-3.5 py-2 text-[13px] text-red-700">
@@ -333,7 +372,7 @@ export default function WalkScreen({
           className="pointer-events-none absolute inset-x-0 z-20 flex flex-col items-center justify-center"
           style={{ top: 76, bottom: 88 }}
         >
-          <StartCollage label={t(lang, "startWalk")} onStart={() => setModeOpen(true)} />
+          <StartCollage label={t(lang, "startWalk")} onStart={() => (route ? startDemoWalk() : setModeOpen(true))} />
         </div>
       ) : null}
 
@@ -473,7 +512,7 @@ export default function WalkScreen({
       ) : null}
 
       <MiniPlayer session={session} lang={lang} bottom={barBottom} />
-      <DiscoverySheet session={session} lang={lang} readOnly={embedded} onSaveFailed={() => flash(t(lang, "storageFull"))} />
+      <DiscoverySheet session={session} lang={lang} readOnly={embedded} />
 
       {photoFile ? <PhotoView key={photoFile.name + photoFile.lastModified + photoFile.size} file={photoFile} profile={profile} lang={lang} session={session} fix={walk.fix} onClose={() => setPhotoFile(null)} /> : null}
 
@@ -491,6 +530,25 @@ export default function WalkScreen({
             <Send size={18} aria-hidden />
           </button>
         </form>
+      </Sheet>
+      <Sheet open={simBackOpen} title={t(lang, "simBadge")} lang={lang} onClose={() => setSimBackOpen(false)}>
+        <p className="pb-4 text-[15px] text-sub">{t(lang, "simBackBody")}</p>
+        <div className="flex gap-2 pb-2">
+          <button type="button" onClick={() => setSimBackOpen(false)} className="h-11 flex-1 rounded-full border border-line text-[15px] font-medium">
+            {t(lang, "cancel")}
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setSimBackOpen(false);
+              handleEnd();
+              router.push("/onboarding");
+            }}
+            className="h-11 flex-1 rounded-full bg-ink text-[15px] font-medium text-white"
+          >
+            {t(lang, "simBackGo")}
+          </button>
+        </div>
       </Sheet>
       <Sheet open={panel === "trace"} title={t(lang, "guideThinking")} lang={lang} onClose={() => setPanel(null)}>
         <TracePanel steps={walk.trace} lang={lang} />
