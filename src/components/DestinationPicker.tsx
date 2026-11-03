@@ -134,13 +134,13 @@ function Preview({ lang, dest, onStart, onRetry }: { lang: Lang; dest: Destinati
         <p className="truncate text-[17px] font-semibold">{dest.destination?.name}</p>
         {dest.destination?.label ? <p className="truncate text-[13px] text-sub">{dest.destination.label}</p> : null}
         <p className="mt-1 text-[13px] text-sub" aria-live="polite">
-          {dest.routing || !route ? (
+          {route && !dest.routing ? (
+            t(lang, "destEta", { d: formatDistance(route.distanceM), n: etaMinutes(route, route.distanceM) })
+          ) : dest.routeError ? null : (
             <span className="inline-flex items-center gap-2">
               <Loader2 size={14} aria-hidden className="animate-spin" />
               {t(lang, "destSearching")}
             </span>
-          ) : (
-            t(lang, "destEta", { d: formatDistance(route.distanceM), n: etaMinutes(route, route.distanceM) })
           )}
         </p>
       </div>

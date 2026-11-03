@@ -17,6 +17,57 @@ export interface Citation {
 
 const DOMAINS: string[] = (whitelist as { domains: string[] }).domains.map((d) => d.toLowerCase());
 
+// ---- Canonical URL identity for citation matching ----
+
+// Search citations and the model's used_urls rarely match byte for byte
+// (trailing slash, http/https, www., AMP/mobile hosts, URL encoding, query
+// strings, Wikipedia language subdomains), so compare canonical keys: the
+// host with www/m/mobile/amp prefixes stripped, the decoded path lowercased
+// without a trailing slash, and no query string or fragment. Two keys on the
+// same registrable site (en.wikipedia.org vs zh.wikipedia.org) count as the
+// same outlet. Only ever used to keep entries from the trusted list — an
+// untrusted URL can never be admitted through these keys.
+export function canonicalHost(url: string): string | null {
+  try {
+    const u = new URL(url.trim());
+    if (u.protocol !== "http:" && u.protocol !== "https:") return null;
+    let host = u.hostname.toLowerCase().replace(/\.+$/, "");
+    host = host.replace(/^(www|m|mobile|amp)\./, "");
+    host = host.replace(/\.(m|mobile|amp)\./, ".");
+    return host || null;
+  } catch {
+    return null;
+  }
+}
+
+export function canonicalUrlKey(url: string): string {
+  const host = canonicalHost(url);
+  if (!host) return url.trim().toLowerCase();
+  let path = "";
+  try {
+    path = new URL(url.trim()).pathname;
+    try {
+      path = decodeURIComponent(path);
+    } catch {
+      // Keep the raw path when it is not valid percent-encoding.
+    }
+    path = path.replace(/\/+$/, "").toLowerCase();
+  } catch {
+    path = "";
+  }
+  return path && path !== "/" ? `${host}${path}` : host;
+}
+
+const SECOND_LEVEL = new Set(["gov", "edu", "go", "ac", "co", "ne", "or", "com", "org", "net"]);
+
+export function canonicalSite(url: string): string | null {
+  const host = canonicalHost(url);
+  if (!host) return null;
+  const parts = host.split(".").filter(Boolean);
+  if (parts.length >= 3 && SECOND_LEVEL.has(parts[parts.length - 2])) return parts.slice(-3).join(".");
+  return parts.slice(-2).join(".");
+}
+
 export function hostnameOf(url: string): string | null {
   try {
     const u = new URL(url);
@@ -244,8 +295,9 @@ export function trustedSources(citations: Citation[]): Source[] {
   const seen = new Set<string>();
   const sources: Source[] = [];
   for (const c of citations) {
-    if (!isTrustedUrl(c.url) || seen.has(c.url)) continue;
-    seen.add(c.url);
+    const key = canonicalUrlKey(c.url);
+    if (!isTrustedUrl(c.url) || seen.has(key)) continue;
+    seen.add(key);
     sources.push({
       url: c.url,
       title: readableSourceTitle(c.url, c.title),

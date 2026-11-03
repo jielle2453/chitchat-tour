@@ -124,6 +124,8 @@ describe("runAsk / runExplain", () => {
         raw: { output: [{ type: "web_search_call", action: { sources: urls.map((url) => ({ type: "url", url })) } }, { type: "message", content: [{ type: "output_text", text, annotations: [] }] }] },
       };
     };
+    const noTopic = () => ({ text: JSON.stringify({ itemId: null }) });
+    responsesText.mockResolvedValueOnce(noTopic());
     responsesText.mockResolvedValueOnce(reply(["https://blog.example.com/a", "https://en.wikipedia.org/wiki/A", "https://www.gov.taipei/x"], ["https://en.m.wikipedia.org/wiki/A"]));
     const ok = await runAsk({ profile, question: "What is a scooter hook turn?", recent: [] });
     expect(ok.narration.sources.map((s) => s.url)).toEqual(["https://en.wikipedia.org/wiki/A"]);
@@ -132,13 +134,18 @@ describe("runAsk / runExplain", () => {
     expect(ok.narration.sources[0].publisher).toBe("en.wikipedia.org");
     expect(ok.narration.title).toBe("Hook turn");
     expect(ok.narration.confidence).toBe("medium");
-    expect(responsesText.mock.calls[0][0].max_tool_calls).toBeGreaterThan(0);
+    const webCall = responsesText.mock.calls
+      .map((c) => c[0] as { tools?: unknown; max_tool_calls?: number })
+      .find((p) => p.tools !== undefined);
+    expect(webCall?.max_tool_calls).toBeGreaterThan(0);
 
+    responsesText.mockResolvedValueOnce(noTopic());
     responsesText.mockResolvedValueOnce(reply(["https://blog.example.com/a"], ["https://blog.example.com/a"]));
     const bad = await runAsk({ profile, question: "What is a scooter hook turn?", recent: [] });
     expect(bad.narration.confidence).toBe("low");
     expect(bad.narration.sources).toEqual([]);
 
+    responsesText.mockResolvedValueOnce(noTopic());
     responsesText.mockResolvedValueOnce(reply(["https://en.wikipedia.org/wiki/A"], [], false));
     const none = await runAsk({ profile, question: "Who named this lane?", recent: [] });
     expect(none.narration.sources).toEqual([]);
@@ -147,6 +154,7 @@ describe("runAsk / runExplain", () => {
   it("real ask surfaces the page title from web_search_call.results", async () => {
     process.env.META_API_KEY = "test";
     const text = JSON.stringify({ found: true, title: "Hook turn", answer: "Answer.", used_urls: ["https://en.m.wikipedia.org/wiki/Hook_turn"] });
+    responsesText.mockResolvedValueOnce({ text: JSON.stringify({ itemId: null }) });
     responsesText.mockResolvedValueOnce({
       text,
       raw: {

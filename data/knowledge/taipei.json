@@ -372,13 +372,13 @@
     ],
     "confidence": "low",
     "disputed": false,
-    "caveats": "The 2000-07-01 start date and the reduction figures come from search snippets that were not mapped to a specific page. Do not quote the date or percentage until checked against the ordinance and the Taipei EPB.",
+    "caveats": "The 2000-07-01 start date and the reduction figures come from search snippets that were not mapped to a specific page. Do not quote the date or percentage until checked against the ordinance and the Taipei EPB. JP bag prices were not verified; do not quote prices.",
     "hometown": {
       "JP": {
         "status": "same",
         "comparison": {
-          "en": "Many Japanese municipalities also require designated trash bags, sold at supermarkets, convenience stores and drugstores. Details differ by city, so do not quote prices.",
-          "zh-TW": "日本許多自治體也要求使用指定垃圾袋，在超市、超商、藥妝店販售。各市細節不同，不要講金額。",
+          "en": "Many Japanese municipalities also require designated trash bags, sold at supermarkets, convenience stores and drugstores. Details differ by city.",
+          "zh-TW": "日本許多自治體也要求使用指定垃圾袋，在超市、超商、藥妝店販售。各市細節不同。",
           "ja": "日本でも多くの自治体が指定ごみ袋を求め、スーパーやコンビニで販売しています（自治体により異なります）。"
         },
         "sources": [
@@ -437,7 +437,7 @@
     ],
     "confidence": "medium",
     "disputed": false,
-    "caveats": "Do not quote bin counts (earlier figures such as 806 were not verified and change over time). Say 'fewer than before'. The village chief's view in the PTS article is one person's opinion.",
+    "caveats": "Do not quote bin counts (earlier figures such as 806 were not verified and change over time). Say 'fewer than before'. The village chief's view in the PTS article is one person's opinion. No verified like-for-like Taipei count for the US 24,700 figure; do not rank the two cities.",
     "hometown": {
       "JP": {
         "status": "same",
@@ -459,9 +459,9 @@
       "US": {
         "status": "unknown",
         "comparison": {
-          "en": "New York's Sanitation Department reports about 24,700 public litter baskets citywide (April 2024). No like-for-like Taipei count was verified, so do not rank the two cities.",
-          "zh-TW": "紐約市清潔局公布全市約 24,700 個公共垃圾筒（2024 年 4 月）。台北沒有可比較的查證數字，所以不要比誰多誰少。",
-          "ja": "ニューヨーク市衛生局の発表では、市内の公共ごみかごは約24,700個（2024年4月）。台北と比較できる公式の数は確認されていないため、どちらが多いとは言いません。"
+          "en": "New York's Sanitation Department reports about 24,700 public litter baskets citywide (April 2024).",
+          "zh-TW": "紐約市清潔局公布全市約 24,700 個公共垃圾筒（2024 年 4 月）。",
+          "ja": "ニューヨーク市衛生局の発表では、市内の公共ごみかごは約24,700個です（2024年4月）。"
         },
         "sources": [
           {
@@ -559,7 +559,7 @@
     ],
     "confidence": "high",
     "disputed": false,
-    "caveats": "Numbers are time-limited (2025). Do not give a reason for why Taiwan is so dense; none was verified. Do not compare with Korea for Korean visitors (Korea is denser).",
+    "caveats": "Numbers are time-limited (2025). Do not give a reason for why Taiwan is so dense; none was verified. Do not compare with Korea for Korean visitors (Korea is denser). No verified US per-person official figure; NACS includes fuel sellers, so do not rank density.",
     "hometown": {
       "JP": {
         "status": "different",
@@ -581,9 +581,9 @@
       "US": {
         "status": "unknown",
         "comparison": {
-          "en": "The industry group NACS counts about 152,000 convenience stores in the US at the end of 2025. Its totals include stores that sell motor fuel, so the definition is broader and not like-for-like. No per-person US figure was verified.",
-          "zh-TW": "美國便利商店協會 NACS 統計 2025 年底全美約 15.2 萬間便利商店，統計範圍包含賣汽油的店，口徑較寬，不能直接比。沒有查證到美國每人平均的官方數字。",
-          "ja": "米国の業界団体NACSの統計では、2025年末の全米のコンビニは約15.2万店ですが、ガソリン販売店を含む広い定義のため単純比較はできません。米国の一人あたりの公式の数は確認されていません。"
+          "en": "The industry group NACS counts about 152,000 convenience stores in the US at the end of 2025. Its totals include stores that sell motor fuel, so the definition is broader and not like-for-like.",
+          "zh-TW": "美國便利商店協會 NACS 統計 2025 年底全美約 15.2 萬間便利商店，統計範圍包含賣汽油的店，口徑和台灣不同。",
+          "ja": "米国の業界団体NACSの統計では、2025年末の全米のコンビニは約15.2万店ですが、ガソリン販売店を含む広い定義です。"
         },
         "sources": [
           {
@@ -636,7 +636,7 @@
     ],
     "confidence": "high",
     "disputed": false,
-    "caveats": "Time-limited (2025). Area-based density depends on how much of each country is mountain or uninhabited, so do not over-interpret it.",
+    "caveats": "Time-limited (2025). Area-based density depends on how much of each country is mountain or uninhabited, so do not over-interpret it. No official NYC bodega count and the definition varies; do not compare density with Taipei.",
     "hometown": {
       "JP": {
         "status": "different",
@@ -658,9 +658,9 @@
       "US": {
         "status": "unknown",
         "comparison": {
-          "en": "New York's corner stores, called bodegas, are estimated at about 8,000 citywide by the New York Health Foundation, with older industry estimates as high as 13,000. There is no official city count and the definition of a bodega varies, so do not compare density with Taipei.",
-          "zh-TW": "紐約街角的小店叫 bodega，紐約健康基金會估計全市約 8000 間，較舊的業界估計高到 1.3 萬間。市府沒有正式統計，bodega 的定義也不一，所以不要和台北比密度。",
-          "ja": "ニューヨークの街角の小店はbodega（ボデガ）と呼ばれ、ニューヨーク健康財団の推計では市内に約8,000店、古い業界推計では1.3万店にもなります。市の正式な統計はなく、bodegaの定義もまちまちなので、台北と密度を比べません。"
+          "en": "New York's corner stores, called bodegas, are estimated at about 8,000 citywide by the New York Health Foundation, with older industry estimates as high as 13,000. There is no official city count and the definition of a bodega varies.",
+          "zh-TW": "紐約街角的小店叫 bodega，紐約健康基金會估計全市約 8000 間，較舊的業界估計高到 1.3 萬間。市府沒有正式統計，bodega 的定義也不一。",
+          "ja": "ニューヨークの街角の小店はbodega（ボデガ）と呼ばれ、ニューヨーク健康財団の推計では市内に約8,000店、古い業界推計では1.3万店にもなります。市の正式な統計はなく、bodegaの定義もまちまちです。"
         },
         "sources": [
           {
@@ -716,7 +716,7 @@
     ],
     "confidence": "medium",
     "disputed": false,
-    "caveats": "Snippet only; the prior research round did not map each claim to the page. Check the 1998 details before quoting.",
+    "caveats": "Snippet only; the prior research round did not map each claim to the page. Check the 1998 details before quoting. Whether US convenience stores take utility-bill payments is unverified, and current UPS locker coverage is unconfirmed (2016 report only).",
     "hometown": {
       "JP": {
         "status": "same",
@@ -744,9 +744,9 @@
       "US": {
         "status": "unknown",
         "comparison": {
-          "en": "The counter service that 7-Eleven's partner Western Union confirms in the US is money orders; utility bill payment at US convenience stores was not verified. UPS has put pickup lockers outside some 7-Eleven stores (a 2016 report), but current coverage is unconfirmed.",
-          "zh-TW": "美國 7-Eleven 合作夥伴西聯匯款證實的櫃台服務是購買匯票；美國超商能不能繳水電費沒有查證。UPS 曾在部分 7-Eleven 外設取貨櫃（2016 年報導），目前範圍未證實。",
-          "ja": "米国の7-Elevenで提携先のウエスタンユニオンが確認している店頭サービスは送金為替（money order）で、米国のコンビニで光熱費が払えるかは確認されていません。UPSが一部の7-Eleven店外に受取ロッカーを置いたという2016年の報道もありますが、現在の範囲は未確認です。"
+          "en": "The counter service that 7-Eleven's partner Western Union confirms in the US is money orders. UPS has put pickup lockers outside some 7-Eleven stores (a 2016 report).",
+          "zh-TW": "美國 7-Eleven 合作夥伴西聯匯款證實的櫃台服務是購買匯票。UPS 曾在部分 7-Eleven 外設取貨櫃（2016 年報導）。",
+          "ja": "米国の7-Elevenで提携先のウエスタンユニオンが確認している店頭サービスは送金為替（money order）です。UPSが一部の7-Eleven店外に受取ロッカーを置いたという2016年の報道もあります。"
         },
         "sources": [
           {
@@ -799,14 +799,14 @@
     ],
     "confidence": "medium",
     "disputed": false,
-    "caveats": "Time-limited policy figure; check the current cap before use.",
+    "caveats": "Time-limited policy figure; check the current cap before use. Japanese per-payment cap unverified; do not compare amounts.",
     "hometown": {
       "JP": {
         "status": "same",
         "comparison": {
-          "en": "Japanese convenience stores also collect public money such as national and local taxes, according to the Digital Agency. The Japanese cap per payment was not verified, so do not compare amounts.",
-          "zh-TW": "日本的超商也代收國稅、地方稅等公款（數位廳文件）。日本每筆上限沒有查證，不要比金額。",
-          "ja": "日本のコンビニでも国税・地方税などの公金収納代行を行っています（デジタル庁資料）。1件あたりの上限額は確認していません。"
+          "en": "Japanese convenience stores also collect public money such as national and local taxes, according to the Digital Agency.",
+          "zh-TW": "日本的超商也代收國稅、地方稅等公款（數位廳文件）。",
+          "ja": "日本のコンビニでも国税・地方税などの公金収納代行を行っています（デジタル庁資料）。"
         },
         "sources": [
           {
@@ -1122,13 +1122,13 @@
     ],
     "confidence": "medium",
     "disputed": false,
-    "caveats": "Only an instruction with no confirmed date, and rollout across signals is unconfirmed. Say 'is planned to go away' and never claim a particular signal has already changed.",
+    "caveats": "Only an instruction with no confirmed date, and rollout across signals is unconfirmed. Say 'is planned to go away' and never claim a particular signal has already changed. Whether Japanese signals have any running animation, and NYC DOT's own practice, are unverified.",
     "hometown": {
       "JP": {
         "status": "different",
         "comparison": {
-          "en": "In Japan the walk light is officially called blue (青), not green, and the Tokyo Metropolitan Police say a flashing pedestrian blue means the same as yellow: wait for the next blue. Whether Japanese signals have any running animation was not verified.",
-          "zh-TW": "日本的通行燈在法規與警方說明裡叫「青」，不是「綠」；警視廳說行人燈青色閃爍的意思和黃燈一樣，要等下一次青燈。日本號誌有沒有類似跑步動畫沒有查證。",
+          "en": "In Japan the walk light is officially called blue (青), not green, and the Tokyo Metropolitan Police say a flashing pedestrian blue means the same as yellow: wait for the next blue.",
+          "zh-TW": "日本的通行燈在法規與警方說明裡叫「青」，不是「綠」；警視廳說行人燈青色閃爍的意思和黃燈一樣，要等下一次青燈。",
           "ja": "日本では歩行者用信号の通行可の灯火は「青色」と呼ばれ、警視庁は青色の点滅は黄色信号と同じ意味で、次の青色信号まで待つよう案内しています。"
         },
         "sources": [
@@ -1144,9 +1144,9 @@
       "US": {
         "status": "different",
         "comparison": {
-          "en": "The US federal signal manual defines pedestrian signals by symbols, a walking person and a flashing upraised hand, plus a numeric seconds countdown during the flashing hand. It describes no running animation. New York City DOT's own practice was not verified.",
-          "zh-TW": "美國聯邦號誌手冊用符號定義行人號誌：行走的人、閃爍的手掌，閃爍期間再加上倒數秒數，沒有跑步動畫的規定。紐約市交通局自己的做法沒有查證。",
-          "ja": "米国の連邦信号マニュアルでは、歩行者用信号は歩く人と点滅する手のひらの記号に、手のひらの点滅中は秒数のカウントダウンを加えると定め、走るアニメーションの規定はありません。ニューヨーク市交通局独自の運用は確認していません。"
+          "en": "The US federal signal manual defines pedestrian signals by symbols, a walking person and a flashing upraised hand, plus a numeric seconds countdown during the flashing hand. It describes no running animation.",
+          "zh-TW": "美國聯邦號誌手冊用符號定義行人號誌：行走的人、閃爍的手掌，閃爍期間再加上倒數秒數，沒有跑步動畫的規定。",
+          "ja": "米国の連邦信号マニュアルでは、歩行者用信号は歩く人と点滅する手のひらの記号に、手のひらの点滅中は秒数のカウントダウンを加えると定め、走るアニメーションの規定はありません。"
         },
         "sources": [
           {
@@ -1202,13 +1202,13 @@
     ],
     "confidence": "low",
     "disputed": true,
-    "caveats": "Use 'one explanation is'. Origin accounts conflict. The rule applies to motorcycles 250cc and under per earlier reporting; not re-verified.",
+    "caveats": "Use 'one explanation is'. Origin accounts conflict. The rule applies to motorcycles 250cc and under per earlier reporting; not re-verified. JP details from motoring media, not police sources; left-turn legal wording not checked.",
     "hometown": {
       "JP": {
         "status": "different",
         "comparison": {
-          "en": "Japan drives on the left, so small mopeds (the 50cc class) must make two-stage right turns at certain intersections, such as ones with three or more lanes in each direction or marked ones. Details come from motoring media, not the police.",
-          "zh-TW": "日本靠左行駛，所以小排氣量的原付（50cc 級）在某些路口，例如單向三線道以上或有標示的路口，要做二段式右轉。細節來自汽機車媒體，不是警方原文。",
+          "en": "Japan drives on the left, so small mopeds (the 50cc class) must make two-stage right turns at certain intersections, such as ones with three or more lanes in each direction or marked ones, according to motoring media.",
+          "zh-TW": "日本靠左行駛，所以小排氣量的原付（50cc 級）在某些路口，例如單向三線道以上或有標示的路口，要做二段式右轉，細節來自汽機車媒體。",
           "ja": "日本は左側通行のため、原付（50cc級）は一部の交差点で二段階右折が必要です（自動車メディアの情報）。"
         },
         "sources": [
@@ -1224,9 +1224,9 @@
       "US": {
         "status": "different",
         "comparison": {
-          "en": "New York State's motorcycle manual tells riders that motorcyclists can use a full lane, and it gives no separate two-stage turn procedure; it mainly warns about cars turning left in front of riders. The legal wording on left turns was not checked.",
-          "zh-TW": "紐約州機車手冊說機車騎士可以使用完整的一條車道，沒有另外規定兩段式轉彎，主要是提醒騎士小心對向左轉的汽車。左轉的法條原文沒有查證。",
-          "ja": "ニューヨーク州のバイクマニュアルでは、ライダーは1車線をまるごと使えるとされ、二段階左折のような特別な手順はなく、主に対向車の左折への注意が呼びかけられています。左折に関する法文そのものは確認していません。"
+          "en": "New York State's motorcycle manual tells riders that motorcyclists can use a full lane, and it gives no separate two-stage turn procedure; it mainly warns about cars turning left in front of riders.",
+          "zh-TW": "紐約州機車手冊說機車騎士可以使用完整的一條車道，沒有另外規定兩段式轉彎，主要是提醒騎士小心對向左轉的汽車。",
+          "ja": "ニューヨーク州のバイクマニュアルでは、ライダーは1車線をまるごと使えるとされ、二段階左折のような特別な手順はなく、主に対向車の左折への注意が呼びかけられています。"
         },
         "sources": [
           {
@@ -1371,13 +1371,13 @@
     ],
     "confidence": "medium",
     "disputed": false,
-    "caveats": "Wikipedia only; its station counts do not reconcile, so do not quote them.",
+    "caveats": "Wikipedia only; its station counts do not reconcile, so do not quote them. JP operators' start dates unverified; do not compare origins.",
     "hometown": {
       "JP": {
         "status": "same",
         "comparison": {
-          "en": "Tokyo's main bike-share is docomo bike share, which lists 'Greater Tokyo' as its service area and shows bikes available at each port in its app. HELLO CYCLING is another big operator. Their start dates were not verified, so do not compare origins.",
-          "zh-TW": "東京主要的共享單車是 docomo bike share，官網列的服務範圍是「東京廣域」，App 可看各站可用車數；另一家大業者是 HELLO CYCLING。兩者的起步年份沒有查證，不要比起源。",
+          "en": "Tokyo's main bike-share is docomo bike share, which lists 'Greater Tokyo' as its service area and shows bikes available at each port in its app. HELLO CYCLING is another big operator.",
+          "zh-TW": "東京主要的共享單車是 docomo bike share，官網列的服務範圍是「東京廣域」，App 可看各站可用車數；另一家大業者是 HELLO CYCLING。",
           "ja": "東京の主なシェアサイクルはドコモ・バイクシェアで、提供エリアは「東京広域」、アプリでポートごとの自転車台数を確認できます。HELLO CYCLINGも大手です。"
         },
         "sources": [
@@ -1448,13 +1448,13 @@
     ],
     "confidence": "low",
     "disputed": false,
-    "caveats": "Policy may have changed; the 17 percent is one thesis estimate. Confirm the current tariff with Taipei City before quoting.",
+    "caveats": "Policy may have changed; the 17 percent is one thesis estimate. Confirm the current tariff with Taipei City before quoting. JP and US prices vary by area and change over time; quote as about/approximately.",
     "hometown": {
       "JP": {
         "status": "different",
         "comparison": {
-          "en": "Tokyo's docomo bike share charges for the first 30 minutes too. Municipal documents list about 165 yen per 30 minutes for one-time users, and the extension rate in 12 Tokyo wards went from 110 to 165 yen in February 2022. Prices differ by area, so check the app and say 'around'.",
-          "zh-TW": "東京 docomo bike share 前 30 分鐘也要收費。自治體文件列單次使用者約每 30 分鐘 165 日圓，東京 12 區的延長費 2022 年 2 月由 110 圓調到 165 圓。各區價格不同，要說「大約」。",
+          "en": "Tokyo's docomo bike share charges for the first 30 minutes too. Municipal documents list about 165 yen per 30 minutes for one-time users, and the extension rate in 12 Tokyo wards went from 110 to 165 yen in February 2022. Prices differ by area, so check the app.",
+          "zh-TW": "東京 docomo bike share 前 30 分鐘也要收費。自治體文件列單次使用者約每 30 分鐘 165 日圓，東京 12 區的延長費 2022 年 2 月由 110 圓調到 165 圓。各區價格不同。",
           "ja": "ドコモ・バイクシェアは最初の30分から有料です。自治体資料では1回利用は30分165円程度で、都内12区の延長料金は2022年2月に110円から165円に改定されました（地域で異なります）。"
         },
         "sources": [
@@ -1476,9 +1476,9 @@
       "US": {
         "status": "different",
         "comparison": {
-          "en": "Citi Bike is not free for the first half hour. A single ride costs $4.99 including 30 minutes on a classic bike, and an annual membership ($239 a year) includes 45-minute classic rides. E-bikes cost extra per minute.",
-          "zh-TW": "Citi Bike 前半小時不是免費的。單次騎乘 4.99 美元，含一般單車 30 分鐘；年費會員（每年 239 美元）一般單車每趟含 45 分鐘；電輔車另外按分鐘計費。價格會變，要說「大約」。",
-          "ja": "Citi Bikeの最初の30分は無料ではありません。1回利用は4.99ドルで普通自転車30分込み、年会員（年239ドル）は普通自転車45分込みで、電動アシストは分単位の追加料金です。料金は変わるため「おおよそ」です。"
+          "en": "Citi Bike is not free for the first half hour. A single ride costs about $4.99 including 30 minutes on a classic bike, and an annual membership (about $239 a year) includes 45-minute classic rides. E-bikes cost extra per minute.",
+          "zh-TW": "Citi Bike 前半小時不是免費的。單次騎乘約 4.99 美元，含一般單車 30 分鐘；年費會員（每年約 239 美元）一般單車每趟含 45 分鐘；電輔車另外按分鐘計費。",
+          "ja": "Citi Bikeの最初の30分は無料ではありません。1回利用は約4.99ドルで普通自転車30分込み、年会員（年約239ドル）は普通自転車45分込みで、電動アシストは分単位の追加料金です。"
         },
         "sources": [
           {
@@ -1531,13 +1531,13 @@
     ],
     "confidence": "medium",
     "disputed": false,
-    "caveats": "Design details beyond the numbers come from news, not the water department itself. Only trigger when a decorated cover is actually seen.",
+    "caveats": "Design details beyond the numbers come from news, not the water department itself. Only trigger when a decorated cover is actually seen. JP national counts unverified (official figures could not be opened); whether NY has a decorative program is unverified, so do not claim it lacks one.",
     "hometown": {
       "JP": {
         "status": "same",
         "comparison": {
-          "en": "Decorative manhole covers also spread in Japan from the 1980s, partly to improve the image of sewers. Taipei's set dates from 2020. Do not quote national counts; the official figures could not be opened.",
-          "zh-TW": "日本也有裝飾人孔蓋，從 1980 年代起為了改善下水道形象而普及；台北這套是 2020 年才開始。全國數量沒有查證，不要講。",
+          "en": "Decorative manhole covers also spread in Japan from the 1980s, partly to improve the image of sewers. Taipei's set dates from 2020.",
+          "zh-TW": "日本也有裝飾人孔蓋，從 1980 年代起為了改善下水道形象而普及；台北這套是 2020 年才開始。",
           "ja": "日本でも1980年代から下水道のイメージ向上のためデザインマンホールが広まりました。台北は2020年開始です。"
         },
         "sources": [
@@ -1553,9 +1553,9 @@
       "US": {
         "status": "unknown",
         "comparison": {
-          "en": "New York's manhole covers are round because a round lid cannot fall through its own opening, according to the city's environmental protection department. No New York decorative program was verified, so do not say the city lacks one.",
-          "zh-TW": "紐約市環保局說，人孔蓋做成圓形是因為圓蓋不會掉進自己的洞裡。紐約有沒有類似彩繪計畫沒有查證，不要說沒有。",
-          "ja": "ニューヨーク市環境保護局によれば、マンホールのふたが丸いのは、丸いふたは自分の穴に落ちないためです。ニューヨークに装飾マンホールの事業があるかは確認されていないため、ないとは言いません。"
+          "en": "New York's manhole covers are round because a round lid cannot fall through its own opening, according to the city's environmental protection department.",
+          "zh-TW": "紐約市環保局說，人孔蓋做成圓形是因為圓蓋不會掉進自己的洞裡。",
+          "ja": "ニューヨーク市環境保護局によれば、マンホールのふたが丸いのは、丸いふたは自分の穴に落ちないためです。"
         },
         "sources": [
           {
@@ -1657,13 +1657,13 @@
     ],
     "confidence": "medium",
     "disputed": false,
-    "caveats": "Cost figure is Taipower's claim as relayed by news. Do not explain why transformers sit on poles; no source found. Do not quote a Taipei undergrounding percentage. Underground-share figures (e.g. 87% vs 96%) come from different statistical bases and are not comparable; never quote a share.",
+    "caveats": "Cost figure is Taipower's claim as relayed by news. Do not explain why transformers sit on poles; no source found. Do not quote a Taipei undergrounding percentage. Underground-share figures (e.g. 87% vs 96%) come from different statistical bases and are not comparable; never quote a share. The JP 8% uses MLIT's road-length basis and is not directly comparable with Taipei figures.",
     "hometown": {
       "JP": {
         "status": "same",
         "comparison": {
           "en": "Tokyo's 23 wards had only about 8 percent of roads without utility poles at the end of 2019, by Japan's road-length measure. Japan's ministry notes this measure is not directly comparable to Taipei's figures.",
-          "zh-TW": "東京 23 區 2019 年底以道路長度算，無電線桿的比例約 8%。日本國交省說明這個算法不能直接和台北比，所以只說「日本也不高」。",
+          "zh-TW": "東京 23 區 2019 年底以道路長度算，無電線桿的比例約 8%，日本也不高。",
           "ja": "東京23区の無電柱化率は2019年末で道路延長ベース約8%（国土交通省）。台北の数字とは算定方法が違うため直接比較はできません。"
         },
         "sources": [
@@ -1740,13 +1740,13 @@
     ],
     "confidence": "medium",
     "disputed": false,
-    "caveats": "Only mention the 1900 rule. Accounts of what triggered it (an 1898 flood, a 1899 proposal) differ, so do not give a cause.",
+    "caveats": "Only mention the 1900 rule. Accounts of what triggered it (an 1898 flood, a 1899 proposal) differ, so do not give a cause. The built-into-each-building vs added-structure contrast lacks an architectural-history source; do not state it.",
     "hometown": {
       "JP": {
         "status": "different",
         "comparison": {
-          "en": "Japanese covered shopping arcades are generally owned by shopping-street associations, and in 1955 the construction ministry took a policy of discouraging them over fire, traffic and hygiene concerns. Whether Taiwanese arcades are built into each building while Japanese ones are separate is not yet backed by an architectural source.",
-          "zh-TW": "日本的有頂商店街多半由商店街組織持有；1955 年建設省曾因防火、交通、衛生疑慮採抑制方針。至於「台灣騎樓是每棟建築自己退縮、日本是另外加蓋」這種結構差異，目前沒有建築史來源，不要講。",
+          "en": "Japanese covered shopping arcades are generally owned by shopping-street associations, and in 1955 the construction ministry took a policy of discouraging them over fire, traffic and hygiene concerns.",
+          "zh-TW": "日本的有頂商店街多半由商店街組織持有；1955 年建設省曾因防火、交通、衛生疑慮採抑制方針。",
           "ja": "日本の有蓋アーケードは商店街組織の所有が多く、1955年に建設省が防火・交通・衛生の観点から抑制方針をとりました。"
         },
         "sources": [
@@ -1849,14 +1849,14 @@
     ],
     "confidence": "medium",
     "disputed": false,
-    "caveats": "Do not state the 70 percent open-area or 10 cm rules; they came from one web article and are unverified. Do not claim why Taipei residents install bars.",
+    "caveats": "Do not state the 70 percent open-area or 10 cm rules; they came from one web article and are unverified. Do not claim why Taipei residents install bars. JP comparison is one thin article; use only as a light remark.",
     "hometown": {
       "JP": {
         "status": "different",
         "comparison": {
-          "en": "In Japan, window bars are commonly seen on bathrooms, toilets and kitchens, according to one article. This is thin evidence, so only use it as a light remark.",
-          "zh-TW": "有文章說日本住宅的窗花常見於浴室、廁所、廚房。證據薄弱，只能當輕鬆的小評論。",
-          "ja": "日本では浴室・トイレ・台所の窓に面格子がよく見られると言われます（根拠は弱い）。"
+          "en": "In Japan, window bars are commonly seen on bathrooms, toilets and kitchens, according to one article.",
+          "zh-TW": "有文章說日本住宅的窗花常見於浴室、廁所、廚房。",
+          "ja": "日本では浴室・トイレ・台所の窓に面格子がよく見られると言われます。"
         },
         "sources": [
           {
@@ -1920,7 +1920,7 @@
     ],
     "confidence": "low",
     "disputed": false,
-    "caveats": "Commercial source only. Say 'commonly explained as'. Do not claim every Taiwanese household has its own tank; no source supports it.",
+    "caveats": "Commercial source only. Say 'commonly explained as'. Do not claim every Taiwanese household has its own tank; no source supports it. One article claims up to about 17,000 NY tanks citywide; say only 'thousands'.",
     "hometown": {
       "JP": {
         "status": "same",
@@ -1943,7 +1943,7 @@
         "status": "same",
         "comparison": {
           "en": "New York is famous for rooftop wooden water tanks. City water pressure was too weak to reach upper floors, so buildings of six stories or more were required to have a rooftop tank with a pump; gravity then feeds the building. There are thousands of them across the city.",
-          "zh-TW": "紐約以屋頂木造水塔聞名。市政水壓推不到高樓層，所以六層以上的建築要在屋頂設水塔加抽水機，再靠重力供水。有文章說全市最多約 1.7 萬座，所以只說「數千座」。",
+          "zh-TW": "紐約以屋頂木造水塔聞名。市政水壓推不到高樓層，所以六層以上的建築要在屋頂設水塔加抽水機，再靠重力供水，全市約有數千座。",
           "ja": "ニューヨークは屋根の木造水タンクで有名です。市水の水圧では高層階に届かないため、6階建て以上の建物にはポンプ付きの屋上タンクが必要で、重力で建物全体に給水します。市内には数千基あると言われます。"
         },
         "sources": [
@@ -1997,13 +1997,13 @@
     ],
     "confidence": "low",
     "disputed": false,
-    "caveats": "Only the two-strand history is sourced. The 'usually hot' title is a loose summary, so use it only for a light line.",
+    "caveats": "Only the two-strand history is sourced. The 'usually hot' title is a loose summary, so use it only for a light line. Single observer's view (one Japanese author living in Taiwan); attribute as one author's remark.",
     "hometown": {
       "JP": {
         "status": "different",
         "comparison": {
           "en": "One Japanese author living in Taiwan observes that Japanese breakfasts lean toward cold items such as rice balls and bento.",
-          "zh-TW": "有位在台灣生活的日本作者觀察，日本早餐偏冷食，例如飯糰、便當。這是單一觀察者的看法，要說「有位作者提到」。",
+          "zh-TW": "有位在台灣生活的日本作者提到，日本早餐偏冷食，例如飯糰、便當。",
           "ja": "日本の朝食は、おにぎりや弁当など冷たいものが中心だと観察する作者がいます（個人の見方）。"
         },
         "sources": [
@@ -2121,13 +2121,13 @@
     ],
     "confidence": "medium",
     "disputed": false,
-    "caveats": "Season-bound: only trigger during the seventh lunar month (in 2026 it has already ended, so this will not trigger on a November demo). The historical background is a common interpretation, not a single settled account.",
+    "caveats": "Season-bound: only trigger during the seventh lunar month (in 2026 it has already ended, so this will not trigger on a November demo). The historical background is a common interpretation, not a single settled account. JP Obon comparison based on general explainer sites only.",
     "hometown": {
       "JP": {
         "status": "different",
         "comparison": {
-          "en": "Japan's closest counterpart is Obon, held 13 to 16 July or August depending on region. It is mainly about welcoming family ancestors, with a small welcoming fire lit on the evening of the 13th, rather than appeasing unattached spirits. Based on general explainer sites only.",
-          "zh-TW": "日本最接近的是盂蘭盆節（お盆），依地區在 7 月或 8 月 13 到 16 日。重點是迎接自家祖先，13 日傍晚點迎火，不是安撫無主孤魂。資料只有一般解說網站。",
+          "en": "Japan's closest counterpart is Obon, held 13 to 16 July or August depending on region. It is mainly about welcoming family ancestors, with a small welcoming fire lit on the evening of the 13th, rather than appeasing unattached spirits.",
+          "zh-TW": "日本最接近的是盂蘭盆節（お盆），依地區在 7 月或 8 月 13 到 16 日。重點是迎接自家祖先，13 日傍晚點迎火，不是安撫無主孤魂。",
           "ja": "日本で近い行事はお盆（地域により7月または8月の13〜16日）です。13日夕方に迎え火を焚いてご先祖様をお迎えするもので、無縁の霊を慰める台湾の普渡とは性格が異なります。"
         },
         "sources": [

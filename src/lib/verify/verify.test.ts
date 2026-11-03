@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { extractCitations, extractOutputText, isTrustedUrl, readableSourceTitle, trustedSources } from "./index";
+import { canonicalHost, canonicalSite, canonicalUrlKey, extractCitations, extractOutputText, isTrustedUrl, readableSourceTitle, trustedSources } from "./index";
 
 const response = {
   output: [
@@ -83,6 +83,34 @@ describe("verify", () => {
     };
     const s = trustedSources(extractCitations(live));
     expect(s.find((x) => x.url.includes("taiwaninsight"))?.title).toBe("From Musical Garbage Trucks to Garbage Consciousness in Taiwan");
+  });
+  it("canonicalises URLs so the same article matches across variants", () => {
+    const a = "https://www.ltn.com.tw/news/world/breakingnews/123";
+    expect(canonicalUrlKey(a)).toBe(canonicalUrlKey("http://www.ltn.com.tw/news/world/breakingnews/123?utm_source=x"));
+    expect(canonicalUrlKey(a)).toBe(canonicalUrlKey("https://www.ltn.com.tw/news/world/breakingnews/123/"));
+    expect(canonicalSite(a)).toBe(canonicalSite("https://news.ltn.com.tw/news/world/breakingnews/123")); // section subdomain: same outlet
+    expect(canonicalUrlKey("https://zh.wikipedia.org/wiki/%E5%9E%83%E5%9C%BE%E8%BB%8A")).toBe(
+      canonicalUrlKey("https://zh.wikipedia.org/wiki/垃圾車"),
+    );
+    expect(canonicalHost("https://en.m.wikipedia.org/wiki/X")).toBe("en.wikipedia.org");
+    expect(canonicalHost("https://amp.theguardian.com/x")).toBe("theguardian.com");
+    expect(canonicalHost("https://taiwaninsight.org./x")).toBe("taiwaninsight.org");
+    expect(canonicalHost("not a url")).toBeNull();
+    expect(canonicalHost("javascript:alert(1)")).toBeNull();
+  });
+  it("treats language editions and outlet subdomains as the same site", () => {
+    expect(canonicalSite("https://zh.wikipedia.org/wiki/X")).toBe("wikipedia.org");
+    expect(canonicalSite("https://en.wikipedia.org/wiki/X")).toBe("wikipedia.org");
+    expect(canonicalSite("https://news.ltn.com.tw/x")).toBe("ltn.com.tw");
+    expect(canonicalSite("https://www.ltn.com.tw/x")).toBe("ltn.com.tw");
+    expect(canonicalSite("https://www.epd.gov.taipei/x")).toBe("epd.gov.taipei");
+  });
+  it("dedupes trusted sources that differ only by slash or scheme", () => {
+    const s = trustedSources([
+      { url: "https://taiwaninsight.org/x/", title: "T" },
+      { url: "http://www.taiwaninsight.org/x", title: "T" },
+    ]);
+    expect(s).toHaveLength(1);
   });
   it("never falls back to a bare hostname when a better title exists", () => {
     const pdf = "https://www.jil.go.jp/institute/zassi/backnumber/2024/05/pdf/082-083.pdf";

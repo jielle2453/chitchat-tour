@@ -1,5 +1,5 @@
 "use client";
-import { Brain, Camera, Footprints, History, Keyboard, LocateFixed, Mic, Pause, Play, Send } from "lucide-react";
+import { Brain, Camera, History, Keyboard, LocateFixed, MapPin, Mic, Pause, Play, Send, X } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { unlockAudio } from "@/lib/client/audio";
@@ -19,6 +19,7 @@ import ModeChoice from "./ModeChoice";
 import NavBanner, { arrowForModifier } from "./NavBanner";
 import PhotoView from "./PhotoView";
 import Sheet from "./Sheet";
+import StartCollage from "./StartCollage";
 import StickerArt from "./StickerArt";
 import TracePanel from "./TracePanel";
 
@@ -320,33 +321,20 @@ export default function WalkScreen({
         </button>
       </div>
 
-      {/* start button, centred on the map's visible area; hidden once the walk runs */}
-      {!embedded && !session.active ? (
+      {/* start button, centred on the map's visible area; hidden once the walk runs or a choice is open */}
+      {!embedded && !session.active && !modeOpen && dest.status === "idle" ? (
         <div
           className="pointer-events-none absolute inset-x-0 z-20 flex flex-col items-center justify-center"
           style={{ top: 76, bottom: 88 }}
         >
-          <div className="relative grid place-items-center">
-            <span aria-hidden className="rg-halo absolute h-[104px] w-[104px] rounded-full border border-[rgba(17,17,17,0.10)]" />
-            <button
-              type="button"
-              onClick={() => setModeOpen(true)}
-              aria-label={t(lang, "startWalk")}
-              className="pointer-events-auto relative grid h-[88px] w-[88px] place-items-center rounded-full bg-ink text-white"
-            >
-              <Footprints size={28} aria-hidden />
-            </button>
-          </div>
-          <p className="glass mt-[10px] flex h-7 items-center rounded-full px-3 text-[13px] font-semibold text-ink">
-            {t(lang, "startWalk")}
-          </p>
+          <StartCollage label={t(lang, "startWalk")} onStart={() => setModeOpen(true)} />
         </div>
       ) : null}
 
       {/* bottom: compact action bar */}
       {!embedded ? (
-        <div className="absolute inset-x-0 bottom-0 z-20 px-3 pb-3">
-          <div className="glass grid h-16 grid-cols-3 items-center justify-items-center rounded-[32px] px-5">
+        <div className="absolute inset-x-0 bottom-0 z-20 flex justify-center px-3 pb-3">
+          <div className="glass flex h-16 items-center gap-6 rounded-[32px] px-4">
             <button
               type="button"
               onClick={() => {
@@ -420,7 +408,24 @@ export default function WalkScreen({
         />
       ) : null}
 
-      {!embedded && (dest.status === "picking" || dest.status === "preview") ? (
+      {/* while choosing on the map the sheet steps aside so taps reach the map */}
+      {!embedded && dest.status === "picking" && dest.pickArmed ? (
+        <div className="pointer-events-none absolute inset-x-0 top-0 z-30 flex justify-center px-4 pt-[max(16px,env(safe-area-inset-top))]">
+          <div className="glass pointer-events-auto flex h-11 items-center gap-2 rounded-full pl-4 pr-1.5 text-[14px] font-medium text-ink">
+            <MapPin size={16} aria-hidden />
+            {t(lang, "destTapHint")}
+            <button
+              type="button"
+              onClick={() => dest.setPickArmed(false)}
+              aria-label={t(lang, "close")}
+              className="grid h-8 w-8 place-items-center rounded-full bg-[rgba(17,17,17,0.06)]"
+            >
+              <X size={14} aria-hidden />
+            </button>
+          </div>
+        </div>
+      ) : null}
+      {!embedded && (dest.status === "picking" || dest.status === "preview") && !(dest.status === "picking" && dest.pickArmed) ? (
         <DestinationPicker lang={lang} dest={dest} fix={walk.fix ?? originFix()} onClose={() => dest.cancelPick()} onStart={startDestination} />
       ) : null}
 
