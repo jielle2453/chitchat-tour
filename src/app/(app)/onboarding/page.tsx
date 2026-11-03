@@ -246,7 +246,9 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="rg-scroll relative flex h-full flex-col justify-center px-6 pb-[max(48px,calc(env(safe-area-inset-bottom)+24px))] pt-[max(32px,env(safe-area-inset-top))]">
+    <div className="rg-scroll flex h-full flex-col px-6 pb-[max(20px,env(safe-area-inset-bottom))] pt-[max(32px,env(safe-area-inset-top))]">
+      {/* my-auto centres the block but lets a tall one scroll instead of clipping */}
+      <div className="my-auto pb-6">
       <header className="flex flex-col items-center">
         <h1 className="mb-9 flex items-center gap-3 text-[20px] font-semibold tracking-tight">
           <span aria-hidden className="h-px w-7 bg-ink" />
@@ -327,7 +329,8 @@ export default function OnboardingPage() {
           <span className="text-[12px] leading-tight text-sub">{t(lang, "onbSimSub")}</span>
         </button>
       </div>
-      <p className="absolute inset-x-0 bottom-[max(20px,env(safe-area-inset-bottom))] text-center text-[12px] text-sub">{t(lang, "builtWith")}</p>
+      </div>
+      <p className="shrink-0 text-center text-[12px] text-sub">{t(lang, "builtWith")}</p>
     </div>
   );
 }
