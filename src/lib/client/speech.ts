@@ -2,6 +2,7 @@
 // Speech queue: server TTS (mp3) through the unlocked audio element, speechSynthesis as fallback.
 import type { Lang } from "@/lib/types";
 import { getAudioElement, reportBlocked } from "./audio";
+import { setSpeaking } from "./sound";
 
 export interface SpeakOptions {
   // Called when sound actually starts. `durationMs` is known for server TTS, null for speechSynthesis.
@@ -82,6 +83,7 @@ export function stopSpeaking() {
 async function pump() {
   if (pumping) return;
   pumping = true;
+  setSpeaking(true);
   try {
     while (queue.length) {
       const job = queue.shift()!;
@@ -90,6 +92,7 @@ async function pump() {
     }
   } finally {
     pumping = false;
+    setSpeaking(false);
   }
 }
 

@@ -1,8 +1,10 @@
 "use client";
 // The phone-app shell: frame, bottom tabs, first-launch redirect, and the one walking session shared by all tabs.
 import { usePathname, useRouter } from "next/navigation";
-import { createContext, useContext, useEffect, useMemo } from "react";
+import { createContext, useContext, useEffect, useMemo, useRef } from "react";
 import { migrateLegacyStorage, useHydrated, useProfile, useSettings } from "@/lib/client/storage";
+import { playSfx, setMusicWanted, setSoundEnabled } from "@/lib/client/sound";
+import { pauseSpeaking, resumeSpeaking } from "@/lib/client/speech";
 import { useGuideSession, type GuideSession } from "@/lib/client/useGuideSession";
 import { listRoutes } from "@/lib/geo";
 import type { RouteDef } from "@/lib/types";
@@ -55,6 +57,44 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     migrateLegacyStorage();
   }, []);
+
+  // Soft background music everywhere (starts on the first tap), off with the setting.
+  useEffect(() => {
+    setSoundEnabled(settings.sound);
+    setMusicWanted(settings.sound);
+  }, [settings.sound]);
+
+  // A light click on every button and link.
+  useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      if ((e.target as Element | null)?.closest?.("button, a, [role='button'], select, input[type='range']")) playSfx("tap");
+    };
+    document.addEventListener("click", onClick, true);
+    return () => document.removeEventListener("click", onClick, true);
+  }, []);
+
+  // The simulated walk pauses (voice included) while another tab is open and
+  // picks up where it was on coming back to the walk.
+  const sessionRef = useRef(session);
+  const autoPaused = useRef(false);
+  useEffect(() => {
+    sessionRef.current = session;
+  });
+  useEffect(() => {
+    const s = sessionRef.current;
+    if (!route) return;
+    if (path !== "/") {
+      if (s.simPlaying) {
+        s.simToggle();
+        pauseSpeaking();
+        autoPaused.current = true;
+      }
+    } else if (autoPaused.current) {
+      autoPaused.current = false;
+      resumeSpeaking();
+      if (!s.simPlaying) s.simToggle();
+    }
+  }, [path, route]);
 
   useEffect(() => {
     document.documentElement.lang = lang;

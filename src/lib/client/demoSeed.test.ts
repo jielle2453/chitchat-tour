@@ -1,6 +1,6 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import type { KnowledgeItem } from "@/lib/types";
-import { buildSeedData, DEMO_DEST_IDS, DEMO_WANDER_IDS, seedTimes, shortenLine } from "./demoSeed";
+import { buildSeedData, DEMO_PAST_WALKS, shortenLine } from "./demoSeed";
 import { dayKey } from "./walkPath";
 
 const item = (id: string, withHometown: boolean): KnowledgeItem => ({
@@ -19,52 +19,71 @@ const item = (id: string, withHometown: boolean): KnowledgeItem => ({
     : {},
 });
 
-const items = [...DEMO_WANDER_IDS.map((id) => item(id, true)), ...DEMO_DEST_IDS.map((id) => item(id, false))];
-const routeCoords: [number, number][] = Array.from({ length: 20 }, (_, i) => [121.52 + i * 0.0001, 25.03 + i * 0.0001]);
-const destRouteCoords: [number, number][] = Array.from({ length: 16 }, (_, i) => [121.521 + i * 0.0001, 25.031 + i * 0.0001]);
+const allIds = DEMO_PAST_WALKS.flatMap((w) => w.itemIds);
+const items = allIds.map((id, i) => item(id, i % 2 === 0));
+const line = (lon: number, lat: number): [number, number][] => Array.from({ length: 20 }, (_, i) => [lon + i * 0.0001, lat + i * 0.0001]);
+const routes = {
+  dadaocheng: line(121.51, 25.054),
+  minsheng: line(121.556, 25.06),
+  tainan: line(120.196, 22.997),
+  ximen: line(121.507, 25.042),
+  zhongshan: line(121.52, 25.053),
+};
 const now = new Date(2026, 10, 3, 15, 0).getTime(); // a Tuesday afternoon, local
 
 describe("buildSeedData", () => {
-  it("seeds a wander today and a destination walk yesterday, using real titles", () => {
-    const { discoveries, walks } = buildSeedData({ items, routeCoords, destRouteCoords, lang: "en", hometown: "JP", now });
-    expect(discoveries).toHaveLength(DEMO_WANDER_IDS.length + DEMO_DEST_IDS.length);
-    expect(walks).toHaveLength(2);
-    const [wander, dest] = walks;
-    expect(wander.mode).toBe("wander");
-    expect(wander.destination).toBeNull();
-    expect(dest.mode).toBe("destination");
-    expect(dest.destination?.name).toBe("Dongmen Market");
-    // discoveries spread along each path, in walking order
-    expect(wander.discoveryIds).toHaveLength(DEMO_WANDER_IDS.length);
-    expect(dest.discoveryIds).toHaveLength(DEMO_DEST_IDS.length);
-    expect(dayKey(wander.startedAt)).toBe("2026-11-03");
-    expect(dayKey(dest.startedAt)).toBe("2026-11-02");
+  it("seeds each past walk on its own day and route, using real titles", () => {
+    const { discoveries, walks } = buildSeedData({ items, routes, lang: "en", hometown: "JP", now });
+    expect(discoveries).toHaveLength(allIds.length);
+    expect(walks.map((w) => w.id)).toEqual(DEMO_PAST_WALKS.map((w) => w.id));
+    const dadaocheng = walks.find((w) => w.id === "demo-walk-dadaocheng")!;
+    const tainan = walks.find((w) => w.id === "demo-walk-tainan")!;
+    expect(dadaocheng.mode).toBe("wander");
+    expect(dadaocheng.destination).toBeNull();
+    expect(tainan.mode).toBe("destination");
+    expect(tainan.destination?.name).toBe("Shennong Street");
+    expect(dayKey(dadaocheng.startedAt)).toBe("2026-11-02");
+    expect(dayKey(tainan.startedAt)).toBe("2026-10-31");
     const byId = new Map(discoveries.map((d) => [d.id, d]));
     for (const w of walks) {
+      expect(w.id.startsWith("demo-")).toBe(true);
       expect(w.simulated).toBe(true);
       expect(w.distanceM).toBeGreaterThan(0);
       expect(w.path.length).toBeGreaterThan(1);
+      expect(w.endedAt).toBeLessThan(now);
       const ats = w.discoveryIds.map((id) => byId.get(id)!.at);
       expect(ats).toEqual([...ats].sort((a, b) => a - b));
       for (const id of w.discoveryIds) {
         const d = byId.get(id)!;
+        expect(d.id.startsWith("demo-")).toBe(true);
         expect(d.walkId).toBe(w.id);
+        expect(d.at).toBeGreaterThan(w.startedAt);
+        expect(d.at).toBeLessThan(w.endedAt!);
         expect(d.narration.title).toMatch(/^Title /);
       }
     }
-    // the two walks run on different routes
-    expect(wander.path).not.toEqual(dest.path);
+    expect(dadaocheng.path).not.toEqual(tainan.path);
+    // newest first, each on its own day
+    const starts = walks.map((w) => w.startedAt);
+    expect(starts).toEqual([...starts].sort((a, b) => b - a));
+    expect(new Set(walks.map((w) => dayKey(w.startedAt))).size).toBe(walks.length);
   });
 
   it("localises the destination name", () => {
-    const { walks } = buildSeedData({ items, routeCoords, destRouteCoords, lang: "zh-TW", hometown: "", now });
-    expect(walks[1].destination?.name).toBe("東門市場");
+    const { walks } = buildSeedData({ items, routes, lang: "zh-TW", hometown: "", now });
+    expect(walks.find((w) => w.id === "demo-walk-tainan")!.destination?.name).toBe("神農街");
+  });
+
+  it("skips a walk whose route is missing", () => {
+    const { walks, discoveries } = buildSeedData({ items, routes: { tainan: routes.tainan }, lang: "en", hometown: "", now });
+    expect(walks.map((w) => w.id)).toEqual(["demo-walk-tainan"]);
+    expect(discoveries.every((d) => d.walkId === "demo-walk-tainan")).toBe(true);
   });
 
   it("builds short one-line here/elsewhere chips only when the hometown has a comparison", () => {
-    const { discoveries } = buildSeedData({ items, routeCoords, destRouteCoords, lang: "en", hometown: "JP", now });
-    const withCmp = discoveries.find((d) => d.narration.itemId === DEMO_WANDER_IDS[0])!;
-    expect(withCmp.narration.contrast).toEqual({ here: `Title ${DEMO_WANDER_IDS[0]}`, elsewhere: `In Japan ${DEMO_WANDER_IDS[0]} differs` });
+    const { discoveries } = buildSeedData({ items, routes, lang: "en", hometown: "JP", now });
+    const withCmp = discoveries.find((d) => d.narration.itemId === allIds[0])!;
+    expect(withCmp.narration.contrast).toEqual({ here: `Title ${allIds[0]}`, elsewhere: `In Japan ${allIds[0]} differs` });
     for (const d of discoveries) {
       const c = d.narration.contrast;
       if (c) {
@@ -73,9 +92,9 @@ describe("buildSeedData", () => {
         expect(c.here).not.toContain("Second sentence");
       }
     }
-    const noCmp = discoveries.find((d) => d.narration.itemId === DEMO_DEST_IDS[0])!;
+    const noCmp = discoveries.find((d) => d.narration.itemId === allIds[1])!;
     expect(noCmp.narration.contrast).toBeNull();
-    const unknown = buildSeedData({ items, routeCoords, destRouteCoords, lang: "en", hometown: "", now });
+    const unknown = buildSeedData({ items, routes, lang: "en", hometown: "", now });
     expect(unknown.discoveries.every((d) => d.narration.contrast === null)).toBe(true);
   });
 
@@ -86,22 +105,31 @@ describe("buildSeedData", () => {
     expect(shortenLine("Short.")).toBe("Short");
   });
 
-  it("keeps all of today's items within today, even just after midnight", () => {
-    const justAfterMidnight = new Date(2026, 10, 3, 0, 30).getTime();
-    const ats = seedTimes(justAfterMidnight, 6);
-    expect(ats).toHaveLength(6);
-    for (const at of ats) {
-      expect(dayKey(at)).toBe("2026-11-03");
-      expect(at).toBeLessThanOrEqual(justAfterMidnight);
-    }
-    const { discoveries, walks } = buildSeedData({ items, routeCoords, destRouteCoords, lang: "en", hometown: "JP", now: justAfterMidnight });
-    const wander = walks.find((w) => w.mode === "wander")!;
-    for (const id of wander.discoveryIds) expect(dayKey(discoveries.find((d) => d.id === id)!.at)).toBe("2026-11-03");
-  });
-
   it("localises titles and facts", () => {
-    const { discoveries } = buildSeedData({ items, routeCoords, destRouteCoords, lang: "zh-TW", hometown: "", now });
+    const { discoveries } = buildSeedData({ items, routes, lang: "zh-TW", hometown: "", now });
     expect(discoveries[0].narration.title).toMatch(/^標題/);
     expect(discoveries[0].narration.lang).toBe("zh-TW");
+  });
+});
+
+describe("resetSimulatedNotebook", () => {
+  it("drops earlier simulated replays and their stories, keeps real walks", async () => {
+    const mem = new Map<string, string>();
+    vi.stubGlobal("localStorage", {
+      getItem: (k: string) => mem.get(k) ?? null,
+      setItem: (k: string, v: string) => void mem.set(k, v),
+      removeItem: (k: string) => void mem.delete(k),
+    });
+    const { readDiscoveries, readWalks, writeStored } = await import("./storage");
+    const { KEYS } = await import("./storageFormat");
+    const { resetSimulatedNotebook } = await import("./demoSeed");
+    const w = (id: string, simulated: boolean) => ({ id, startedAt: 1, endedAt: 2, areaName: null, distanceM: 10, path: [], discoveryIds: [], simulated });
+    const d = (id: string, walkId: string) => ({ id, narration: { id, title: id, text: id, lang: "en", sources: [], confidence: "high", category: "street", contrast: null }, origin: "guide", at: 1, walkId });
+    writeStored(KEYS.walks, [w("old-replay", true), w("real", false), w("demo-walk-x", true)]);
+    writeStored(KEYS.discoveries, [d("a", "old-replay"), d("b", "real")]);
+    resetSimulatedNotebook({ lang: "en", hometown: "JP" });
+    expect(readWalks().map((x) => x.id)).toEqual(["real", "demo-walk-x"]);
+    expect(readDiscoveries().map((x) => x.id)).toEqual(["b"]);
+    vi.unstubAllGlobals();
   });
 });

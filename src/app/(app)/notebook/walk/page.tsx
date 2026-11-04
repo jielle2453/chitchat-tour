@@ -27,8 +27,18 @@ function WalkPage() {
   // Street geometry is only needed for this sheet — load it on demand.
   useEffect(() => {
     let alive = true;
-    void import("@data/osm/streets.json").then((m) => {
-      if (alive) setStreets(m.default as StreetGeom[]);
+    void Promise.all([
+      import("@data/osm/streets.json"),
+      import("@data/osm/streets-dadaocheng.json"),
+      import("@data/osm/streets-tainan.json"),
+      import("@data/osm/streets-minsheng.json"),
+      import("@data/osm/streets-ximen.json"),
+      import("@data/osm/streets-zhongshan.json"),
+    ]).then((files) => {
+      // neighbouring areas overlap: keep each OSM way once
+      const byId = new Map<string, StreetGeom>();
+      for (const m of files) for (const st of m.default as StreetGeom[]) byId.set(st.id, st);
+      if (alive) setStreets([...byId.values()]);
     });
     return () => {
       alive = false;

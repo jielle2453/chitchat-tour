@@ -1,4 +1,5 @@
-// Pre-generate one flat illustration per knowledge item with Muse Image.
+// Pre-generate one photo sticker per knowledge item with Muse Image: a
+// realistic studio shot on pure white that the browser die-cuts (dieCut.ts).
 // Usage: node scripts/generate-illustrations.mjs [--force] [--only id1,id2]
 // Skips files that already exist unless --force or --only is given.
 // Uses only built-in fetch/fs. Never prints the API key.
@@ -38,88 +39,78 @@ if (!KEY) {
 
 // Verbatim suffix from prompts/illustration-style.md.
 const STYLE =
-  "Hand-made flat illustration built from a few big solid colour blocks: " +
-  "chunky simplified shapes with slightly wobbly, uneven, hand-cut edges, no outlines. " +
-  "Use the object's real-world colours, flat and slightly muted. " +
-  "Plain solid fills only: no patterns, no dots, no stripes, no texture, no gradients, no shading, no 3D. " +
-  "Very few details, small dark shapes only where needed (windows, wheels). " +
-  "Single object, centred, plain white background, no border. " +
-  "No text, letters or numbers. No face. No people.";
+  "Realistic studio product photograph of one single real object, isolated, fully in frame with a generous margin, " +
+  "centred on a pure white (#FFFFFF) seamless background. Flat, even, shadowless lighting: absolutely no shadow, " +
+  "no reflection and no floor line under or around the object, the white is clean right up to its edges. " +
+  "True-to-life colours and materials, sharp focus, slight three-quarter view, 50mm lens. " +
+  "No text, letters, numbers or logos. No people, no hands, no faces. No other objects.";
 
 // Hand-written concrete object description per knowledge item.
 const DESCRIPTIONS = {
   "garbage-truck-why-music":
-    "a mustard-yellow Taiwanese garbage truck seen from the side, with a small dark grey loudspeaker on the cab roof and two small solid dark music notes floating above the cargo box",
+    "a small yellow Taiwanese municipal garbage truck seen from the side, with a loudspeaker horn mounted on the cab roof",
   "garbage-truck-japan-origin":
-    "an old 1960s boxy refuse truck with a rounded cab and a dusty olive-yellow body, with a small brass wind-up key sticking out of its side",
+    "a vintage 1960s Japanese boxy refuse truck scale model, rounded cab, faded olive-yellow paint",
   "garbage-truck-maidens-prayer":
-    "a small open wind-up music box in dark brown wood with a golden brass cylinder and comb visible inside",
-  "garbage-truck-fur-elise":
-    "the rear view of a mustard-yellow garbage truck with a wide dark open loading hopper and two dark grey tied trash bags beside it",
+    "an open antique wooden music box with a brass cylinder and steel comb visible inside",
   "garbage-truck-1984-tune-swap":
-    "a chunky golden trophy cup with two small handles and a short stem base",
-  "garbage-truck-1968-objection":
-    "a dark grey horn loudspeaker on a short stand, mouth facing left",
+    "a vintage gold-coloured metal trophy cup with two handles on a short black base",
   "garbage-truck-local-tunes":
-    "a solid teal island shape like Taiwan with one small solid dark music note placed on its northern end",
+    "a small vintage portable cassette tape player in cream plastic with a silver speaker grille",
   "taipei-pay-as-you-throw":
-    "a cobalt-blue plastic rubbish bag with a knotted tied top, slightly slumped",
+    "a tied, half-full translucent pale blue plastic municipal garbage bag, knotted at the top",
   "few-public-trash-cans":
-    "a dark green metal street litter bin with a domed top and a wide slot opening",
+    "a dark green metal public street litter bin with a domed top and a wide slot opening",
   "household-trash-in-public-bins-fine":
-    "a dark green street litter bin with a thick red prohibition ring and diagonal slash over it",
+    "an overstuffed dark green metal street litter bin with a black household trash bag jammed into its slot",
   "convenience-store-density":
-    "a small generic convenience shopfront: cream walls, a plain dusty-orange sign band with no words above a big glass shopfront and a glass door",
+    "a miniature scale model of a generic Taiwanese corner convenience store, glass front, plain orange sign band with no words",
   "convenience-store-area-density":
-    "two small generic shopfronts side by side, one with a dusty-orange sign band and one with a slate-blue sign band, both with big glass windows and no words",
+    "two miniature scale-model convenience store shopfronts side by side, one with an orange sign band and one with a blue sign band, no words",
   "convenience-store-bill-payment":
-    "a freestanding dark teal self-service bill-payment kiosk with a dark blank screen and a small slot, no words",
+    "a dark teal self-service multimedia kiosk as found in Taiwanese convenience stores, blank dark screen, small receipt slot",
   "convenience-store-tax-payment":
-    "a stack of three gold coins beside a cream paper envelope sealed with a solid red square stamp, no words",
+    "a paper payment slip with a printed barcode area left blank, clipped together with a few New Taiwan dollar coins",
   "mrt-no-eating":
-    "a brown paper takeaway cup with a thick red prohibition ring and diagonal slash over it",
+    "a takeaway paper coffee cup with a plastic lid, with a round red prohibition sign plate leaning against it",
   "mrt-fare-gate-yellow-line":
-    "three dark grey metro fare gate posts in a row with one thick mustard-yellow floor line running across in front of them",
+    "a single grey metro fare gate cabinet with a short strip of yellow floor tape in front of it",
   "pedestrian-flashing-green-rule":
-    "a dark grey pedestrian signal box showing one solid green walking-person symbol, no numbers",
+    "a Taiwanese pedestrian traffic signal head, black box, lit green walking man figure, no countdown digits",
   "pedestrian-green-man-run-animation":
-    "a dark grey pedestrian signal box showing one solid green running-person symbol with two short solid motion bars behind it, no numbers",
+    "a Taiwanese pedestrian traffic signal head, black box, lit green running man figure in mid-stride, no digits",
   "two-stage-left-turn-origin":
-    "a dark red scooter seen from the side, parked inside a large flat dark-grey painted rectangular road marking",
+    "a dark red Taiwanese 125cc scooter seen from the side, parked",
   "two-stage-left-turn-tainan":
-    "a dark blue scooter seen from the side next to one big solid curved arrow pointing left",
-  "motorcycle-share-of-road-deaths":
-    "two crossing dark grey road bands forming a cross seen from above, with one small dark red scooter at the centre",
+    "a dark blue Taiwanese scooter seen from the side, front wheel turned slightly left",
   "motorcycles-out-of-arcades":
-    "a beige shophouse arcade front with three round arches, with a dark red scooter under it crossed by a red prohibition ring and slash",
+    "a matte black Taiwanese scooter parked on its centre stand, seen from three-quarter front",
   "youbike-origin":
-    "a bright orange city-share bicycle with a front basket, locked to a short grey docking post",
+    "an orange and white Taipei YouBike share bicycle with a front basket, seen from the side",
   "youbike-free-30-min":
-    "a bright orange city-share bicycle next to a plain cream clock face with two dark hands and no numbers",
+    "an orange YouBike share bicycle seen from the side, with a small white analogue kitchen timer in its front basket",
   "manhole-covers-art":
-    "a round charcoal-grey manhole cover carrying one big solid teal curved shape and one small solid mustard circle, no words",
+    "a round cast-iron decorative manhole cover with a coloured painted relief of a flower and a bird, seen from above",
   "manhole-anti-slip":
-    "a round dark grey manhole cover with one wide raised outer ring and one small raised centre disc, no words",
+    "a round cast-iron manhole cover with a raised anti-slip grid pattern, seen from above",
   "overhead-power-lines":
-    "a grey concrete utility pole with black overhead wires stretching out to both sides and a small grey transformer box on the pole",
-  "underground-share-conflict":
-    "a grey concrete utility pole with its black wires cut short, and a dark coil of cable lying at its base",
+    "a short section of a grey concrete utility pole top with a transformer and black cables hanging off both sides",
   "arcade-qilou-origin":
-    "a historic beige shophouse front with three round arcade arches and a dark grey pitched tile roof",
+    "a miniature scale model of a historic red-brick Taiwanese shophouse with three arched arcade openings on the ground floor",
   "arcade-is-road":
-    "two beige arcade columns standing on one long flat grey level ramp step",
+    "two square white-tiled arcade pillars standing on a short slab of grey stone pavement, a fragment of a covered walkway",
   "iron-window-bars":
-    "a small window with dark grey iron bars set in a mustard-yellow wall square",
+    "a rusty decorative iron window grille from an old Taiwanese apartment, swirl patterns, painted pale green",
   "rooftop-water-tank":
-    "a light grey cylindrical stainless steel rooftop water tank with two dark bands around it, standing on a small metal stand",
+    "a cylindrical stainless steel rooftop water tank as used on Taipei apartment roofs, brushed metal with two bands, on a short steel frame",
   "bubble-tea-dispute":
-    "a tall beige milk-tea cup with dark round tapioca pearls at the bottom and one thick dark straw",
+    "a tall clear plastic cup of milk tea with dark tapioca pearls at the bottom, sealed film lid, thick straw",
   "breakfast-hot-food":
-    "a teal breakfast bowl of cream-coloured soy milk with one golden-brown fried dough stick resting across the top",
+    "a Taiwanese breakfast: a white ceramic bowl of warm soy milk with one golden fried dough stick resting across the rim",
   "joss-paper-burners":
-    "a squat rust-red temple furnace with a wide dark round mouth and two short legs",
+    "a large red-painted iron joss paper furnace from a Taiwanese temple courtyard, tall chimney top, a square opening glowing faintly orange",
   "ghost-month-offerings":
-    "a low brown wooden offering table holding three dark bowls of food and two thick red candles",
+    "a red plastic tray holding packaged snacks, a few oranges and a can of drink, as set out for a Taiwanese ghost month offering",
 };
 
 async function generateOne(id, description) {
@@ -138,7 +129,9 @@ async function generateOne(id, description) {
   if (!b64) {
     throw new Error(`unexpected response shape: ${JSON.stringify(json).slice(0, 200)}`);
   }
-  const buf = Buffer.from(b64, "base64");
+  // 512 px is plenty for a sticker; sharp ships with Next.
+  const { default: sharp } = await import("sharp");
+  const buf = await sharp(Buffer.from(b64, "base64")).resize(512, 512).webp({ quality: 82 }).toBuffer();
   writeFileSync(join(OUT_DIR, `${id}.webp`), buf);
   return buf.length;
 }

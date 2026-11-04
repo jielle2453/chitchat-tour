@@ -50,6 +50,23 @@ function checkContext() {
   }
 }
 
+// The shared AudioContext for music and sound effects; created on demand
+// (it starts suspended outside a gesture and is resumed on the next tap).
+export function getAudioContext(): AudioContext | null {
+  if (!ctx) {
+    try {
+      const Ctor = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+      if (Ctor) {
+        ctx = new Ctor();
+        ctx.onstatechange = checkContext;
+      }
+    } catch {
+      return null;
+    }
+  }
+  return ctx;
+}
+
 // Call synchronously from a click handler.
 export function unlockAudio() {
   try {

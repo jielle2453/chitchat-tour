@@ -11,6 +11,7 @@ import DieCutImg from "../DieCutImg";
 import { t } from "@/lib/client/i18n";
 import { themeName, type ThemeKey } from "@/lib/client/notebookData";
 import { createJarWorld, JAR_DT, settleJar, stepJar, wakeJar, type JarWorld } from "@/lib/client/physics";
+import { playSfx } from "@/lib/client/sound";
 import type { Discovery, Lang, Narration } from "@/lib/types";
 
 const GLASS: CSSProperties = {
@@ -303,9 +304,16 @@ function ThemeSheet({
       last = now;
       let n = 0;
       while (acc >= JAR_DT && n < 6) {
+        const v0 = world.bodies.map((b) => [b.vx, b.vy]);
         stepJar(world);
         acc -= JAR_DT;
         n++;
+        // a sudden change of velocity is a knock against glass or another sticker
+        let hit = 0;
+        world.bodies.forEach((b, i) => {
+          hit = Math.max(hit, Math.hypot(b.vx - v0[i][0], b.vy - v0[i][1]));
+        });
+        if (hit > 220) playSfx("tick", hit / 900);
       }
       // a dragged sticker stays pinned; holding still zeroes its velocity
       const drag = dragRef.current;

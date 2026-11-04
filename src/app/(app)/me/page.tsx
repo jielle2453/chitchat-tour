@@ -125,6 +125,17 @@ export default function MePage() {
         <Row label={t(lang, "voiceSpeed")}>
           <Segmented label={t(lang, "voiceSpeed")} value={settings.voiceRate} options={speeds.map((s) => ({ v: s.v, label: t(lang, s.key) }))} onChange={(v) => update({ voiceRate: v })} />
         </Row>
+        <Row label={t(lang, "soundLabel")} hint={t(lang, "soundHint")}>
+          <Segmented
+            label={t(lang, "soundLabel")}
+            value={settings.sound ? "on" : "off"}
+            options={[
+              { v: "on", label: t(lang, "soundOn") },
+              { v: "off", label: t(lang, "soundOff") },
+            ]}
+            onChange={(v) => update({ sound: v === "on" })}
+          />
+        </Row>
       </Group>
 
       <Group title={t(lang, "groupPrivacy")}>

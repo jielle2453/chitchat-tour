@@ -77,8 +77,9 @@ export interface Settings {
   voiceRate: number;
   demo: boolean;
   routeId: string | null;
+  sound: boolean; // background music + feedback sounds
 }
-export const DEFAULT_SETTINGS: Settings = { quietS: DEFAULT_QUIET_S, voiceRate: 1.2, demo: false, routeId: null };
+export const DEFAULT_SETTINGS: Settings = { quietS: DEFAULT_QUIET_S, voiceRate: 1.2, demo: false, routeId: null, sound: true };
 
 export function sanitizeSettings(x: unknown): Settings | null {
   if (!isObj(x)) return null;
@@ -90,7 +91,7 @@ export function sanitizeSettings(x: unknown): Settings | null {
         : DEFAULT_QUIET_S;
   // the old "slower" (0.85) is now the plain 1x; out-of-range falls back to the default
   const rate = typeof x.voiceRate === "number" && x.voiceRate >= 0.5 && x.voiceRate <= 2 ? Math.max(1, x.voiceRate) : DEFAULT_SETTINGS.voiceRate;
-  return { quietS, voiceRate: rate, demo: x.demo === true, routeId: typeof x.routeId === "string" ? x.routeId : null };
+  return { quietS, voiceRate: rate, demo: x.demo === true, routeId: typeof x.routeId === "string" ? x.routeId : null, sound: x.sound !== false };
 }
 
 function validDiscovery(d: unknown): d is Discovery {

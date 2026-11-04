@@ -6,6 +6,8 @@ import { createGpsSource, createSimulatedSource, type SimulatedSource } from "@/
 import type { TriggerConfig } from "@/lib/trigger";
 import type { AskResponse, DetectedObject, Discovery, DiscoveryOrigin, ExplainRequest, GeoFix, LocationSource, Narration, RouteDef, UserProfile, WalkRecord } from "@/lib/types";
 import { postJson } from "./api";
+import { resetSimulatedNotebook } from "./demoSeed";
+import { playSfx } from "./sound";
 import { unlockAudio } from "./audio";
 import { pauseSpeaking, registerPrerecorded, resumeSpeaking, setSpeechRate, speak, speechProgress, stopSpeaking } from "./speech";
 import { addHeard, notebookItemIds, readWalks, removeWalk, saveDiscovery, upsertWalk, useDiscoveries, useHeard, useToday } from "./storage";
@@ -189,6 +191,7 @@ export function useGuideSession(options: SessionOptions) {
 
   const present = useCallback(
     (n: Narration, origin: DiscoveryOrigin, fix: GeoFix | null) => {
+      playSfx("chime");
       const at = Date.now();
       const d: Discovery = {
         id: `${n.id}-${at.toString(36)}${(counter++).toString(36)}`,
@@ -289,6 +292,10 @@ export function useGuideSession(options: SessionOptions) {
       // called from a click: audio and wake lock must be set up synchronously here
       unlockAudio();
       startWakeLock();
+      if (opts.simulated) {
+        const { lang, hometown } = optsRef.current.profile;
+        resetSimulatedNotebook({ lang, hometown });
+      }
       const rec: WalkRecord = {
         id: uid("w"),
         startedAt: Date.now(),

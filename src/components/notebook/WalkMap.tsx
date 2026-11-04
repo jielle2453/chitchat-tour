@@ -14,6 +14,7 @@ import DieCutImg from "../DieCutImg";
 import StickerArt from "../StickerArt";
 import { useNowTick } from "./useNow";
 import { formatDistance, t } from "@/lib/client/i18n";
+import { playSfx } from "@/lib/client/sound";
 import {
   clipStreets,
   collageDurationMs,
@@ -104,10 +105,47 @@ interface KbThing {
 
 // A sticker's note names the thing: the knowledge item's short English
 // concept ("garbage truck"), or the first few characters of a CJK title.
+// English names for what each story sticker photo shows (several stories
+// share one knowledge-base concept, e.g. five are "garbage truck").
+const STICKER_LABEL: Record<string, string> = {
+  "garbage-truck-why-music": "garbage truck",
+  "garbage-truck-japan-origin": "1960s truck",
+  "garbage-truck-maidens-prayer": "music box",
+  "garbage-truck-1984-tune-swap": "trophy",
+  "garbage-truck-local-tunes": "cassette player",
+  "taipei-pay-as-you-throw": "official trash bag",
+  "few-public-trash-cans": "street trash can",
+  "household-trash-in-public-bins-fine": "stuffed trash can",
+  "convenience-store-density": "convenience store",
+  "convenience-store-area-density": "two stores",
+  "convenience-store-bill-payment": "payment kiosk",
+  "convenience-store-tax-payment": "tax slip",
+  "mrt-no-eating": "no food or drink",
+  "mrt-fare-gate-yellow-line": "fare gate",
+  "pedestrian-flashing-green-rule": "green man",
+  "pedestrian-green-man-run-animation": "running green man",
+  "two-stage-left-turn-origin": "scooter",
+  "two-stage-left-turn-tainan": "left-turn scooter",
+  "motorcycles-out-of-arcades": "parked scooter",
+  "youbike-origin": "YouBike",
+  "youbike-free-30-min": "YouBike",
+  "manhole-covers-art": "painted manhole",
+  "manhole-anti-slip": "manhole cover",
+  "overhead-power-lines": "utility pole",
+  "arcade-qilou-origin": "shophouse arcade",
+  "arcade-is-road": "arcade pillars",
+  "iron-window-bars": "iron window grille",
+  "rooftop-water-tank": "water tank",
+  "breakfast-hot-food": "soy milk",
+  "joss-paper-burners": "joss paper furnace",
+  "ghost-month-offerings": "offerings",
+};
+
 function shortThing(d: Discovery, lang: Lang, things: Record<string, string>): string {
   const title = d.narration.title.trim();
   if (lang === "en") {
-    const c = d.narration.itemId ? things[d.narration.itemId] : undefined;
+    const id = d.narration.itemId;
+    const c = id ? (STICKER_LABEL[id] ?? things[id]) : undefined;
     if (c) return c;
     return title.split(/[:—,]/)[0].split(/\s+/).slice(0, 3).join(" ");
   }
@@ -334,6 +372,13 @@ export default function WalkMap({
       el.style.strokeDasharray = "none";
       el.style.strokeDashoffset = "0";
     }
+  }, [layout, replayKey, D]);
+
+  // a soft pop as each sticker lands, in step with its fade-in
+  useEffect(() => {
+    if (!layout || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const timers = layout.placed.map((p) => setTimeout(() => playSfx("pop"), p.frac * D + 60));
+    return () => timers.forEach(clearTimeout);
   }, [layout, replayKey, D]);
 
   return (

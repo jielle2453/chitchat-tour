@@ -24,10 +24,11 @@ const STUB_RULE = "rgba(17,17,17,0.3)";
 const STUB_PLACE = "rgba(17,17,17,0.34)";
 const MONTHS = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
 
-// Coarse Taipei City box; everything else in Taiwan is just "TAIWAN".
+// Coarse Taipei / Tainan city boxes; everything else in Taiwan is just "TAIWAN".
 export function placeStamp(path: [number, number][]): string {
   const p = path[0];
   if (p && p[0] > 24.96 && p[0] < 25.21 && p[1] > 121.45 && p[1] < 121.67) return "TAIWAN TAIPEI";
+  if (p && p[0] > 22.88 && p[0] < 23.1 && p[1] > 120.1 && p[1] < 120.3) return "TAIWAN TAINAN";
   return "TAIWAN";
 }
 

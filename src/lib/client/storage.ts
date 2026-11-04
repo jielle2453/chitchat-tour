@@ -102,7 +102,9 @@ export function useProfile() {
 // ---------- settings ----------
 
 export function useSettings() {
-  const settings = useStored<Settings>(KEYS.settings, DEFAULT_SETTINGS, migrateSettings);
+  const stored = useStored<Settings>(KEYS.settings, DEFAULT_SETTINGS, migrateSettings);
+  // fields added later (e.g. `sound`) take their default in older saved settings
+  const settings = useMemo(() => ({ ...DEFAULT_SETTINGS, ...stored }), [stored]);
   const update = useCallback((patch: Partial<Settings>) => {
     writeStored(KEYS.settings, { ...readStored<Settings>(KEYS.settings, DEFAULT_SETTINGS, migrateSettings), ...patch });
   }, []);

@@ -54,7 +54,8 @@ describe("profile migration", () => {
 describe("settings migration", () => {
   it("fills defaults and clamps bad values", () => {
     expect(migrateSettings({})).toEqual(DEFAULT_SETTINGS);
-    expect(migrateSettings({ quietS: 60, voiceRate: 9, demo: true, routeId: "r" })).toEqual({ quietS: 60, voiceRate: 1.2, demo: true, routeId: "r" });
+    expect(migrateSettings({ quietS: 60, voiceRate: 9, demo: true, routeId: "r" })).toEqual({ quietS: 60, voiceRate: 1.2, demo: true, routeId: "r", sound: true });
+    expect(migrateSettings({ sound: false })?.sound).toBe(false);
   });
   it("maps the old frequency values to quiet seconds", () => {
     expect(migrateSettings({ frequency: "often" })).toMatchObject({ quietS: 10 });

@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { formatDistance, t } from "@/lib/client/i18n";
 import type { Lang } from "@/lib/types";
 import DieCutImg from "./DieCutImg";
+import { playSfx } from "@/lib/client/sound";
 
 const INK = "#3a3a3a";
 const STICKER = 48;
@@ -100,6 +101,7 @@ export default function ArrivalSheet({
   onPrimary: () => void;
   onSecondary: () => void;
 }) {
+  useEffect(() => playSfx("arrive"), []);
   const dist = formatDistance(distanceM);
   const chars = [...dist];
   const digitsAt = 0.3;

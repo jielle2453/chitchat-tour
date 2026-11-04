@@ -1,42 +1,91 @@
-// Demo seeding for the notebook: writes two realistic sample walks (a wander
-// today + a destination walk to Dongmen Market yesterday) into the same client
-// storage the walk uses, so the Notebook tab can be browsed without walking
-// first. Titles, facts and sources come from the real knowledge base; the
-// walked routes are the Yongkang / Jinhua demo routes. Every id has a
-// corresponding public/illustrations/<itemId>.webp.
+// Demo seeding for the notebook: writes realistic past walks in other parts of
+// Taiwan (Tainan, Dadaocheng) into the same client storage the walk uses, so
+// the Notebook tab has history beside the simulated Yongkang walk. Titles,
+// facts and sources come from the real knowledge base; paths follow real OSM
+// streets (scripts/osm/build-demo-routes.mjs). Every id has a corresponding
+// public/illustrations/<itemId>.webp.
 "use client";
-import type { Discovery, KnowledgeItem, Lang, RouteDef, WalkMode, WalkRecord } from "@/lib/types";
+import type { Discovery, KnowledgeItem, Lang, LocalizedText, WalkMode, WalkRecord } from "@/lib/types";
 import { localized } from "./i18n";
-import { readDiscoveries, readWalks, writeStored } from "./storage";
-import { KEYS } from "./storageFormat";
+import { readDiscoveries, readStored, readWalks, writeStored } from "./storage";
+import { KEYS, migrateDiscoveries } from "./storageFormat";
 import { pathDistanceM, thinPath, type LatLon } from "./walkPath";
 
-// Six discoveries along today's wander, four along yesterday's destination walk.
-export const DEMO_WANDER_IDS = [
-  "garbage-truck-why-music",
-  "convenience-store-density",
-  "mrt-no-eating",
-  "pedestrian-flashing-green-rule",
-  "arcade-qilou-origin",
-  "youbike-origin",
-] as const;
+export interface PastWalkDef {
+  id: string;
+  route: string; // key in data/demo/past-walk-routes.json
+  daysAgo: number;
+  start: [number, number]; // local hour, minute
+  gapMin: number; // minutes between stories
+  mode: WalkMode;
+  areaName: string;
+  destination?: { name: LocalizedText; lat: number; lon: number };
+  itemIds: string[];
+}
 
-export const DEMO_DEST_IDS = [
-  "breakfast-hot-food",
-  "mrt-fare-gate-yellow-line",
-  "two-stage-left-turn-origin",
-  "rooftop-water-tank",
-] as const;
-
-export const DEMO_DEST_NAME: Record<Lang, string> = { en: "Dongmen Market", "zh-TW": "東門市場", ja: "東門市場", ko: "Dongmen Market" };
+// None of these repeat a story from the recorded Tokyo walk.
+export const DEMO_PAST_WALKS: PastWalkDef[] = [
+  {
+    id: "demo-walk-dadaocheng",
+    route: "dadaocheng",
+    daysAgo: 1,
+    start: [15, 20],
+    gapMin: 5,
+    mode: "wander",
+    areaName: "Dadaocheng",
+    itemIds: ["arcade-qilou-origin", "arcade-is-road", "joss-paper-burners", "iron-window-bars"],
+  },
+  {
+    id: "demo-walk-minsheng",
+    route: "minsheng",
+    daysAgo: 2,
+    start: [19, 5],
+    gapMin: 4,
+    mode: "wander",
+    areaName: "Minsheng Community",
+    itemIds: ["garbage-truck-why-music", "garbage-truck-japan-origin", "garbage-truck-maidens-prayer", "taipei-pay-as-you-throw", "few-public-trash-cans"],
+  },
+  {
+    id: "demo-walk-tainan",
+    route: "tainan",
+    daysAgo: 3,
+    start: [8, 10],
+    gapMin: 6,
+    mode: "destination",
+    areaName: "Tainan",
+    destination: { name: { en: "Shennong Street", "zh-TW": "神農街", ja: "神農街" }, lat: 22.998, lon: 120.195 },
+    itemIds: ["breakfast-hot-food", "convenience-store-bill-payment", "two-stage-left-turn-tainan", "manhole-covers-art"],
+  },
+  {
+    id: "demo-walk-ximen",
+    route: "ximen",
+    daysAgo: 4,
+    start: [20, 10],
+    gapMin: 5,
+    mode: "destination",
+    areaName: "Ximending",
+    destination: { name: { en: "The Red House", "zh-TW": "西門紅樓", ja: "西門紅樓" }, lat: 25.0421, lon: 121.5068 },
+    itemIds: ["mrt-fare-gate-yellow-line", "pedestrian-green-man-run-animation", "convenience-store-area-density", "youbike-free-30-min"],
+  },
+  {
+    id: "demo-walk-zhongshan",
+    route: "zhongshan",
+    daysAgo: 5,
+    start: [14, 30],
+    gapMin: 5,
+    mode: "wander",
+    areaName: "Zhongshan",
+    itemIds: ["overhead-power-lines", "manhole-anti-slip", "convenience-store-tax-payment", "household-trash-in-public-bins-fine", "two-stage-left-turn-origin"],
+  },
+];
 
 export interface SeedInput {
   items: KnowledgeItem[];
-  routeCoords: [number, number][]; // [lon, lat], walking order (wander)
-  destRouteCoords?: [number, number][]; // [lon, lat], walking order (destination)
+  routes: Record<string, [number, number][]>; // [lon, lat], walking order
   lang: Lang;
   hometown: string;
   now: number;
+  walks?: PastWalkDef[];
 }
 
 export interface SeedData {
@@ -64,17 +113,6 @@ export function shortenLine(text: string): string {
   return words.length <= 12 ? clause : words.slice(0, 12).join(" ");
 }
 
-// Never before local midnight today: spread over the past half hour, clamped
-// to 00:05+. Just after midnight everything lands on `now`.
-export function seedTimes(now: number, n: number): number[] {
-  const start = new Date(now);
-  start.setHours(0, 5, 0, 0);
-  const end = now - 5 * MIN;
-  const earliest = Math.max(start.getTime(), end - 30 * MIN);
-  if (earliest >= end || n < 2) return Array(n).fill(now);
-  return Array.from({ length: n }, (_, i) => earliest + ((end - earliest) * i) / (n - 1));
-}
-
 function pickCoord(routeCoords: [number, number][], frac: number): { lat: number; lon: number } {
   const c = routeCoords[Math.min(routeCoords.length - 1, Math.floor(frac * routeCoords.length))];
   return { lat: c[1], lon: c[0] };
@@ -97,110 +135,64 @@ function toNarration(item: KnowledgeItem, lang: Lang, hometown: string) {
   };
 }
 
-function buildWalk(
-  id: string,
-  routeCoords: [number, number][],
-  frac: [number, number],
-  firstAt: number,
-  lastAt: number,
-  discoveryIds: string[],
-  opts: { areaName: string | null; mode: WalkMode; destination?: { name: string; lat: number; lon: number } | null },
-): WalkRecord {
-  const slice = routeCoords.slice(Math.floor(frac[0] * routeCoords.length), Math.ceil(frac[1] * routeCoords.length));
-  const path = thinPath(slice.map(([lon, lat]): LatLon => [lat, lon]));
-  return {
-    id,
-    startedAt: firstAt - 8 * MIN,
-    endedAt: lastAt + 4 * MIN,
-    areaName: opts.areaName,
-    distanceM: Math.round(pathDistanceM(path)),
-    path: path.map(([lat, lon]) => [lat, lon] as [number, number]),
-    discoveryIds,
-    simulated: true,
-    mode: opts.mode,
-    destination: opts.destination ?? null,
-  };
-}
-
 // Pure builder (no browser APIs): easy to test, easy to re-run.
-export function buildSeedData({ items, routeCoords, destRouteCoords, lang, hometown, now }: SeedInput): SeedData {
+export function buildSeedData({ items, routes, lang, hometown, now, walks = DEMO_PAST_WALKS }: SeedInput): SeedData {
   const byId = new Map(items.map((i) => [i.id, i]));
-  const coords: [number, number][] = routeCoords.length ? routeCoords : [[121.5299, 25.0338]];
-  const destCoords: [number, number][] = destRouteCoords?.length ? destRouteCoords : coords;
   const discoveries: SeedDiscovery[] = [];
-  const mk = (itemId: string, at: number, walkId: string, frac: number, tag: string, on: [number, number][]): void => {
-    const item = byId.get(itemId);
-    if (!item) return;
-    const { lat, lon } = pickCoord(on, frac);
-    discoveries.push({
-      id: `demo-${itemId}-${tag}`,
-      narration: toNarration(item, lang, hometown),
-      origin: "guide",
-      at,
-      lat,
-      lon,
-      walkId,
+  const records: WalkRecord[] = [];
+  for (const def of walks) {
+    const coords = routes[def.route];
+    if (!coords?.length) continue;
+    const day = new Date(now);
+    day.setDate(day.getDate() - def.daysAgo);
+    day.setHours(def.start[0], def.start[1], 0, 0);
+    const startedAt = day.getTime();
+    const ids: string[] = [];
+    def.itemIds.forEach((itemId, i) => {
+      const item = byId.get(itemId);
+      if (!item) return;
+      const { lat, lon } = pickCoord(coords, (i + 1) / (def.itemIds.length + 1));
+      const id = `${def.id}-${itemId}`;
+      discoveries.push({
+        id,
+        narration: toNarration(item, lang, hometown),
+        origin: "guide",
+        at: startedAt + (4 + i * def.gapMin) * MIN,
+        lat,
+        lon,
+        walkId: def.id,
+      });
+      ids.push(id);
     });
-  };
-
-  // Walk 1 (today): an open wander along the full Yongkang loop.
-  const wanderIds: string[] = [];
-  const wanderAts = seedTimes(now, DEMO_WANDER_IDS.length);
-  DEMO_WANDER_IDS.forEach((itemId, i) => {
-    mk(itemId, wanderAts[i], "demo-walk-wander", (i + 1) / (DEMO_WANDER_IDS.length + 1), `w${i}`, coords);
-    wanderIds.push(`demo-${itemId}-w${i}`);
-  });
-
-  // Walk 2 (yesterday afternoon, so the date never shifts): a destination walk
-  // to Dongmen Market along the Jinhua route.
-  const destIds: string[] = [];
-  const destDay = new Date(now);
-  destDay.setDate(destDay.getDate() - 1);
-  destDay.setHours(14, 5, 0, 0);
-  const destFirst = destDay.getTime();
-  const destAts = DEMO_DEST_IDS.map((_, i) => destFirst + i * 4 * MIN);
-  DEMO_DEST_IDS.forEach((itemId, i) => {
-    mk(itemId, destAts[i], "demo-walk-dest", (i + 1) / (DEMO_DEST_IDS.length + 1), `d${i}`, destCoords);
-    destIds.push(`demo-${itemId}-d${i}`);
-  });
-
-  const kept = new Set(discoveries.map((d) => d.id));
-  const destName = DEMO_DEST_NAME[lang] ?? DEMO_DEST_NAME.en;
-  const walks = [
-    buildWalk("demo-walk-wander", coords, [0, 1], wanderAts[0], wanderAts[wanderAts.length - 1], wanderIds.filter((id) => kept.has(id)), {
-      areaName: "Yongkang Street",
-      mode: "wander",
-    }),
-    buildWalk(
-      "demo-walk-dest",
-      destCoords,
-      [0, 1],
-      destAts[0],
-      destAts[destAts.length - 1],
-      destIds.filter((id) => kept.has(id)),
-      {
-        areaName: "Yongkang Street",
-        mode: "destination",
-        destination: { name: destName, lat: 25.0348, lon: 121.5268 },
-      },
-    ),
-  ];
-  return { discoveries, walks };
+    const path = thinPath(coords.map(([lon, lat]): LatLon => [lat, lon]));
+    records.push({
+      id: def.id,
+      startedAt,
+      endedAt: startedAt + (8 + def.itemIds.length * def.gapMin) * MIN,
+      areaName: def.areaName,
+      distanceM: Math.round(pathDistanceM(path)),
+      path: path.map(([lat, lon]) => [lat, lon] as [number, number]),
+      discoveryIds: ids,
+      simulated: true,
+      mode: def.mode,
+      destination: def.destination ? { name: localized(def.destination.name, lang), lat: def.destination.lat, lon: def.destination.lon } : null,
+    });
+  }
+  return { discoveries, walks: records };
 }
 
 // Loads the real knowledge base + routes (code-split, only on demand) and
 // merges the sample walks into the notebook. Returns the number of seeded
 // discoveries. Re-running replaces the previous sample, never duplicates it.
 export async function fillNotebookWithSampleWalk(opts: { lang: Lang; hometown: string }): Promise<number> {
-  const [{ default: kb }, { default: route }, { default: destRoute }] = await Promise.all([
+  const [{ default: kb }, { default: routes }] = await Promise.all([
     import("@data/knowledge/taipei.json"),
-    import("@data/routes/yongkang.json"),
-    import("@data/routes/jinhua.json"),
+    import("@data/demo/past-walk-routes.json"),
   ]);
+  removeSampleWalks();
   const data = buildSeedData({
     items: kb as KnowledgeItem[],
-    routeCoords: (route as RouteDef).coordinates,
-    destRouteCoords: (destRoute as RouteDef).coordinates,
+    routes: routes as unknown as Record<string, [number, number][]>,
     lang: opts.lang,
     hometown: opts.hometown,
     now: Date.now(),
@@ -217,4 +209,19 @@ export function removeSampleWalks(): void {
   const isSample = (id: string) => id.startsWith("demo-");
   writeStored(KEYS.discoveries, readDiscoveries().filter((d) => !isSample(d.id)));
   writeStored(KEYS.walks, readWalks().filter((w) => !isSample(w.id)));
+}
+
+// Every simulated walk starts from the same notebook: drop earlier replays
+// (and the stories heard on them), then lay the sample walks down again with
+// fresh relative dates. Real walks are never touched.
+export function resetSimulatedNotebook(opts: { lang: Lang; hometown: string }): void {
+  const walks = readWalks();
+  const gone = new Set(walks.filter((w) => w.simulated && !w.id.startsWith("demo-")).map((w) => w.id));
+  if (gone.size) {
+    const keep = (d: Discovery) => !d.walkId || !gone.has(d.walkId);
+    writeStored(KEYS.walks, walks.filter((w) => !gone.has(w.id)));
+    writeStored(KEYS.discoveries, readDiscoveries().filter(keep));
+    writeStored(KEYS.heard, readStored<Discovery[]>(KEYS.heard, [], migrateDiscoveries).filter(keep));
+  }
+  void fillNotebookWithSampleWalk(opts).catch(() => 0);
 }
