@@ -18,6 +18,19 @@ interface Job {
 let rate = 1;
 let audioActive = false;
 
+// Pre-rendered narration clips, keyed by trimmed text. When a job's text is
+// registered here, the clip plays through the normal audio-element path
+// instead of server TTS / speechSynthesis.
+const prerecorded = new Map<string, string>();
+
+export function registerPrerecorded(text: string, url: string) {
+  prerecorded.set(text.trim(), url);
+}
+
+export function clearPrerecorded() {
+  prerecorded.clear();
+}
+
 export function setSpeechRate(r: number) {
   rate = Math.min(2, Math.max(0.5, r));
 }
@@ -92,6 +105,22 @@ async function playOne(job: Job) {
     window.speechSynthesis?.cancel();
   };
   try {
+    // A pre-rendered clip wins over server TTS (which may be disabled with
+    // 501). A failed fetch falls through to the behaviour below.
+    const clip = prerecorded.get(job.text.trim());
+    if (clip) {
+      try {
+        const res = await fetch(clip, { signal: ac.signal });
+        if (res.ok) {
+          const blob = await res.blob();
+          if (cancelled) return;
+          await playBlob(blob, () => cancelled, job.opts);
+          return;
+        }
+      } catch {
+        if (cancelled) return;
+      }
+    }
     if (!ttsDisabled) {
       try {
         const res = await fetch("/api/tts", {

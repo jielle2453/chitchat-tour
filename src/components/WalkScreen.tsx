@@ -293,7 +293,7 @@ export default function WalkScreen({
               <span className="ml-1.5 shrink-0 whitespace-nowrap font-medium text-ink/55">
                 {walkingDest && dest.route
                   ? formatDistance(nav.remainingM)
-                  : `${formatDistance(session.distanceM)} · ${t(lang, "nbMetCount", { n: session.heardToday.length })}`}
+                  : formatDistance(session.distanceM)}
               </span>
             </p>
           </div></div> : <div className="flex-1" />}

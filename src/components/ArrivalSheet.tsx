@@ -117,7 +117,7 @@ export default function ArrivalSheet({
             ch === " " ? <span key={i} aria-hidden className="w-2.5" /> : <Digit key={i} ch={ch} index={i} at={digitsAt} />,
           )}
         </div>
-        <p className="mt-2 pr-36 text-[15px] font-medium">{t(lang, "navArrivedLine", { n: storyCount, name: destName })}</p>
+        <p className="mt-2 pr-36 text-[15px] font-medium">{t(lang, storyCount === 1 ? "navArrivedLineOne" : "navArrivedLine", { n: storyCount, name: destName })}</p>
         <div className="mt-5 flex flex-col gap-3">
           <button
             type="button"

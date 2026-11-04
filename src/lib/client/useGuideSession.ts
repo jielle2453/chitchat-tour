@@ -7,7 +7,7 @@ import type { TriggerConfig } from "@/lib/trigger";
 import type { AskResponse, DetectedObject, Discovery, DiscoveryOrigin, ExplainRequest, GeoFix, LocationSource, Narration, RouteDef, UserProfile, WalkRecord } from "@/lib/types";
 import { postJson } from "./api";
 import { unlockAudio } from "./audio";
-import { pauseSpeaking, resumeSpeaking, setSpeechRate, speak, speechProgress, stopSpeaking } from "./speech";
+import { pauseSpeaking, registerPrerecorded, resumeSpeaking, setSpeechRate, speak, speechProgress, stopSpeaking } from "./speech";
 import { addHeard, notebookItemIds, readWalks, removeWalk, saveDiscovery, upsertWalk, useDiscoveries, useHeard, useToday } from "./storage";
 import { sanitizeQuietS } from "./storageFormat";
 import { estimateSpeechMs } from "./text";
@@ -63,6 +63,13 @@ interface ReplayEvent {
   narration: Narration;
 }
 const REPLAY: ReplayEvent[] = (tokyoWalk as unknown as { events: ReplayEvent[] }).events;
+
+// Natural-voice clips pre-rendered for the recorded English walk
+// (public/demo/tokyo-walk/<index>.mp3). Module-level so they are ready when
+// the replay starts; Map-only, so safe to evaluate during SSR.
+if (typeof window !== "undefined") {
+  REPLAY.forEach((ev, i) => registerPrerecorded(ev.narration.text, `/demo/tokyo-walk/${i}.mp3`));
+}
 
 let counter = 0;
 // A strolling pace for simulated walks, a bit slower than commuting (1.3 m/s).

@@ -4,14 +4,13 @@
 // opens a large glass sheet where stickers drop in, collide, and can be
 // dragged/flung. Rendering: absolutely positioned art updated via
 // requestAnimationFrame refs (never React state per frame). Stickers are real
-// links (keyboard works); a plain small list sits below so physics never
-// traps anyone.
-import { Building2, Bus, Coffee, Signpost, Smartphone, Star, Store, X, type LucideIcon } from "lucide-react";
+// links (keyboard works); the page lists the jar's stories below it.
+import { Building2, Bus, Coffee, Signpost, Star, Store, X, type LucideIcon } from "lucide-react";
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import DieCutImg from "../DieCutImg";
 import { t } from "@/lib/client/i18n";
 import { themeName, type ThemeKey } from "@/lib/client/notebookData";
-import { createJarWorld, JAR_DT, JAR_GRAVITY, setJarGravity, settleJar, stepJar, wakeJar, type JarWorld } from "@/lib/client/physics";
+import { createJarWorld, JAR_DT, settleJar, stepJar, wakeJar, type JarWorld } from "@/lib/client/physics";
 import type { Discovery, Lang, Narration } from "@/lib/types";
 
 const GLASS: CSSProperties = {
@@ -27,9 +26,11 @@ const INK_55 = "rgba(17,17,17,0.55)";
 
 const GRID_SIZE = 72; // px stickers in the grid for 5+ items
 const GRID_CORNER = 28; // card radius
-const GRID_MAX = 6;
-const SHEET_SIZE = 96; // px stickers in the sheet
-const SHEET_R = 40; // ≈ 0.42 × size
+const GRID_MAX = 9;
+// Sheet sticker size shrinks as the jar fills up.
+function sheetSize(n: number): number {
+  return n <= 6 ? 96 : n <= 12 ? 80 : n <= 20 ? 66 : 56;
+}
 const SHEET_CORNER = 32; // sheet radius
 
 const ICONS: Record<NonNullable<Narration["category"]>, LucideIcon> = {
@@ -116,6 +117,8 @@ function SheetSticker({
       aria-label={discovery.narration.title}
       onPointerDown={(e) => onPointerDown(e, discovery.id)}
       onClickCapture={onClickCapture}
+      draggable={false}
+      onDragStart={(e) => e.preventDefault()}
       onFocus={focusRing(true)}
       onBlur={focusRing(false)}
       className="absolute left-0 top-0 block touch-none overflow-visible outline-none"
@@ -161,7 +164,7 @@ function ThemeCell({
   }, []);
 
   // Sparse themes get bigger stickers so the card doesn't look empty.
-  const stickerSize = items.length <= 2 ? 96 : items.length <= 4 ? 80 : GRID_SIZE;
+  const stickerSize = items.length <= 2 ? 96 : items.length <= 4 ? 80 : items.length <= 6 ? GRID_SIZE : 58;
   const pile = useMemo(() => {
     if (size <= 0) return null;
     const r = Math.round(stickerSize * 0.42);
@@ -233,7 +236,6 @@ function ThemeSheet({
   const dragRef = useRef<DragState | null>(null);
   const draggedAway = useRef(false);
   const ctlRef = useRef<{ kick: () => void } | null>(null);
-  const [tiltOn, setTiltOn] = useState(false);
   const [area, setArea] = useState({ w: 0, h: 0 });
   const [boxW, setBoxW] = useState(() => (typeof window !== "undefined" ? window.innerWidth - 32 : 360));
 
@@ -250,11 +252,12 @@ function ThemeSheet({
   // Size the play area itself to its pile; the sheet wraps it. The physics
   // world is built from the measured box, so its floor is the visible floor.
   const sheetCount = Math.min(items.length, 40);
+  const SHEET_SIZE = sheetSize(sheetCount);
+  const SHEET_R = Math.round(SHEET_SIZE * 0.42);
   const sheetPerRow = Math.max(1, Math.floor(boxW / SHEET_SIZE));
-  const playH = Math.min(
-    typeof window !== "undefined" ? window.innerHeight * 0.6 : 500,
-    Math.max(200, Math.ceil(sheetCount / sheetPerRow) * SHEET_SIZE * 0.95 + 40),
-  );
+  // The open jar is a square: the play area fills the sheet's width minus its header.
+  void sheetPerRow;
+  const playH = Math.max(220, boxW - 32 - 48);
 
   useEffect(() => {
     const el = areaRef.current;
@@ -340,38 +343,7 @@ function ThemeSheet({
       cancelAnimationFrame(raf);
       ctlRef.current = null;
     };
-  }, [area.w, area.h, items]);
-
-  // Phone tilt shifts gravity. iOS needs a permission tap — the tilt button is it.
-  useEffect(() => {
-    if (!tiltOn) return;
-    const onOri = (e: DeviceOrientationEvent) => {
-      const world = worldRef.current;
-      if (!world || e.gamma == null || e.beta == null) return;
-      const gx = Math.max(-1, Math.min(1, e.gamma / 30)) * JAR_GRAVITY;
-      const gy = Math.max(220, Math.min(JAR_GRAVITY, ((e.beta - 55) / 30) * JAR_GRAVITY + JAR_GRAVITY * 0.35));
-      setJarGravity(world, gx, gy);
-      ctlRef.current?.kick();
-    };
-    window.addEventListener("deviceorientation", onOri);
-    return () => window.removeEventListener("deviceorientation", onOri);
-  }, [tiltOn]);
-
-  async function enableTilt() {
-    if (tiltOn) {
-      setTiltOn(false);
-      return;
-    }
-    try {
-      const DOE = window.DeviceOrientationEvent as unknown as { requestPermission?: () => Promise<string> } | undefined;
-      if (DOE && typeof DOE.requestPermission === "function") {
-        if ((await DOE.requestPermission()) !== "granted") return;
-      }
-    } catch {
-      // non-iOS: no permission step, just listen
-    }
-    setTiltOn(true);
-  }
+  }, [area.w, area.h, items, SHEET_SIZE, SHEET_R]);
 
   function areaPoint(e: React.PointerEvent): { x: number; y: number } {
     const rect = areaRef.current?.getBoundingClientRect();
@@ -427,28 +399,8 @@ function ThemeSheet({
       <div className="relative z-10 flex items-center justify-between gap-2">
         <div className="flex min-w-0 items-baseline gap-2">
           <span className="truncate text-[16px] font-semibold">{name}</span>
-          <span className="shrink-0 text-[12px] font-medium tabular-nums" style={{ color: INK_55 }}>
-            {t(lang, "nbMetCount", { n: items.length })}
-          </span>
         </div>
         <div className="flex shrink-0 items-center gap-2">
-          <button
-            type="button"
-            onClick={enableTilt}
-            aria-pressed={tiltOn}
-            title={t(lang, "nbTiltAllow")}
-            className="inline-flex h-9 items-center gap-1.5 rounded-full px-3 text-[13px] font-medium"
-            style={{
-              background: "rgba(255,255,255,0.6)",
-              backdropFilter: "blur(12px)",
-              WebkitBackdropFilter: "blur(12px)",
-              border: "1px solid rgba(255,255,255,0.9)",
-              color: INK_55,
-            }}
-          >
-            <Smartphone size={14} aria-hidden />
-            {t(lang, "nbTilt")}
-          </button>
           <button
             type="button"
             onClick={onToggle}
@@ -467,17 +419,16 @@ function ThemeSheet({
           </button>
         </div>
       </div>
-      <p className="relative z-10 px-1 pb-2 pt-1 text-[12px]" style={{ color: "rgba(17,17,17,0.45)" }}>
-        {t(lang, "nbSheetHint")}
-      </p>
+      <div className="h-2" />
       <div
         ref={areaRef}
         role="group"
-        aria-label={`${name} — ${t(lang, "nbSheetHint")}`}
+        aria-label={name}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerUp}
-        className="relative w-full shrink-0 overflow-hidden"
+        onDragStart={(e) => e.preventDefault()}
+        className="relative w-full shrink-0 touch-none select-none overflow-hidden"
         style={{ height: playH }}
       >
         {items.slice(0, 40).map((d) => (
@@ -494,21 +445,43 @@ function ThemeSheet({
           />
         ))}
       </div>
-      <details className="relative z-10 px-1 pt-1 text-[13px]">
-        <summary className="cursor-pointer font-medium" style={{ color: INK_55 }}>
-          {t(lang, "nbJarList")}
-        </summary>
-        <ul className="space-y-1 py-2">
-          {items.map((d) => (
-            <li key={d.id}>
-              <a href={`/notebook/item?id=${encodeURIComponent(d.id)}`} className="underline decoration-line underline-offset-2">
-                {d.narration.title}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </details>
     </div>
+  );
+}
+
+// A short note: the first clause, at most five words (or twelve CJK characters).
+function shortNote(text: string): string {
+  const first = text.trim().split(/[,.;:—，。；：、]/)[0].trim();
+  if (/[぀-ヿ㐀-䶿一-鿿]/.test(first)) return first.length > 12 ? `${first.slice(0, 12)}…` : first;
+  const words = first.split(/\s+/);
+  return words.length > 5 ? `${words.slice(0, 5).join(" ")}…` : first;
+}
+
+// Below an open jar: every story in it, sticker + title + the short "here" note.
+export function ThemeStoryList({ items }: { items: Discovery[]; lang?: Lang }) {
+  return (
+    <ul className="space-y-2">
+      {items.map((d) => (
+        <li key={d.id}>
+          <a
+            href={`/notebook/item?id=${encodeURIComponent(d.id)}`}
+            className="flex items-center gap-3 rounded-2xl bg-white px-3 py-2.5 ring-1 ring-line"
+          >
+            <span className="grid h-14 w-14 shrink-0 place-items-center">
+              <StickerArt discovery={d} size={56} />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block truncate text-[15px] font-medium">{d.narration.title}</span>
+              {d.narration.contrast?.here && d.narration.contrast.here.trim() !== d.narration.title.trim() ? (
+                <span className="mt-0.5 block truncate text-[13px]" style={{ color: INK_55 }}>
+                  {shortNote(d.narration.contrast.here)}
+                </span>
+              ) : null}
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
   );
 }
 

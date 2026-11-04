@@ -25,5 +25,6 @@ const ORIGIN_KEY = { guide: "originGuide", ask: "originAsk", photo: "originPhoto
 
 export function discoveryEyebrow(lang: Lang, origin: keyof typeof ORIGIN_KEY, narration: Pick<Narration, "category" | "itemId">): string {
   const second = isLiveDiscovery(narration.itemId) ? t(lang, "liveNew") : narration.category ? categoryLabel(lang, narration.category) : null;
-  return [t(lang, ORIGIN_KEY[origin]), second].filter(Boolean).join(" · ");
+  // Guide stories are the default, so they carry no origin label.
+  return [origin === "guide" ? null : t(lang, ORIGIN_KEY[origin]), second].filter(Boolean).join(" · ");
 }

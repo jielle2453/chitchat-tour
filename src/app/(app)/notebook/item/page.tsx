@@ -1,9 +1,10 @@
 "use client";
 import { ArrowLeft, MapPin, Pause, Play } from "lucide-react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { ConfidenceBadge, ContrastChips, SourceLinks } from "@/components/DiscoveryParts";
+import DieCutImg from "@/components/DieCutImg";
 import StickerArt from "@/components/StickerArt";
 import { unlockAudio } from "@/lib/client/audio";
 import { t } from "@/lib/client/i18n";
@@ -15,6 +16,7 @@ const ORIGIN_KEY = { guide: "originGuide", ask: "originAsk", photo: "originPhoto
 
 function ItemPage() {
   const id = useSearchParams().get("id") ?? "";
+  const router = useRouter();
   const { profile } = useProfile();
   const lang = profile.lang;
   const d = useDiscoveries().find((x) => x.id === id) ?? null;
@@ -34,20 +36,37 @@ function ItemPage() {
   }
 
   return (
-    <div className="rg-scroll h-full space-y-4 px-4 pb-8 pt-[max(12px,env(safe-area-inset-top))]">
-      <Link href="/notebook" aria-label={t(lang, "back")} onClick={() => stopSpeaking()} className="grid h-10 w-10 place-items-center rounded-full bg-surface ring-1 ring-line">
+    <div className="rg-scroll h-full space-y-7 px-4 pb-10 pt-[max(12px,env(safe-area-inset-top))]">
+      <Link
+        href="/notebook"
+        aria-label={t(lang, "back")}
+        onClick={(e) => {
+          stopSpeaking();
+          // came from a walk page or the themes tab: go back there, not to the list
+          if (window.history.length > 1) {
+            e.preventDefault();
+            router.back();
+          }
+        }}
+        className="grid h-10 w-10 place-items-center rounded-full bg-surface ring-1 ring-line"
+      >
         <ArrowLeft size={18} aria-hidden />
       </Link>
       {!d ? (
         <p className="pt-10 text-center text-sub">{t(lang, "nbNotFound")}</p>
       ) : (
         <>
-          <div className="flex flex-col items-center gap-2.5 pt-1 text-center">
-            <div className="rg-pop rounded-[28px] bg-white p-3 ring-1 ring-line">
-              <StickerArt discovery={d} size={160} rotate={0} />
+          <div className="flex flex-col items-center gap-3 pt-1 text-center">
+            {/* the story's sticker itself, die-cut, no tile behind it */}
+            <div className="rg-pop" style={{ width: 176, height: 176, filter: "drop-shadow(0 4px 8px rgba(17,17,17,0.14))" }}>
+              {d.stickerDataUrl || !d.narration.itemId ? (
+                <StickerArt discovery={d} size={176} rotate={0} />
+              ) : (
+                <DieCutImg src={`/illustrations/${encodeURIComponent(d.narration.itemId)}.webp`} size={176} style={{ width: "100%", height: "100%" }} />
+              )}
             </div>
-            <p className="text-xs font-medium text-sub">{t(lang, ORIGIN_KEY[d.origin])}</p>
-            <h1 className="-mt-1 text-[22px] font-semibold leading-snug">{d.narration.title}</h1>
+            {d.origin !== "guide" ? <p className="text-xs font-medium text-sub">{t(lang, ORIGIN_KEY[d.origin])}</p> : null}
+            <h1 className="text-[22px] font-semibold leading-snug">{d.narration.title}</h1>
             <ConfidenceBadge confidence={d.narration.confidence} lang={lang} />
           </div>
           <button type="button" onClick={toggle} className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-ink text-[15px] font-medium text-white">

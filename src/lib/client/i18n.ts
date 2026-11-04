@@ -175,6 +175,9 @@ const en = {
   nbNoGeo: "No location yet",
   nbStartMark: "Start",
   nbEndMark: "Arrived",
+  nbStatDate: "Date",
+  nbStatDistance: "Distance",
+  nbStatTime: "Time",
   nbReplay: "Replay",
   nbTilt: "Tilt",
   nbTiltAllow: "Tap to let the jar feel gravity",
@@ -277,6 +280,7 @@ const en = {
   navArrivedSub: "{name} is here. Take your time.",
   navArrivedTitle: "You heard {n} stories in {d}",
   navArrivedLine: "{n} stories on the way to {name}",
+  navArrivedLineOne: "1 story on the way to {name}",
   navArrivedNotebook: "See this walk's notebook",
 
   // wander detours
@@ -458,6 +462,9 @@ const ja: Dict = {
   nbNoGeo: "場所の記録なし",
   nbStartMark: "スタート",
   nbEndMark: "ゴール",
+  nbStatDate: "日付",
+  nbStatDistance: "距離",
+  nbStatTime: "時間",
   nbReplay: "リプレイ",
   nbTilt: "傾ける",
   nbTiltAllow: "タップして傾きを許可",
@@ -556,6 +563,7 @@ const ja: Dict = {
   navArrivedSub: "{name}です。ゆっくりどうぞ。",
   navArrivedTitle: "{d}の散歩で{n}つの話を聞きました",
   navArrivedLine: "{name}までの道で{n}つの話を聞きました",
+  navArrivedLineOne: "{name}までの道で1つの話を聞きました",
   navArrivedNotebook: "この散歩のノートを見る",
 
   detourSuggest: "{dir}に{name}があります。寄り道しますか？",
@@ -733,6 +741,9 @@ const zhTW: Dict = {
   nbNoGeo: "沒有位置的",
   nbStartMark: "出發",
   nbEndMark: "到了",
+  nbStatDate: "日期",
+  nbStatDistance: "距離",
+  nbStatTime: "時間",
   nbReplay: "重播",
   nbTilt: "傾斜",
   nbTiltAllow: "點一下，讓罐子感受重力",
@@ -831,6 +842,7 @@ const zhTW: Dict = {
   navArrivedSub: "{name}到了，慢慢逛。",
   navArrivedTitle: "走了{d}，聽了{n}則故事",
   navArrivedLine: "一路聽了 {n} 則故事，抵達{name}",
+  navArrivedLineOne: "一路聽了 1 則故事，抵達{name}",
   navArrivedNotebook: "看這趟的筆記",
 
   detourSuggest: "{dir}有{name}，要不要繞過去看看？",

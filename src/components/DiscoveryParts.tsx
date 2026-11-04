@@ -24,7 +24,7 @@ export function ConfidenceBadge({ confidence, lang }: { confidence: Confidence; 
 export function ContrastChips({ contrast, lang }: { contrast: Narration["contrast"]; lang: Lang }) {
   if (!contrast || (!contrast.here && !contrast.elsewhere)) return null;
   return (
-    <div className="grid grid-cols-2 divide-x divide-line rounded-2xl bg-fill/70">
+    <div className="grid grid-cols-2 divide-x divide-line rounded-2xl bg-white ring-1 ring-line">
       <div className="px-3.5 py-3">
         <p className="text-xs font-medium text-sub">{t(lang, "here")}</p>
         <p className="mt-0.5 text-[13px] leading-relaxed">{contrast.here}</p>
