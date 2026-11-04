@@ -29,6 +29,8 @@ export interface SessionOptions {
   voiceRate: number;
   speak: boolean; // false = silent session (compare mode second phone): subtitles run on a virtual clock
   sim: RouteDef | null; // simulated walk on this route
+  // false: a simulated walk asks the live guide instead of replaying the recorded Tokyo walk
+  replay?: boolean;
   persist: boolean; // write walk records and the heard list
   storageKey: string;
 }
@@ -225,7 +227,7 @@ export function useGuideSession(options: SessionOptions) {
     onNarration: present,
     onFix,
     knownItemIds: () => (optsRef.current.persist ? notebookItemIds() : []),
-    autoGuide: !options.sim,
+    autoGuide: !(options.sim && options.replay !== false),
   });
 
   // The walk cooldown counts from the END of a narration: whenever playback
@@ -260,7 +262,7 @@ export function useGuideSession(options: SessionOptions) {
     if (!active) replayHoldRef.current = false;
   }, [active]);
   useEffect(() => {
-    if (!options.sim || !active || walk.status !== "running") return;
+    if (!options.sim || options.replay === false || !active || walk.status !== "running") return;
     const ev = REPLAY[replayNextRef.current];
     if (!ev || distanceM < ev.atM) return;
     if (playback.state !== "idle") {
@@ -276,7 +278,7 @@ export function useGuideSession(options: SessionOptions) {
     }
     replayNextRef.current += 1;
     walk.push({ ...ev.narration, id: uid("r") }, "guide", [{ kind: "decision", message: `Replaying the recorded story "${ev.narration.title}" (recorded at ${ev.atM} m).`, at: Date.now() }], { poiId: ev.poiId, lat: ev.lat, lon: ev.lon });
-  }, [options.sim, active, walk, playback.state, distanceM]);
+  }, [options.sim, options.replay, active, walk, playback.state, distanceM]);
 
   const walkWithTrace = useMemo(() => {
     if (discover.trace.length === 0) return walk;

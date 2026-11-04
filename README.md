@@ -6,6 +6,8 @@ You put your phone in your pocket and walk. When you pass something ordinary —
 
 Built for the Meta Global AI Developer Hackathon, Indie Developer track, theme "Build for Your World". The demo city is Taipei, on a route around Yongkang Street and Dongmen.
 
+**Try it:** https://chitchat-tour.vercel.app — on any phone or desktop browser, tap **Try the simulated walk** (no GPS needed), or open `/demo/compare` to watch a Tokyo visitor and a New York visitor walk the same street side by side.
+
 ## Why
 
 Most city guides talk about landmarks. What visitors actually notice and wonder about is the everyday stuff: why the garbage truck plays music, why every arcade has a step, why there are so few public bins. And what is surprising depends on where you come from. A visitor from Tokyo and a visitor from New York walking the same street should not hear the same things.
@@ -19,13 +21,15 @@ Principles:
 
 ## What it does
 
-- **Walk.** A map follows you (real GPS, or a simulated walk for the demo). When you come near something the knowledge base covers, the guide decides whether it is worth saying *for you* and speaks it in a sentence or two, with a "here / in many places" comparison and a source card.
+- **Walk.** A map follows you (real GPS, or a simulated walk for the demo). The simulated walk replays a real recorded Muse Spark walk down Yongkang Street for a visitor from Tokyo (six stories, pre-recorded voice), and pauses when you switch tabs. When you come near something the knowledge base covers, the guide decides whether it is worth saying *for you* and speaks it in a sentence or two, with a "here / in many places" comparison and a source card.
 - **Ask.** Type or hold to talk ("why are there so many convenience stores?"). Muse Spark searches the web, and the answer only keeps sources from an allow-list of trusted domains (government, universities, major newspapers…).
 - **Live discovery.** Outside the hand-made knowledge base, the app looks up places ahead of you on OpenStreetMap and has Muse Spark research them on the web, showing its steps as a readable timeline. Only whitelisted, cited findings become narrations.
 - **Destination walks.** Pick a destination; you get walking directions with spoken turn cues, rerouting, and suggestions for small detours that pass something interesting.
 - **Photo.** Point the camera at something. Faces are blurred on the device, Muse Spark finds the objects, SAM 3.1 cuts them out, and the cut-out becomes a die-cut sticker in your notebook, with the trivia attached if we have it.
-- **Notebook.** Each walk becomes a page: a hand-drawn collage map that redraws your route and drops stickers where you heard things. There is no completion score — everyone's notebook is different.
-- **Compare demo** (`/demo/compare`): the same route side by side for a Tokyo visitor and a New York visitor, showing they hear different things.
+- **Arrival.** Reaching your destination shows how far you walked and how many stories you heard, and the walk is saved.
+- **Notebook.** Each walk becomes a ticket card and a one-screen page: your route drawn over the real streets, with a sticker for every story you heard. **Themes** sorts all your stories into jars of stickers you can shake. The notebook starts with five sample walks around Taiwan (Dadaocheng, Minsheng Community, Tainan, Ximending, Zhongshan). There is no completion score — everyone's notebook is different.
+- **Music and sounds.** A music-box soundtrack and small sound effects, all synthesized live with Web Audio (no audio files); the music ducks while the guide talks. Toggle in Me.
+- **Compare demo** (`/demo/compare`): the same route side by side for a Tokyo visitor and a New York visitor, each with its own live guide. The same story is compared with each visitor's home, and what is the same as home ("same as in US") is ranked down — you can see why in the guide's trace.
 
 UI text is available in English, Japanese and Traditional Chinese.
 
@@ -38,9 +42,9 @@ UI text is available in English, Japanese and Traditional Chinese.
 | **Muse Spark 1.3 (vision)** | `src/lib/vision/` | Finds objects in a photo and returns bounding boxes (normalised 0–1000) |
 | **SAM 3.1** (`sam-3.1`) | `src/lib/vision/sam.ts` | Refines the boxes into masks for die-cut stickers; a "person" text prompt finds people so the app can pixelate them as a second privacy pass |
 | **Muse Voice Transcribe** (`muse-voice-transcribe-1.0`) | `src/lib/voice/` | Hold-to-talk speech to text (WAV), Chinese output converted to Traditional with OpenCC |
-| **Muse Image** (`muse-image-1.0`) | `scripts/generate-illustrations.mjs` | The flat cut-paper illustrations for each trivia topic, generated ahead of time (live generation takes ~30 s, too slow while walking) |
+| **Muse Image** (`muse-image-1.0`) | `scripts/generate-illustrations.mjs` | The 32 story-sticker photos (die-cut in the browser), generated ahead of time because live generation takes ~30 s; also the sample street photos used in the demo video |
 
-Muse Code (with Muse Spark) was also used as a coding agent during development.
+Muse Code (with Muse Spark) and Claude Code were used as coding agents during development.
 
 ## Architecture
 
@@ -120,9 +124,12 @@ All code, data, prompts and images in this repository were created during the ha
 - Photo pipeline: on-device face blur, Muse Spark object boxes, SAM 3.1 masks, browser-made die-cut stickers
 - Hold-to-talk transcription with Muse Voice Transcribe
 - Destination walks: geocoding, foot routing, turn cues, rerouting, detour suggestions
-- Restyled MapLibre map and hand-drawn collage notebook
+- Restyled MapLibre map and the notebook: walk tickets, one-screen walk pages, sticker jars with simple physics
 - The verified Taipei knowledge base (51 items) and the Yongkang Street OSM extract and demo routes
-- 36 illustrations generated with Muse Image
+- 32 story-sticker photos generated with Muse Image
+- Five sample past walks routed on real OpenStreetMap streets (`scripts/osm/build-demo-routes.mjs`)
+- Synthesized music and sound effects (`src/lib/client/sound.ts`)
+- The demo video, built in code with Remotion (`video/`; app footage recorded from the running app with headless Chrome)
 - Tests (Vitest)
 
 Desk research notes in `research/` (in Traditional Chinese) cover user questions, competitors, Meta model behaviour and the Taipei trivia; they document what was checked and why.
@@ -133,4 +140,6 @@ Desk research notes in `research/` (in Traditional Chinese) cover user questions
 - Map tiles by [OpenFreeMap](https://openfreemap.org/), using the [OpenMapTiles](https://openmaptiles.org/) schema.
 - Face detection by [MediaPipe](https://ai.google.dev/edge/mediapipe) (BlazeFace short range).
 - Trivia sources are listed per item in `data/knowledge/taipei.json` and shown in the app.
-- Illustrations generated with Meta Muse Image.
+- Story stickers and the demo video's street photos generated with Meta Muse Image.
+- Voices: the simulated walk's pre-recorded guide voice and the demo video's narration are Microsoft neural voices (Ava, Andrew) rendered with the open-source edge-tts tool. They are not a Meta model and not part of the judged work; on real walks the app uses the device's own speech synthesis.
+- Demo video built with [Remotion](https://www.remotion.dev/).

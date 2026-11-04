@@ -1,0 +1,5 @@
+node_modules/
+out/
+# Large and regenerable: app recordings (.claude/probe/vrec.mjs) and audio (scripts/render-audio*.mjs)
+public/captures/
+public/audio/

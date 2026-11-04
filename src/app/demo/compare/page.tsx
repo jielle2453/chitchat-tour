@@ -23,7 +23,7 @@ export default function ComparePage() {
   const [soundLeft, setSoundLeft] = useState(true);
   const route = routes.find((r) => r.id === routeId) ?? routes[0] ?? null;
 
-  const common = { quietS: 15, voiceRate: 1, sim: route, persist: false };
+  const common = { quietS: 15, voiceRate: 1, sim: route, persist: false, replay: false };
   const a = useGuideSession({ ...common, profile: { hometown: homeA, lang }, speak: soundLeft, storageKey: "cmp-a" });
   const b = useGuideSession({ ...common, profile: { hometown: homeB, lang }, speak: !soundLeft, storageKey: "cmp-b" });
 
