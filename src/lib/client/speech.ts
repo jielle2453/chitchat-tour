@@ -3,6 +3,7 @@
 import type { Lang } from "@/lib/types";
 import { getAudioElement, reportBlocked } from "./audio";
 import { setSpeaking } from "./sound";
+import { isNativeApp } from "./native";
 
 export interface SpeakOptions {
   // Called when sound actually starts. `durationMs` is known for server TTS, null for speechSynthesis.
@@ -106,6 +107,7 @@ async function playOne(job: Job) {
     a.pause();
     a.dispatchEvent(new Event("rg-cancel"));
     window.speechSynthesis?.cancel();
+    nativeStop();
   };
   try {
     // A pre-rendered clip wins over server TTS (which may be disabled with
@@ -199,7 +201,25 @@ function loadVoices(): Promise<SpeechSynthesisVoice[]> {
   });
 }
 
+// The Android WebView has no speechSynthesis: use the phone's own TTS engine,
+// which also keeps speaking with the screen locked.
+async function nativeSynth(text: string, lang: Lang, opts?: SpeakOptions) {
+  const { TextToSpeech } = await import("@capacitor-community/text-to-speech");
+  opts?.onStart?.(null);
+  try {
+    await TextToSpeech.speak({ text, lang, rate, category: "playback" });
+  } catch {
+    // no engine or language missing: skip this line rather than stall the queue
+  }
+}
+
+function nativeStop() {
+  if (!isNativeApp()) return;
+  void import("@capacitor-community/text-to-speech").then(({ TextToSpeech }) => TextToSpeech.stop()).catch(() => undefined);
+}
+
 async function synth(text: string, lang: Lang, isCancelled: () => boolean, opts?: SpeakOptions) {
+  if (isNativeApp()) return nativeSynth(text, lang, opts);
   if (typeof window === "undefined" || !window.speechSynthesis) return;
   const voices = await loadVoices();
   if (isCancelled()) return;

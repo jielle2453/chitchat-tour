@@ -17,6 +17,7 @@ import tokyoWalk from "@data/demo/tokyo-walk.json";
 import { useDiscover } from "./useDiscover";
 import { useWalk } from "./useWalk";
 import { appendThinned, dayKey, hiddenTooLong, type LatLon } from "./walkPath";
+import { isNativeApp } from "./native";
 import { startWakeLock, stopWakeLock } from "./wakelock";
 import type { WalkDestination } from "./useDestinationWalk";
 
@@ -293,7 +294,7 @@ export function useGuideSession(options: SessionOptions) {
     ) => {
       // called from a click: audio and wake lock must be set up synchronously here
       unlockAudio();
-      startWakeLock();
+      if (!isNativeApp()) startWakeLock();
       if (opts.simulated) {
         const { lang, hometown } = optsRef.current.profile;
         resetSimulatedNotebook({ lang, hometown });
@@ -340,7 +341,7 @@ export function useGuideSession(options: SessionOptions) {
     setDestMode(false);
     setRouteCorridor(null);
     const route = o.sim;
-    launch(route ? simFactory(route) : () => createGpsSource(), {
+    launch(route ? simFactory(route) : () => createGpsSource(optsRef.current.profile.lang), {
       reset: !!route,
       simulated: !!route,
       mode: "wander",
@@ -355,7 +356,7 @@ export function useGuideSession(options: SessionOptions) {
       const demo = !!optsRef.current.sim;
       setDestMode(true);
       setRouteCorridor(def.coordinates);
-      launch(demo ? simFactory(def) : () => createGpsSource(), {
+      launch(demo ? simFactory(def) : () => createGpsSource(optsRef.current.profile.lang), {
         reset: false,
         simulated: demo,
         mode: "destination",
@@ -406,7 +407,8 @@ export function useGuideSession(options: SessionOptions) {
         hiddenAtRef.current = Date.now();
         flushRecord();
       } else {
-        if (recordRef.current && hiddenTooLong(hiddenAtRef.current, Date.now())) end();
+        // the native app keeps walking with the screen off, so only the web ends idle walks
+        if (!isNativeApp() && recordRef.current && hiddenTooLong(hiddenAtRef.current, Date.now())) end();
         hiddenAtRef.current = null;
       }
     };

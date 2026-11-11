@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Chitchat Tour</string>
+    <string name="title_activity_main">Chitchat Tour</string>
+    <string name="package_name">com.chitchattour.app</string>
+    <string name="custom_url_scheme">com.chitchattour.app</string>
+    <string name="capacitor_background_geolocation_notification_channel_name">Walking guide</string>
+    <string name="capacitor_background_geolocation_notification_icon">drawable/ic_tracking</string>
+</resources>

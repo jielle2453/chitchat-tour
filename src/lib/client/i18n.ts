@@ -11,6 +11,8 @@ const en = {
   cancel: "Cancel",
   moduleNotReady: "This part of the app is not ready yet. Please try again soon.",
   storageFull: "Could not save: this phone has no storage left for it.",
+  nativeNotifTitle: "Chitchat Tour is walking with you",
+  nativeNotifBody: "Listening for things worth a story nearby",
 
   // onboarding
   onbTitle: "A guide for the everyday street",
@@ -311,6 +313,8 @@ const ja: Dict = {
   cancel: "キャンセル",
   moduleNotReady: "この機能はまだ準備中です。しばらくしてからお試しください。",
   storageFull: "保存できませんでした。端末の空き容量が足りません。",
+  nativeNotifTitle: "Chitchat Tour があなたと歩いています",
+  nativeNotifBody: "近くの面白いものを探しています",
 
   onbTitle: "街角の日常のためのガイド",
   onbSub: "歩くと、身近なものについて出典つきの短い話を聞かせてくれます。",
@@ -594,6 +598,8 @@ const zhTW: Dict = {
   cancel: "取消",
   moduleNotReady: "這個功能還沒準備好，請稍後再試。",
   storageFull: "無法儲存：這支手機的儲存空間不足。",
+  nativeNotifTitle: "Chitchat Tour 正陪你散步",
+  nativeNotifBody: "留意附近值得說的小故事",
 
   onbTitle: "給日常街道的導覽",
   onbSub: "邊走邊聽，關於身邊平凡事物的簡短故事，附有出處。",

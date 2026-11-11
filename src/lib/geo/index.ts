@@ -1,10 +1,12 @@
 // Location sources (real GPS and simulated walks) and map lookups.
 // Runs in the browser. Implementation: geo module owner.
-import type { GeoFix, LocalizedText, LocationSource, NearbyPoi, Poi, RouteDef } from "@/lib/types";
+import type { GeoFix, Lang, LocalizedText, LocationSource, NearbyPoi, Poi, RouteDef } from "@/lib/types";
 import poisJson from "@data/osm/yongkang.json";
 import yongkangRoute from "@data/routes/yongkang.json";
 import jinhuaRoute from "@data/routes/jinhua.json";
 import areasJson from "@data/areas/yongkang.json";
+import { isNativeApp } from "@/lib/client/native";
+import { t } from "@/lib/client/i18n";
 import { bearingDeg, haversineM, pointInPolygon, polygonAreaM2 } from "./math";
 
 export interface SimulatedSource extends LocationSource {
@@ -22,57 +24,136 @@ const MAX_ACCURACY_M = 100;
 const SMOOTHING_WINDOW = 3;
 const MIN_HEADING_MOVE_M = 5;
 
-export function createGpsSource(): LocationSource {
-  let watchId: number | null = null;
+interface RawFix {
+  lat: number;
+  lon: number;
+  accuracy: number;
+  heading: number | null | undefined;
+  speed: number | null | undefined;
+  timestamp: number;
+}
+
+export function createGpsSource(lang: Lang = "en"): LocationSource {
+  let stopper: (() => void) | null = null;
+  let active = false;
   let recent: { lat: number; lon: number }[] = [];
   let lastHeadingPoint: { lat: number; lon: number } | null = null;
   let lastHeading: number | null = null;
 
+  // Shared by the browser and native paths: accuracy filter, smoothing, heading.
+  function handle(raw: RawFix, onFix: (fix: GeoFix) => void) {
+    if (raw.accuracy > MAX_ACCURACY_M) return;
+    recent.push({ lat: raw.lat, lon: raw.lon });
+    if (recent.length > SMOOTHING_WINDOW) recent.shift();
+    const lat = recent.reduce((s, p) => s + p.lat, 0) / recent.length;
+    const lon = recent.reduce((s, p) => s + p.lon, 0) / recent.length;
+
+    let heading: number | null = raw.heading != null && !Number.isNaN(raw.heading) ? raw.heading : null;
+    if (heading === null) {
+      if (!lastHeadingPoint) lastHeadingPoint = { lat, lon };
+      else if (haversineM(lastHeadingPoint, { lat, lon }) > MIN_HEADING_MOVE_M) {
+        lastHeading = bearingDeg(lastHeadingPoint, { lat, lon });
+        lastHeadingPoint = { lat, lon };
+      }
+      heading = lastHeading;
+    } else {
+      lastHeading = heading;
+      lastHeadingPoint = { lat, lon };
+    }
+
+    onFix({
+      lat,
+      lon,
+      accuracy: raw.accuracy,
+      heading,
+      speed: raw.speed != null && !Number.isNaN(raw.speed) ? raw.speed : null,
+      timestamp: raw.timestamp || Date.now(),
+    });
+  }
+
+  // Android app: a foreground service keeps GPS running with the screen off.
+  async function startNative(onFix: (fix: GeoFix) => void, onError?: (e: Error) => void) {
+    try {
+      const { registerPlugin } = await import("@capacitor/core");
+      const plugin = registerPlugin<import("@capacitor-community/background-geolocation").BackgroundGeolocationPlugin>(
+        "BackgroundGeolocation",
+      );
+      const id = await plugin.addWatcher(
+        {
+          backgroundTitle: t(lang, "nativeNotifTitle"),
+          backgroundMessage: t(lang, "nativeNotifBody"),
+          requestPermissions: true,
+          stale: false,
+          distanceFilter: 3,
+        },
+        (loc, err) => {
+          if (err) {
+            onError?.(
+              new Error(
+                err.code === "NOT_AUTHORIZED"
+                  ? "Location permission is off. Allow location for Chitchat Tour in Android settings."
+                  : err.message,
+              ),
+            );
+            return;
+          }
+          if (!loc) return;
+          handle(
+            {
+              lat: loc.latitude,
+              lon: loc.longitude,
+              accuracy: loc.accuracy,
+              heading: loc.bearing,
+              speed: loc.speed,
+              timestamp: loc.time ?? Date.now(),
+            },
+            onFix,
+          );
+        },
+      );
+      if (!active) void plugin.removeWatcher({ id });
+      else stopper = () => void plugin.removeWatcher({ id });
+    } catch (e) {
+      active = false;
+      onError?.(e instanceof Error ? e : new Error(String(e)));
+    }
+  }
+
   return {
     start(onFix, onError) {
+      if (active) return;
+      if (isNativeApp()) {
+        active = true;
+        void startNative(onFix, onError);
+        return;
+      }
       if (typeof navigator === "undefined" || !navigator.geolocation) {
         onError?.(new Error("Geolocation is not available"));
         return;
       }
-      if (watchId !== null) return;
-      watchId = navigator.geolocation.watchPosition(
-        (pos) => {
-          const c = pos.coords;
-          if (c.accuracy > MAX_ACCURACY_M) return;
-          recent.push({ lat: c.latitude, lon: c.longitude });
-          if (recent.length > SMOOTHING_WINDOW) recent.shift();
-          const lat = recent.reduce((s, p) => s + p.lat, 0) / recent.length;
-          const lon = recent.reduce((s, p) => s + p.lon, 0) / recent.length;
-
-          let heading: number | null = c.heading != null && !Number.isNaN(c.heading) ? c.heading : null;
-          if (heading === null) {
-            if (!lastHeadingPoint) lastHeadingPoint = { lat, lon };
-            else if (haversineM(lastHeadingPoint, { lat, lon }) > MIN_HEADING_MOVE_M) {
-              lastHeading = bearingDeg(lastHeadingPoint, { lat, lon });
-              lastHeadingPoint = { lat, lon };
-            }
-            heading = lastHeading;
-          } else {
-            lastHeading = heading;
-            lastHeadingPoint = { lat, lon };
-          }
-
-          onFix({
-            lat,
-            lon,
-            accuracy: c.accuracy,
-            heading,
-            speed: c.speed != null && !Number.isNaN(c.speed) ? c.speed : null,
-            timestamp: pos.timestamp || Date.now(),
-          });
-        },
+      active = true;
+      const watchId = navigator.geolocation.watchPosition(
+        (pos) =>
+          handle(
+            {
+              lat: pos.coords.latitude,
+              lon: pos.coords.longitude,
+              accuracy: pos.coords.accuracy,
+              heading: pos.coords.heading,
+              speed: pos.coords.speed,
+              timestamp: pos.timestamp,
+            },
+            onFix,
+          ),
         (err) => onError?.(new Error(err.message)),
         { enableHighAccuracy: true, maximumAge: 1000, timeout: 20000 },
       );
+      stopper = () => navigator.geolocation.clearWatch(watchId);
     },
     stop() {
-      if (watchId !== null && typeof navigator !== "undefined") navigator.geolocation.clearWatch(watchId);
-      watchId = null;
+      active = false;
+      stopper?.();
+      stopper = null;
       recent = [];
       lastHeadingPoint = null;
       lastHeading = null;
